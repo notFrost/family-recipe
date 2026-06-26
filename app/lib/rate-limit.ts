@@ -52,6 +52,11 @@ export const signupRateLimit = redis
  *
  * If the limiter is `null` (no Upstash configured), the check always passes.
  * Otherwise it calls `limiter.limit(identifier)` and returns the result.
+ *
+ * **Fail-open**: if the rate limiter itself errors (network issue, Upstash
+ * downtime, cold-start timing), the check passes and the request is allowed.
+ * Rate limiting is a defense-in-depth measure — it must never take down the
+ * app when its dependency fails.
  */
 export async function checkRateLimit(
   limiter: Ratelimit | null,
@@ -61,5 +66,9 @@ export async function checkRateLimit(
     return { success: true };
   }
 
-  return limiter.limit(identifier);
+  try {
+    return await limiter.limit(identifier);
+  } catch {
+    return { success: true };
+  }
 }

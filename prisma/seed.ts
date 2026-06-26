@@ -25,6 +25,22 @@ const DEMO_USER = {
 };
 
 async function main() {
+  // Production guard: refuse to run the destructive seed against a remote
+  // Turso database unless explicitly forced with SEED_FORCE=true.
+  // The seed wipes ALL recipes/families/members before re-inserting demo
+  // data — running it against production would destroy user data.
+  if (
+    process.env.DATABASE_URL?.startsWith("libsql://") &&
+    process.env.SEED_FORCE !== "true"
+  ) {
+    console.error(
+      "Refusing to seed: DATABASE_URL points to a remote Turso database.\n" +
+        "This seed is destructive (wipes all recipes/families/members).\n" +
+        "To force, set SEED_FORCE=true in your environment.",
+    );
+    process.exit(1);
+  }
+
   const passwordHash = bcrypt.hashSync(DEMO_USER.password, 12);
 
   // Upsert the demo user before any recipes are created.
