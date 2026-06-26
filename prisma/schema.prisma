@@ -1,0 +1,103 @@
+// Prisma schema for the Recipes app.
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// Recipe model.
+//
+// Modeling choice for `ingredients` / `steps` (both `string[]` in app code):
+// SQLite has no native array type. We store each list as a JSON-encoded
+// string in a TEXT column (`ingredientsJson` / `stepsJson`) and perform all
+// (de)serialization INSIDE the repository (app/lib/recipe-repository.ts).
+// The rest of the app never sees these JSON columns — the repository always
+// maps rows back to the `Recipe` app type with real `string[]` fields.
+//
+// Why JSON-in-TEXT over child tables (Ingredient/Step rows): ingredients and
+// steps are always read and written as whole ordered lists alongside their
+// recipe, are never queried/filtered individually, and have no independent
+// identity. JSON-in-TEXT keeps reads/writes to a single row (no joins, no
+// ordering columns to maintain) and keeps the schema simple. If future
+// requirements demand per-ingredient querying, they can be promoted to
+// related tables without touching any caller (the mapping stays in the repo).
+model Recipe {
+  id          String   @id @default(cuid())
+  title       String
+  imageUrl    String
+  description String?
+  // JSON-encoded string[] — (de)serialized inside the repository only.
+  ingredientsJson String
+  stepsJson       String
+  // FK to User.id. The field is kept named `authorId` so existing callers and
+  // the repository mapping are unchanged; the `author` relation field is added
+  // for Prisma to model the foreign key.
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+  // Recipe visibility: PRIVATE (owner only), PUBLIC (listed on discover),
+  // UNLISTED (accessible via direct link but not listed on discover),
+  // FAMILY (visible to family members only).
+  visibility  String   @default("PRIVATE")
+  // When visibility === "FAMILY", familyId points to the family this recipe
+  // is scoped to. onDelete: SetNull so if a family is deleted, recipes keep
+  // existing but become orphaned (the deleteFamily action re-scopes them to
+  // PRIVATE before deleting, so SetNull is a safety net).
+  familyId    String?
+  family      Family?  @relation(fields: [familyId], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+
+  @@index([authorId])
+  @@index([visibility])
+  @@index([familyId])
+}
+
+// User model for authentication.
+//
+// Auth strategy: NextAuth (Auth.js) v5 with the Credentials provider and a
+// JWT session strategy. Because sessions are stateless JWTs (not stored in the
+// DB) and we are NOT using OAuth providers or email verification, the Auth.js
+// Prisma adapter is NOT used — so the Account / Session / VerificationToken
+// tables it would require are intentionally omitted to keep the schema minimal.
+// This single `User` table holds everything Credentials auth needs.
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  recipes       Recipe[]
+  ownedFamilies Family[]       @relation("FamilyOwner")
+  families      FamilyMember[] @relation("FamilyMembership")
+}
+
+model Family {
+  id        String   @id @default(cuid())
+  name      String
+  ownerId   String
+  owner     User     @relation("FamilyOwner", fields: [ownerId], references: [id])
+  createdAt DateTime @default(now())
+  members   FamilyMember[]
+  recipes   Recipe[]
+
+  @@index([ownerId])
+}
+
+model FamilyMember {
+  id        String   @id @default(cuid())
+  familyId  String
+  family    Family   @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation("FamilyMembership", fields: [userId], references: [id], onDelete: Cascade)
+  // SQLite has no native enum; stored as TEXT. Values: "OWNER" | "MEMBER".
+  role      String   @default("MEMBER")
+  joinedAt  DateTime @default(now())
+
+  @@unique([familyId, userId])
+  @@index([userId])
+}
