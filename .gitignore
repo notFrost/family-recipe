@@ -41,7 +41,9 @@ server-err.txt
 # prisma
 # Local SQLite database files (schema + migrations stay tracked).
 /dev.db
+/local.db
 /dev.db-journal
+/local.db-journal
 *.db
 *.db-journal
 *.db-wal
