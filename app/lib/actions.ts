@@ -3,11 +3,13 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { AuthError } from "next-auth";
+import { headers } from "next/headers";
 import bcrypt from "bcryptjs";
 import { recipeRepository } from "./recipe-repository";
 import { familyRepository } from "./family-repository";
 import { auth, signIn, signOut } from "./auth";
 import { getUserByEmail, createUser } from "./user-repository";
+import { loginRateLimit, signupRateLimit, checkRateLimit } from "./rate-limit";
 import type { Recipe, RecipeVisibility } from "./types";
 
 const VALID_VISIBILITIES = new Set<string>([
@@ -186,6 +188,17 @@ export async function loginAction(
   _prevState: AuthFormState,
   formData: FormData,
 ): Promise<AuthFormState> {
+  // Rate limiting: check before any expensive operations (DB, bcrypt).
+  const headersList = await headers();
+  const ip =
+    headersList.get("x-forwarded-for")?.split(",")[0]?.trim() || "anonymous";
+  const loginCheck = await checkRateLimit(loginRateLimit, ip);
+  if (!loginCheck.success) {
+    return {
+      error: "Too many login attempts. Please try again in a minute.",
+    };
+  }
+
   const email = (formData.get("email") as string | null)?.trim() ?? "";
   const password = (formData.get("password") as string | null) ?? "";
   const callbackUrl =
@@ -226,6 +239,17 @@ export async function signupAction(
   _prevState: AuthFormState,
   formData: FormData,
 ): Promise<AuthFormState> {
+  // Rate limiting: check before any expensive operations (DB, bcrypt).
+  const headersList = await headers();
+  const ip =
+    headersList.get("x-forwarded-for")?.split(",")[0]?.trim() || "anonymous";
+  const signupCheck = await checkRateLimit(signupRateLimit, ip);
+  if (!signupCheck.success) {
+    return {
+      error: "Too many sign-up attempts. Please try again in a minute.",
+    };
+  }
+
   const name = (formData.get("name") as string | null)?.trim() ?? "";
   const email = (formData.get("email") as string | null)?.trim() ?? "";
   const password = (formData.get("password") as string | null) ?? "";
@@ -245,7 +269,7 @@ export async function signupAction(
     return { error: "An account with that email already exists." };
   }
 
-  const passwordHash = await bcrypt.hash(password, 10);
+  const passwordHash = await bcrypt.hash(password, 12);
 
   try {
     await createUser({

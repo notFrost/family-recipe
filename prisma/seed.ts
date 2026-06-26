@@ -25,7 +25,7 @@ const DEMO_USER = {
 };
 
 async function main() {
-  const passwordHash = bcrypt.hashSync(DEMO_USER.password, 10);
+  const passwordHash = bcrypt.hashSync(DEMO_USER.password, 12);
 
   // Upsert the demo user before any recipes are created.
   await prisma.user.upsert({
