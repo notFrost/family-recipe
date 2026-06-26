@@ -57,3 +57,6 @@ server-err.txt
 next-env.d.ts
 
 /app/generated/prisma
+
+# opencode tooling
+.opencode/
