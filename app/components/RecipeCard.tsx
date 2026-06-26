@@ -37,30 +37,33 @@ export default function RecipeCard({
           </p>
         ) : null}
 
-        <div className="mt-auto flex items-center gap-3 pt-3 text-xs font-medium text-zinc-500">
-          <span className="inline-flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
-            {recipe.ingredients.length}{" "}
-            {recipe.ingredients.length === 1 ? "ingredient" : "ingredients"}
-          </span>
-          <span aria-hidden className="text-zinc-300">
-            &bull;
-          </span>
-          <span>
-            {recipe.steps.length} {recipe.steps.length === 1 ? "step" : "steps"}
-          </span>
+        <div className="mt-auto flex flex-col items-center gap-1.5 pt-3 text-xs font-medium text-zinc-500">
+          {/* Row 1: recipe stats — centered */}
+          <div className="flex items-center gap-2.5">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+              {recipe.ingredients.length}{" "}
+              {recipe.ingredients.length === 1 ? "ingredient" : "ingredients"}
+            </span>
+            <span aria-hidden className="text-zinc-300">
+              &bull;
+            </span>
+            <span>
+              {recipe.steps.length} {recipe.steps.length === 1 ? "step" : "steps"}
+            </span>
+          </div>
+
+          {/* Row 2: author — centered, full width for clean truncation */}
           {recipe.authorName ? (
-            <>
-              <span aria-hidden className="text-zinc-300">
-                &bull;
-              </span>
+            <div className="flex w-full items-center justify-center gap-1 truncate">
+              <span className="text-zinc-400">by</span>
               <span className="truncate">{recipe.authorName}</span>
               {authorIsFormerMember ? (
                 <span className="whitespace-nowrap text-zinc-400">
-                  (former member)
+                  (former)
                 </span>
               ) : null}
-            </>
+            </div>
           ) : null}
         </div>
       </div>
