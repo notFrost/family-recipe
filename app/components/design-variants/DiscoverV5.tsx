@@ -477,7 +477,7 @@ export default function DiscoverV5() {
                 style={{ animationDelay: `${120 + index * 80}ms` }}
               >
                 <article
-                  className="relative flex flex-1 flex-col overflow-hidden rounded-2xl transition-colors duration-500"
+                  className="relative flex flex-1 flex-col overflow-hidden rounded-2xl"
                   style={{ backgroundColor: palette.card }}
                 >
                   <div className="relative aspect-[4/3] w-full overflow-hidden">
