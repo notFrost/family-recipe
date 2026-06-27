@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { Fraunces } from "next/font/google";
 
 const fraunces = Fraunces({
@@ -228,12 +229,36 @@ const recipes: MockRecipe[] = [
   },
 ];
 
-const tags = ["NEW", "FAMILY FAVE", "QUICK", "VEGGIE", "COMFORT", "FRESH", "WEEKEND", "BREAKFAST"];
+const tags = [
+  "NEW",
+  "FAMILY FAVE",
+  "QUICK",
+  "VEGGIE",
+  "COMFORT",
+  "FRESH",
+  "WEEKEND",
+  "BREAKFAST",
+];
+
+function Logo() {
+  return (
+    <Link
+      href="/"
+      className="flex items-center gap-2.5 text-xl font-extrabold tracking-tight text-[#1a1a1a]"
+      style={{ fontFamily: "var(--font-fraunces), Georgia, serif" }}
+    >
+      <span className="flex h-9 w-9 items-center justify-center rounded-lg border-2 border-[#1a1a1a] bg-[#fff8ef] text-base">
+        🍽️
+      </span>
+      Family Recipe
+    </Link>
+  );
+}
 
 export default function DiscoverV5() {
   return (
     <div
-      className={`${fraunces.variable} min-h-full bg-[#ffefdb] text-[#1a1a1a]`}
+      className={`${fraunces.variable} flex min-h-screen flex-col bg-[#ffefdb] text-[#1a1a1a]`}
     >
       <style jsx global>{`
         @keyframes slideIn {
@@ -251,96 +276,184 @@ export default function DiscoverV5() {
         }
       `}</style>
 
-      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="relative mb-12 overflow-hidden rounded-3xl bg-[#c73e1d] px-6 py-10 text-[#fff8ef] shadow-xl sm:px-10 sm:py-14">
-          <div className="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-[#f4a261]/30" />
-          <div className="absolute -bottom-12 -left-12 h-40 w-40 rounded-full bg-[#2a9d8f]/30" />
-          <div className="relative">
-            <p className="mb-2 text-sm font-bold uppercase tracking-widest text-[#ffefdb]/80">
-              Community Collection
-            </p>
-            <h1
-              className="text-4xl font-extrabold leading-none tracking-tight sm:text-6xl"
-              style={{ fontFamily: "var(--font-fraunces), Georgia, serif" }}
+      <header className="sticky top-0 z-50 border-b-2 border-[#1a1a1a] bg-[#fff8ef] shadow-[0_4px_0_0_#1a1a1a]">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-8">
+            <Logo />
+            <nav className="hidden items-center gap-6 md:flex">
+              <Link
+                href="/discover"
+                className="text-xs font-extrabold uppercase tracking-widest text-[#1a1a1a]/80 transition-colors hover:text-[#1a1a1a]"
+              >
+                Discover
+              </Link>
+              <Link
+                href="/families"
+                className="text-xs font-extrabold uppercase tracking-widest text-[#1a1a1a]/80 transition-colors hover:text-[#1a1a1a]"
+              >
+                Families
+              </Link>
+            </nav>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <Link
+              href="/login"
+              className="hidden h-10 items-center rounded-full border-2 border-[#1a1a1a] bg-[#fff8ef] px-4 text-xs font-extrabold uppercase tracking-widest text-[#1a1a1a] shadow-[3px_3px_0_0_#1a1a1a] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0_0_#1a1a1a] sm:inline-flex"
             >
-              Discover
-              <br />
-              Recipes
-            </h1>
-            <p className="mt-4 max-w-md text-base leading-relaxed text-[#ffefdb]/90">
-              Bold flavors, timeless techniques, and the stories behind every dish.
-            </p>
+              Log in
+            </Link>
+            <Link
+              href="/signup"
+              className="flex h-10 items-center rounded-full border-2 border-[#1a1a1a] bg-[#f4a261] px-4 text-xs font-extrabold uppercase tracking-widest text-[#1a1a1a] shadow-[3px_3px_0_0_#1a1a1a] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0_0_#1a1a1a]"
+            >
+              Sign up
+            </Link>
           </div>
         </div>
+      </header>
 
-        <form
-          action="/discover"
-          method="get"
-          className="mx-auto mb-10 flex w-full max-w-xl gap-3"
-        >
-          <label htmlFor="v5-q" className="sr-only">
-            Search recipes
-          </label>
-          <input
-            id="v5-q"
-            name="q"
-            type="search"
-            placeholder="Find your next favorite…"
-            className="h-12 flex-1 rounded-full border-2 border-[#1a1a1a] bg-[#fff8ef] px-5 text-sm font-semibold text-[#1a1a1a] placeholder:text-[#1a1a1a]/40 shadow-[4px_4px_0px_0px_#1a1a1a] transition-all focus-visible:outline-none focus-visible:shadow-[2px_2px_0px_0px_#1a1a1a]"
-          />
-          <button
-            type="submit"
-            className="h-12 rounded-full bg-[#2a9d8f] px-6 text-sm font-bold text-white shadow-[4px_4px_0px_0px_#1a1a1a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#1a1a1a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2a9d8f] focus-visible:ring-offset-2"
+      <main className="relative flex-1">
+        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="relative mb-12 overflow-hidden rounded-3xl bg-[#c73e1d] px-6 py-10 text-[#fff8ef] shadow-xl sm:px-10 sm:py-14">
+            <div className="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-[#f4a261]/30" />
+            <div className="absolute -bottom-12 -left-12 h-40 w-40 rounded-full bg-[#2a9d8f]/30" />
+            <div className="relative">
+              <p className="mb-2 text-sm font-bold uppercase tracking-widest text-[#ffefdb]/80">
+                Community Collection
+              </p>
+              <h1
+                className="text-4xl font-extrabold leading-none tracking-tight sm:text-6xl"
+                style={{ fontFamily: "var(--font-fraunces), Georgia, serif" }}
+              >
+                Discover
+                <br />
+                Recipes
+              </h1>
+              <p className="mt-4 max-w-md text-base leading-relaxed text-[#ffefdb]/90">
+                Bold flavors, timeless techniques, and the stories behind every
+                dish.
+              </p>
+            </div>
+          </div>
+
+          <form
+            action="/discover"
+            method="get"
+            className="mx-auto mb-10 flex w-full max-w-xl gap-3"
           >
-            Search
-          </button>
-        </form>
-
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {recipes.map((recipe, index) => (
-            <article
-              key={recipe.id}
-              className="v5-card group relative flex flex-col overflow-hidden rounded-2xl border-2 border-[#1a1a1a] bg-[#fff8ef] shadow-[6px_6px_0px_0px_#1a1a1a] transition-all duration-300 hover:-translate-y-1 hover:shadow-[3px_3px_0px_0px_#1a1a1a]"
-              style={{ animationDelay: `${index * 70}ms` }}
+            <label htmlFor="v5-q" className="sr-only">
+              Search recipes
+            </label>
+            <input
+              id="v5-q"
+              name="q"
+              type="search"
+              placeholder="Find your next favorite…"
+              className="h-12 flex-1 rounded-full border-2 border-[#1a1a1a] bg-[#fff8ef] px-5 text-sm font-semibold text-[#1a1a1a] placeholder:text-[#1a1a1a]/40 shadow-[4px_4px_0px_0px_#1a1a1a] transition-all focus-visible:outline-none focus-visible:shadow-[2px_2px_0px_0px_#1a1a1a]"
+            />
+            <button
+              type="submit"
+              className="h-12 rounded-full bg-[#2a9d8f] px-6 text-sm font-bold text-white shadow-[4px_4px_0px_0px_#1a1a1a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#1a1a1a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2a9d8f] focus-visible:ring-offset-2"
             >
-              <div className="relative aspect-[4/3] w-full overflow-hidden border-b-2 border-[#1a1a1a]">
-                <Image
-                  src={recipe.imageUrl}
-                  alt={recipe.title}
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute left-3 top-3 rounded-full bg-[#f4a261] px-3 py-1 text-xs font-extrabold text-[#1a1a1a] shadow-sm">
-                  {tags[index]}
-                </div>
-              </div>
+              Search
+            </button>
+          </form>
 
-              <div className="flex flex-1 flex-col p-5">
-                <h2
-                  className="text-xl font-bold leading-tight text-[#1a1a1a]"
-                  style={{ fontFamily: "var(--font-fraunces), Georgia, serif" }}
-                >
-                  {recipe.title}
-                </h2>
-                <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-[#1a1a1a]/70">
-                  {recipe.description}
-                </p>
-
-                <div className="mt-auto flex items-center justify-between border-t-2 border-dashed border-[#1a1a1a]/20 pt-4">
-                  <div className="flex flex-col gap-0.5 text-xs font-bold text-[#1a1a1a]/70">
-                    <span>{recipe.ingredients.length} ingredients</span>
-                    <span>{recipe.steps.length} steps</span>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {recipes.map((recipe, index) => (
+              <article
+                key={recipe.id}
+                className="v5-card group relative flex flex-col overflow-hidden rounded-2xl border-2 border-[#1a1a1a] bg-[#fff8ef] shadow-[6px_6px_0px_0px_#1a1a1a] transition-all duration-300 hover:-translate-y-1 hover:shadow-[3px_3px_0px_0px_#1a1a1a]"
+                style={{ animationDelay: `${index * 70}ms` }}
+              >
+                <div className="relative aspect-[4/3] w-full overflow-hidden border-b-2 border-[#1a1a1a]">
+                  <Image
+                    src={recipe.imageUrl}
+                    alt={recipe.title}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute left-3 top-3 rounded-full bg-[#f4a261] px-3 py-1 text-xs font-extrabold text-[#1a1a1a] shadow-sm">
+                    {tags[index]}
                   </div>
-                  <span className="text-xs font-bold text-[#c73e1d]">
-                    @{recipe.authorName}
-                  </span>
                 </div>
-              </div>
-            </article>
-          ))}
+
+                <div className="flex flex-1 flex-col p-5">
+                  <h2
+                    className="text-xl font-bold leading-tight text-[#1a1a1a]"
+                    style={{ fontFamily: "var(--font-fraunces), Georgia, serif" }}
+                  >
+                    {recipe.title}
+                  </h2>
+                  <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-[#1a1a1a]/70">
+                    {recipe.description}
+                  </p>
+
+                  <div className="mt-auto flex items-center justify-between border-t-2 border-dashed border-[#1a1a1a]/20 pt-4">
+                    <div className="flex flex-col gap-0.5 text-xs font-bold text-[#1a1a1a]/70">
+                      <span>{recipe.ingredients.length} ingredients</span>
+                      <span>{recipe.steps.length} steps</span>
+                    </div>
+                    <span className="text-xs font-bold text-[#c73e1d]">
+                      @{recipe.authorName}
+                    </span>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
-      </div>
+      </main>
+
+      <footer className="border-t-2 border-[#1a1a1a] bg-[#1a1a1a] py-12 text-[#fff8ef]">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col items-start justify-between gap-8 md:flex-row">
+            <div>
+              <Link
+                href="/"
+                className="flex items-center gap-2.5 text-2xl font-extrabold tracking-tight text-[#fff8ef]"
+                style={{ fontFamily: "var(--font-fraunces), Georgia, serif" }}
+              >
+                <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#c73e1d] text-lg">
+                  🍽️
+                </span>
+                Family Recipe
+              </Link>
+              <p className="mt-3 max-w-xs text-sm leading-relaxed text-[#fff8ef]/70">
+                Bold recipes, timeless traditions, and the stories behind every
+                family meal.
+              </p>
+            </div>
+            <nav className="flex flex-wrap gap-8 text-sm font-extrabold uppercase tracking-widest text-[#fff8ef]/80">
+              <Link
+                href="/about"
+                className="transition-colors hover:text-[#fff8ef]"
+              >
+                About
+              </Link>
+              <Link
+                href="/discover"
+                className="transition-colors hover:text-[#fff8ef]"
+              >
+                Discover
+              </Link>
+              <a
+                href="https://github.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-colors hover:text-[#fff8ef]"
+              >
+                GitHub
+              </a>
+            </nav>
+          </div>
+          <div className="mt-10 border-t border-[#fff8ef]/10 pt-6 text-xs text-[#fff8ef]/50">
+            © {new Date().getFullYear()} Family Recipe. All rights reserved.
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

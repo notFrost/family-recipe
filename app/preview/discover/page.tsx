@@ -9,12 +9,12 @@ import DiscoverV5 from "@/app/components/design-variants/DiscoverV5";
 import DiscoverV6 from "@/app/components/design-variants/DiscoverV6";
 
 const VARIANTS = [
-  { id: 1, label: "Utilitarian", Component: DiscoverV1 },
-  { id: 2, label: "Cute", Component: DiscoverV2 },
+  { id: 1, label: "Scandinavian", Component: DiscoverV1 },
+  { id: 2, label: "Editorial", Component: DiscoverV2 },
   { id: 3, label: "Modern", Component: DiscoverV3 },
   { id: 4, label: "Homey", Component: DiscoverV4 },
   { id: 5, label: "Retro", Component: DiscoverV5 },
-  { id: 6, label: "Botanical", Component: DiscoverV6 },
+  { id: 6, label: "Mediterranean", Component: DiscoverV6 },
 ] as const;
 
 export default function DiscoverPreviewPage() {
