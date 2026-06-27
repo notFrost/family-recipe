@@ -2,17 +2,17 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Space_Grotesk, Inter } from "next/font/google";
-import { Search } from "lucide-react";
+import { Crimson_Pro, Work_Sans } from "next/font/google";
+import { Search, ChefHat, ListOrdered } from "lucide-react";
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+const crimson = Crimson_Pro({
+  variable: "--font-crimson",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
 
-const inter = Inter({
-  variable: "--font-inter",
+const workSans = Work_Sans({
+  variable: "--font-work-sans",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
 });
@@ -236,22 +236,22 @@ const recipes: MockRecipe[] = [
   },
 ];
 
-const obsidian = "#0E0E10";
-const ink = "#15151A";
-const warmGray = "#8A8279";
-const amber = "#D4A056";
-const blush = "#C98B8B";
+const buttermilk = "#F7F3E8";
+const parchment = "#EDE6D6";
+const forest = "#3A4F3F";
+const plum = "#6B3A4F";
+const rust = "#A85C3A";
 
 function Logo() {
   return (
     <Link
       href="/"
-      className="flex items-center gap-3 text-lg font-semibold tracking-tight"
-      style={{ fontFamily: "var(--font-space-grotesk), system-ui, sans-serif", color: "#F5F3EF" }}
+      className="flex items-center gap-3 text-xl font-semibold tracking-tight"
+      style={{ fontFamily: "var(--font-crimson), Georgia, serif", color: forest }}
     >
       <span
-        className="flex h-9 w-9 items-center justify-center rounded-lg text-base"
-        style={{ background: `linear-gradient(135deg, ${amber}, ${blush})` }}
+        className="flex h-9 w-9 items-center justify-center rounded-full text-base"
+        style={{ backgroundColor: plum, color: buttermilk }}
       >
         🍽️
       </span>
@@ -260,53 +260,44 @@ function Logo() {
   );
 }
 
-export default function DiscoverV5() {
+export default function DiscoverV7() {
   return (
     <div
-      className={`${spaceGrotesk.variable} ${inter.variable} flex min-h-screen flex-col`}
-      style={{ backgroundColor: obsidian, color: "#F5F3EF", fontFamily: "var(--font-inter), system-ui, sans-serif" }}
+      className={`${crimson.variable} ${workSans.variable} flex min-h-screen flex-col`}
+      style={{ backgroundColor: buttermilk, color: forest, fontFamily: "var(--font-work-sans), system-ui, sans-serif" }}
     >
       <style jsx global>{`
-        @keyframes v5-reveal {
+        @keyframes v7-reveal {
           from {
             opacity: 0;
-            transform: translateY(24px);
+            transform: translateY(18px) rotate(-0.5deg);
           }
           to {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) rotate(0deg);
           }
         }
-        .v5-fade {
-          animation: v5-reveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
-        }
-        @keyframes v5-shimmer {
-          0% { background-position: 0% 50%; }
-          100% { background-position: 200% 50%; }
-        }
-        .v5-card-wrap {
-          background: linear-gradient(90deg, ${amber}, ${blush}, ${amber});
-          background-size: 200% 100%;
-        }
-        .v5-card-wrap:hover {
-          animation: v5-shimmer 1.2s linear infinite;
+        .v7-fade {
+          animation: v7-reveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
         }
       `}</style>
 
-      <header className="sticky top-0 z-50 border-b border-white/10" style={{ backgroundColor: `${obsidian}CC`, backdropFilter: "blur(16px)" }}>
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 sm:px-8 lg:px-12">
+      <header className="sticky top-0 z-50 border-b-2 border-dashed" style={{ borderColor: parchment, backgroundColor: `${buttermilk}F2`, backdropFilter: "blur(10px)" }}>
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-8">
             <Logo />
             <nav className="hidden items-center gap-6 md:flex">
               <Link
                 href="/discover"
-                className="text-sm font-medium text-[#BFB9B0] transition-colors hover:text-[#F5F3EF]"
+                className="text-sm font-semibold transition-colors hover:text-[#2A3A2E]"
+                style={{ color: forest }}
               >
                 Discover
               </Link>
               <Link
                 href="/families"
-                className="text-sm font-medium text-[#BFB9B0] transition-colors hover:text-[#F5F3EF]"
+                className="text-sm font-semibold transition-colors hover:text-[#2A3A2E]"
+                style={{ color: forest }}
               >
                 Families
               </Link>
@@ -316,14 +307,15 @@ export default function DiscoverV5() {
           <div className="flex items-center gap-3">
             <Link
               href="/login"
-              className="hidden rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-[#E8E4DF] transition-colors hover:bg-white/10 sm:inline-flex"
+              className="hidden rounded-lg border-2 px-4 py-2 text-sm font-semibold transition-colors hover:bg-[#3A4F3F]/10 sm:inline-flex"
+              style={{ borderColor: forest, color: forest }}
             >
               Log in
             </Link>
             <Link
               href="/signup"
-              className="rounded-full px-4 py-2 text-sm font-semibold transition-colors"
-              style={{ backgroundColor: amber, color: obsidian }}
+              className="rounded-lg px-4 py-2 text-sm font-semibold transition-transform hover:-translate-y-0.5"
+              style={{ backgroundColor: forest, color: buttermilk }}
             >
               Sign up
             </Link>
@@ -332,130 +324,140 @@ export default function DiscoverV5() {
       </header>
 
       <main className="relative flex-1">
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -left-1/4 -top-1/4 h-[600px] w-[600px] rounded-full opacity-20 blur-[120px]" style={{ backgroundColor: amber }} />
-          <div className="absolute -right-1/4 top-1/3 h-[500px] w-[500px] rounded-full opacity-15 blur-[100px]" style={{ backgroundColor: blush }} />
-        </div>
-
-        <div className="relative mx-auto max-w-7xl px-6 py-16 sm:px-8 lg:px-12">
-          <div className="v5-fade mb-16 flex flex-col items-start justify-between gap-8 md:flex-row md:items-end">
-            <div className="max-w-2xl">
-              <p className="mb-3 text-sm font-medium uppercase tracking-widest" style={{ color: amber }}>
-                Community Cookbook
-              </p>
-              <h1
-                className="text-4xl font-medium tracking-tight sm:text-5xl lg:text-6xl"
-                style={{ fontFamily: "var(--font-space-grotesk), system-ui, sans-serif" }}
-              >
-                Discover recipes
-              </h1>
-              <p className="mt-4 text-lg leading-relaxed" style={{ color: warmGray }}>
-                Browse public recipes shared by the community — curated for the modern kitchen.
-              </p>
-            </div>
-
-            <form
-              action="/discover"
-              method="get"
-              className="flex w-full max-w-md gap-2 md:w-auto"
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:px-8">
+          <div className="v7-fade mb-12 text-center">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em]" style={{ color: rust }}>
+              From handwritten kitchens
+            </p>
+            <h1
+              className="text-4xl font-semibold tracking-tight sm:text-5xl"
+              style={{ fontFamily: "var(--font-crimson), Georgia, serif", color: forest }}
             >
-              <label htmlFor="v5-q" className="sr-only">
-                Search recipes
-              </label>
+              Discover recipes
+            </h1>
+            <p className="mx-auto mt-4 max-w-lg text-base leading-relaxed" style={{ color: `${forest}CC` }}>
+              Heirloom dishes and weeknight favorites, gathered like recipe cards in a kitchen drawer.
+            </p>
+          </div>
+
+          <form
+            action="/discover"
+            method="get"
+            className="v7-fade mx-auto mb-12 flex w-full max-w-lg items-center gap-2 rounded-xl border-2 border-dashed bg-white p-2 shadow-sm"
+            style={{ borderColor: parchment }}
+          >
+            <label htmlFor="v7-q" className="sr-only">
+              Search recipes
+            </label>
+            <div className="relative flex-1">
+              <Search
+                className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2"
+                style={{ color: rust }}
+              />
               <input
-                id="v5-q"
+                id="v7-q"
                 name="q"
                 type="search"
                 placeholder="Search recipes…"
-                className="h-12 flex-1 rounded-full border border-white/10 bg-white/5 px-5 text-sm text-[#F5F3EF] placeholder:text-[#6B655E] backdrop-blur-md transition-colors focus-visible:outline-none focus-visible:border-[#D4A056]/50 focus-visible:bg-white/10"
+                className="h-11 w-full rounded-lg border-0 bg-transparent pl-11 pr-4 text-sm placeholder:opacity-50 focus-visible:outline-none"
+                style={{ color: forest }}
               />
-              <button
-                type="submit"
-                className="h-12 rounded-full px-6 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A056] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0E0E10]"
-                style={{ backgroundColor: amber, color: obsidian }}
-              >
-                Search
-              </button>
-            </form>
-          </div>
+            </div>
+            <button
+              type="submit"
+              className="h-11 rounded-lg px-6 text-sm font-semibold text-white transition-transform hover:scale-105"
+              style={{ backgroundColor: rust }}
+            >
+              Search
+            </button>
+          </form>
 
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {recipes.map((recipe, index) => (
-              <div
+              <article
                 key={recipe.id}
-                className="v5-fade v5-card-wrap group relative rounded-2xl p-[1px] transition-transform duration-500 hover:-translate-y-1"
-                style={{ animationDelay: `${120 + index * 80}ms` }}
+                className="v7-fade group relative flex flex-col transition-transform duration-300 hover:-translate-y-2 hover:rotate-[-1deg]"
+                style={{ animationDelay: `${80 + index * 60}ms` }}
               >
-                <article
-                  className="relative flex flex-1 flex-col overflow-hidden rounded-2xl transition-colors duration-500"
-                  style={{ backgroundColor: ink }}
+                <div
+                  className="relative flex flex-1 flex-col overflow-hidden rounded-sm border-2 border-dashed bg-white shadow-md transition-shadow duration-300 group-hover:shadow-xl"
+                  style={{ borderColor: parchment }}
                 >
+                  <div className="absolute left-1/2 top-0 z-10 h-6 w-24 -translate-x-1/2 -translate-y-1/2 rotate-[-2deg] rounded-sm opacity-70 shadow-sm"
+                    style={{ backgroundColor: "#F0ECE3" }}
+                  />
                   <div className="relative aspect-[4/3] w-full overflow-hidden">
                     <Image
                       src={recipe.imageUrl}
                       alt={recipe.title}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover transition-all duration-700 group-hover:scale-110 group-hover:saturate-[1.15]"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#15151A] via-[#15151A]/30 to-transparent" />
-                    <div className="absolute bottom-3 left-3 flex items-center gap-2">
-                      <span className="rounded-full bg-white/10 px-2.5 py-1 text-xs font-medium text-[#F5F3EF] backdrop-blur-md">
+                  </div>
+
+                  <div className="flex flex-1 flex-col p-5">
+                    <h2
+                      className="text-xl font-semibold leading-snug"
+                      style={{ fontFamily: "var(--font-crimson), Georgia, serif", color: forest }}
+                    >
+                      {recipe.title}
+                    </h2>
+                    <p className="mt-2 line-clamp-2 text-sm leading-relaxed" style={{ color: `${forest}AA` }}>
+                      {recipe.description}
+                    </p>
+
+                    <div className="mt-auto flex items-center gap-3 pt-4 text-xs font-semibold">
+                      <span
+                        className="flex items-center gap-1 rounded-full px-2.5 py-1"
+                        style={{ backgroundColor: "#F0ECE3", color: forest }}
+                      >
+                        <ChefHat className="h-3.5 w-3.5" />
                         {recipe.ingredients.length} ingredients
                       </span>
-                      <span className="rounded-full px-2.5 py-1 text-xs font-medium text-[#0E0E10] backdrop-blur-md" style={{ backgroundColor: amber }}>
+                      <span
+                        className="flex items-center gap-1 rounded-full px-2.5 py-1"
+                        style={{ backgroundColor: "#F0ECE3", color: forest }}
+                      >
+                        <ListOrdered className="h-3.5 w-3.5" />
                         {recipe.steps.length} steps
                       </span>
                     </div>
                   </div>
-
-                  <div className="flex flex-1 flex-col gap-2 p-5">
-                    <h2
-                      className="text-lg font-medium leading-snug"
-                      style={{ fontFamily: "var(--font-space-grotesk), system-ui, sans-serif", color: "#F5F3EF" }}
-                    >
-                      {recipe.title}
-                    </h2>
-                    <p className="line-clamp-2 text-sm leading-relaxed" style={{ color: warmGray }}>
-                      {recipe.description}
-                    </p>
-                    <div className="mt-auto pt-4 text-xs font-medium" style={{ color: "#6B655E" }}>
-                      by {recipe.authorName}
-                    </div>
-                  </div>
-                </article>
-              </div>
+                </div>
+              </article>
             ))}
           </div>
         </div>
       </main>
 
-      <footer className="border-t border-white/10 py-12" style={{ backgroundColor: obsidian }}>
-        <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
+      <footer className="border-t-2 border-dashed py-12" style={{ borderColor: parchment, backgroundColor: buttermilk }}>
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-start justify-between gap-8 md:flex-row">
             <div>
               <Logo />
-              <p className="mt-3 max-w-xs text-sm leading-relaxed" style={{ color: warmGray }}>
+              <p className="mt-3 max-w-xs text-sm leading-relaxed" style={{ color: `${forest}AA` }}>
                 Store your family recipes, discover new ones, and keep your family&apos;s cooking together.
               </p>
             </div>
-            <nav className="flex flex-wrap gap-6 text-sm font-medium" style={{ color: warmGray }}>
-              <Link href="/about" className="transition-colors hover:text-[#F5F3EF]">
+            <nav className="flex flex-wrap gap-6 text-sm font-semibold" style={{ color: `${forest}CC` }}>
+              <Link href="/about" className="transition-colors hover:text-[#2A3A2E]">
                 About
               </Link>
-              <Link href="/discover" className="transition-colors hover:text-[#F5F3EF]">
+              <Link href="/discover" className="transition-colors hover:text-[#2A3A2E]">
                 Discover
               </Link>
               <a
                 href="https://github.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="transition-colors hover:text-[#F5F3EF]">
+                className="transition-colors hover:text-[#2A3A2E]"
+              >
                 GitHub
               </a>
             </nav>
           </div>
-          <div className="mt-10 border-t border-white/10 pt-6 text-xs" style={{ color: "#6B655E" }}>
+          <div className="mt-10 border-t border-dashed pt-6 text-xs" style={{ borderColor: parchment, color: `${forest}80` }}>
             © {new Date().getFullYear()} Family Recipe. All rights reserved.
           </div>
         </div>

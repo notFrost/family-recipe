@@ -59,3 +59,6 @@ next-env.d.ts
 
 # opencode tooling
 .opencode/
+
+.vercel
+.env*

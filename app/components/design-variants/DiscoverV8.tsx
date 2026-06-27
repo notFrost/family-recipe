@@ -2,19 +2,19 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Space_Grotesk, Inter } from "next/font/google";
+import { Abril_Fatface, Source_Sans_3 } from "next/font/google";
 import { Search } from "lucide-react";
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+const abril = Abril_Fatface({
+  variable: "--font-abril",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400"],
 });
 
-const inter = Inter({
-  variable: "--font-inter",
+const sourceSans = Source_Sans_3({
+  variable: "--font-source-sans",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "600", "700"],
 });
 
 interface MockRecipe {
@@ -236,22 +236,22 @@ const recipes: MockRecipe[] = [
   },
 ];
 
-const obsidian = "#0E0E10";
-const ink = "#15151A";
-const warmGray = "#8A8279";
-const amber = "#D4A056";
-const blush = "#C98B8B";
+const whitewash = "#F8F6F1";
+const sea = "#2E6F7A";
+const coral = "#D66D4F";
+const ochre = "#D4A23A";
+const ink = "#2A2A2A";
 
 function Logo() {
   return (
     <Link
       href="/"
-      className="flex items-center gap-3 text-lg font-semibold tracking-tight"
-      style={{ fontFamily: "var(--font-space-grotesk), system-ui, sans-serif", color: "#F5F3EF" }}
+      className="flex items-center gap-3 text-xl tracking-tight"
+      style={{ fontFamily: "var(--font-abril), Georgia, serif", color: sea }}
     >
       <span
         className="flex h-9 w-9 items-center justify-center rounded-lg text-base"
-        style={{ background: `linear-gradient(135deg, ${amber}, ${blush})` }}
+        style={{ backgroundColor: coral, color: whitewash }}
       >
         🍽️
       </span>
@@ -260,53 +260,67 @@ function Logo() {
   );
 }
 
-export default function DiscoverV5() {
+function AzulejoPattern({ id }: { id: string }) {
+  return (
+    <svg width="0" height="0" className="absolute">
+      <defs>
+        <pattern id={id} x="0" y="0" width="48" height="48" patternUnits="userSpaceOnUse">
+          <rect width="24" height="24" fill={sea} />
+          <rect x="24" width="24" height="24" fill={whitewash} />
+          <rect y="24" width="24" height="24" fill={whitewash} />
+          <rect x="24" y="24" width="24" height="24" fill={sea} />
+          <circle cx="12" cy="12" r="7" fill={whitewash} />
+          <circle cx="36" cy="36" r="7" fill={whitewash} />
+          <circle cx="36" cy="12" r="7" fill={sea} />
+          <circle cx="12" cy="36" r="7" fill={sea} />
+          <rect x="10" y="10" width="4" height="4" fill={coral} opacity="0.9" />
+          <rect x="34" y="34" width="4" height="4" fill={coral} opacity="0.9" />
+        </pattern>
+      </defs>
+    </svg>
+  );
+}
+
+export default function DiscoverV8() {
   return (
     <div
-      className={`${spaceGrotesk.variable} ${inter.variable} flex min-h-screen flex-col`}
-      style={{ backgroundColor: obsidian, color: "#F5F3EF", fontFamily: "var(--font-inter), system-ui, sans-serif" }}
+      className={`${abril.variable} ${sourceSans.variable} flex min-h-screen flex-col`}
+      style={{ backgroundColor: whitewash, color: ink, fontFamily: "var(--font-source-sans), system-ui, sans-serif" }}
     >
       <style jsx global>{`
-        @keyframes v5-reveal {
+        @keyframes v8-reveal {
           from {
             opacity: 0;
-            transform: translateY(24px);
+            transform: translateY(18px);
           }
           to {
             opacity: 1;
             transform: translateY(0);
           }
         }
-        .v5-fade {
-          animation: v5-reveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
-        }
-        @keyframes v5-shimmer {
-          0% { background-position: 0% 50%; }
-          100% { background-position: 200% 50%; }
-        }
-        .v5-card-wrap {
-          background: linear-gradient(90deg, ${amber}, ${blush}, ${amber});
-          background-size: 200% 100%;
-        }
-        .v5-card-wrap:hover {
-          animation: v5-shimmer 1.2s linear infinite;
+        .v8-fade {
+          animation: v8-reveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
         }
       `}</style>
 
-      <header className="sticky top-0 z-50 border-b border-white/10" style={{ backgroundColor: `${obsidian}CC`, backdropFilter: "blur(16px)" }}>
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 sm:px-8 lg:px-12">
+      <AzulejoPattern id="azulejo-header" />
+
+      <header className="sticky top-0 z-50 border-b shadow-sm" style={{ borderColor: "#E5E1D8", backgroundColor: `${whitewash}F2`, backdropFilter: "blur(10px)" }}>
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-8">
             <Logo />
             <nav className="hidden items-center gap-6 md:flex">
               <Link
                 href="/discover"
-                className="text-sm font-medium text-[#BFB9B0] transition-colors hover:text-[#F5F3EF]"
+                className="text-sm font-semibold transition-colors hover:text-[#1F4F57]"
+                style={{ color: sea }}
               >
                 Discover
               </Link>
               <Link
                 href="/families"
-                className="text-sm font-medium text-[#BFB9B0] transition-colors hover:text-[#F5F3EF]"
+                className="text-sm font-semibold transition-colors hover:text-[#1F4F57]"
+                style={{ color: sea }}
               >
                 Families
               </Link>
@@ -316,14 +330,15 @@ export default function DiscoverV5() {
           <div className="flex items-center gap-3">
             <Link
               href="/login"
-              className="hidden rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-[#E8E4DF] transition-colors hover:bg-white/10 sm:inline-flex"
+              className="hidden rounded-lg border-2 px-4 py-2 text-sm font-semibold transition-colors hover:bg-[#2E6F7A]/10 sm:inline-flex"
+              style={{ borderColor: sea, color: sea }}
             >
               Log in
             </Link>
             <Link
               href="/signup"
-              className="rounded-full px-4 py-2 text-sm font-semibold transition-colors"
-              style={{ backgroundColor: amber, color: obsidian }}
+              className="rounded-lg px-4 py-2 text-sm font-semibold transition-transform hover:-translate-y-0.5"
+              style={{ backgroundColor: coral, color: whitewash }}
             >
               Sign up
             </Link>
@@ -331,131 +346,159 @@ export default function DiscoverV5() {
         </div>
       </header>
 
-      <main className="relative flex-1">
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -left-1/4 -top-1/4 h-[600px] w-[600px] rounded-full opacity-20 blur-[120px]" style={{ backgroundColor: amber }} />
-          <div className="absolute -right-1/4 top-1/3 h-[500px] w-[500px] rounded-full opacity-15 blur-[100px]" style={{ backgroundColor: blush }} />
+      <main className="relative flex-1 overflow-hidden">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-72 opacity-[0.12]">
+          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+            <rect width="100%" height="100%" fill="url(#azulejo-header)" />
+          </svg>
         </div>
 
-        <div className="relative mx-auto max-w-7xl px-6 py-16 sm:px-8 lg:px-12">
-          <div className="v5-fade mb-16 flex flex-col items-start justify-between gap-8 md:flex-row md:items-end">
-            <div className="max-w-2xl">
-              <p className="mb-3 text-sm font-medium uppercase tracking-widest" style={{ color: amber }}>
-                Community Cookbook
-              </p>
-              <h1
-                className="text-4xl font-medium tracking-tight sm:text-5xl lg:text-6xl"
-                style={{ fontFamily: "var(--font-space-grotesk), system-ui, sans-serif" }}
-              >
-                Discover recipes
-              </h1>
-              <p className="mt-4 text-lg leading-relaxed" style={{ color: warmGray }}>
-                Browse public recipes shared by the community — curated for the modern kitchen.
-              </p>
-            </div>
-
-            <form
-              action="/discover"
-              method="get"
-              className="flex w-full max-w-md gap-2 md:w-auto"
+        <div className="relative mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:px-8">
+          <div className="v8-fade mb-12 text-center">
+            <p className="mb-2 text-xs font-bold uppercase tracking-[0.25em]" style={{ color: coral }}>
+              From the sunlit market
+            </p>
+            <h1
+              className="text-5xl tracking-tight sm:text-6xl"
+              style={{ fontFamily: "var(--font-abril), Georgia, serif", color: sea }}
             >
-              <label htmlFor="v5-q" className="sr-only">
-                Search recipes
-              </label>
+              Discover recipes
+            </h1>
+            <p className="mx-auto mt-4 max-w-lg text-base leading-relaxed" style={{ color: `${ink}B3` }}>
+              Bright, honest dishes from coastal kitchens — cooked in terra-cotta, served with lemon.
+            </p>
+          </div>
+
+          <form
+            action="/discover"
+            method="get"
+            className="v8-fade mx-auto mb-12 flex w-full max-w-lg flex-col gap-2 sm:flex-row"
+          >
+            <label htmlFor="v8-q" className="sr-only">
+              Search recipes
+            </label>
+            <div className="relative flex-1">
+              <Search
+                className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2"
+                style={{ color: sea }}
+              />
               <input
-                id="v5-q"
+                id="v8-q"
                 name="q"
                 type="search"
                 placeholder="Search recipes…"
-                className="h-12 flex-1 rounded-full border border-white/10 bg-white/5 px-5 text-sm text-[#F5F3EF] placeholder:text-[#6B655E] backdrop-blur-md transition-colors focus-visible:outline-none focus-visible:border-[#D4A056]/50 focus-visible:bg-white/10"
+                className="h-12 w-full rounded-lg border-2 bg-white pl-11 pr-4 text-sm placeholder:opacity-50 focus-visible:outline-none"
+                style={{ borderColor: sea, color: ink }}
               />
-              <button
-                type="submit"
-                className="h-12 rounded-full px-6 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A056] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0E0E10]"
-                style={{ backgroundColor: amber, color: obsidian }}
-              >
-                Search
-              </button>
-            </form>
-          </div>
+            </div>
+            <button
+              type="submit"
+              className="h-12 rounded-lg px-6 text-sm font-semibold text-white transition-transform hover:scale-105"
+              style={{ backgroundColor: sea }}
+            >
+              Search
+            </button>
+          </form>
 
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {recipes.map((recipe, index) => (
-              <div
+              <article
                 key={recipe.id}
-                className="v5-fade v5-card-wrap group relative rounded-2xl p-[1px] transition-transform duration-500 hover:-translate-y-1"
-                style={{ animationDelay: `${120 + index * 80}ms` }}
+                className="v8-fade group relative flex flex-col overflow-hidden rounded-xl bg-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                style={{ animationDelay: `${80 + index * 60}ms` }}
               >
-                <article
-                  className="relative flex flex-1 flex-col overflow-hidden rounded-2xl transition-colors duration-500"
-                  style={{ backgroundColor: ink }}
+                <div className="pointer-events-none absolute -right-10 -top-10 z-10 h-20 w-20 rotate-45 transition-transform duration-500 group-hover:scale-[2.5] group-hover:opacity-20"
+                  style={{ opacity: 0.35 }}
                 >
-                  <div className="relative aspect-[4/3] w-full overflow-hidden">
-                    <Image
-                      src={recipe.imageUrl}
-                      alt={recipe.title}
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover transition-all duration-700 group-hover:scale-110 group-hover:saturate-[1.15]"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#15151A] via-[#15151A]/30 to-transparent" />
-                    <div className="absolute bottom-3 left-3 flex items-center gap-2">
-                      <span className="rounded-full bg-white/10 px-2.5 py-1 text-xs font-medium text-[#F5F3EF] backdrop-blur-md">
-                        {recipe.ingredients.length} ingredients
-                      </span>
-                      <span className="rounded-full px-2.5 py-1 text-xs font-medium text-[#0E0E10] backdrop-blur-md" style={{ backgroundColor: amber }}>
-                        {recipe.steps.length} steps
-                      </span>
-                    </div>
-                  </div>
+                  <svg width="100%" height="100%" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="24" height="24" fill={sea} />
+                    <rect x="24" width="24" height="24" fill={whitewash} />
+                    <rect y="24" width="24" height="24" fill={whitewash} />
+                    <rect x="24" y="24" width="24" height="24" fill={sea} />
+                    <circle cx="12" cy="12" r="7" fill={whitewash} />
+                    <circle cx="36" cy="36" r="7" fill={whitewash} />
+                    <circle cx="36" cy="12" r="7" fill={sea} />
+                    <circle cx="12" cy="36" r="7" fill={sea} />
+                    <rect x="10" y="10" width="4" height="4" fill={coral} />
+                    <rect x="34" y="34" width="4" height="4" fill={coral} />
+                  </svg>
+                </div>
+                <div className="relative aspect-[4/3] w-full overflow-hidden">
+                  <Image
+                    src={recipe.imageUrl}
+                    alt={recipe.title}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
 
-                  <div className="flex flex-1 flex-col gap-2 p-5">
-                    <h2
-                      className="text-lg font-medium leading-snug"
-                      style={{ fontFamily: "var(--font-space-grotesk), system-ui, sans-serif", color: "#F5F3EF" }}
-                    >
-                      {recipe.title}
-                    </h2>
-                    <p className="line-clamp-2 text-sm leading-relaxed" style={{ color: warmGray }}>
-                      {recipe.description}
-                    </p>
-                    <div className="mt-auto pt-4 text-xs font-medium" style={{ color: "#6B655E" }}>
-                      by {recipe.authorName}
-                    </div>
+                <div className="flex flex-1 flex-col p-5">
+                  <h2
+                    className="text-xl font-bold leading-snug"
+                    style={{ fontFamily: "var(--font-abril), Georgia, serif", color: sea }}
+                  >
+                    {recipe.title}
+                  </h2>
+                  <p className="mt-2 line-clamp-2 text-sm leading-relaxed" style={{ color: `${ink}AA` }}>
+                    {recipe.description}
+                  </p>
+
+                  <div className="mt-auto flex items-center justify-between border-t pt-4 text-xs font-bold" style={{ borderColor: "#E5E1D8", color: `${ink}80` }}>
+                    <span>{recipe.ingredients.length} ingredients</span>
+                    <span>{recipe.steps.length} steps</span>
                   </div>
-                </article>
-              </div>
+                </div>
+              </article>
             ))}
           </div>
         </div>
       </main>
 
-      <footer className="border-t border-white/10 py-12" style={{ backgroundColor: obsidian }}>
-        <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
+      <footer className="relative border-t py-12" style={{ borderColor: "#E5E1D8", backgroundColor: sea }}>
+        <div className="pointer-events-none absolute inset-0 opacity-[0.08]">
+          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+            <rect width="100%" height="100%" fill="url(#azulejo-header)" />
+          </svg>
+        </div>
+        <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-start justify-between gap-8 md:flex-row">
             <div>
-              <Logo />
-              <p className="mt-3 max-w-xs text-sm leading-relaxed" style={{ color: warmGray }}>
+              <Link
+                href="/"
+                className="flex items-center gap-3 text-xl tracking-tight"
+                style={{ fontFamily: "var(--font-abril), Georgia, serif", color: whitewash }}
+              >
+                <span
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-base"
+                  style={{ backgroundColor: coral, color: whitewash }}
+                >
+                  🍽️
+                </span>
+                Family Recipe
+              </Link>
+              <p className="mt-3 max-w-xs text-sm leading-relaxed" style={{ color: `${whitewash}CC` }}>
                 Store your family recipes, discover new ones, and keep your family&apos;s cooking together.
               </p>
             </div>
-            <nav className="flex flex-wrap gap-6 text-sm font-medium" style={{ color: warmGray }}>
-              <Link href="/about" className="transition-colors hover:text-[#F5F3EF]">
+            <nav className="flex flex-wrap gap-6 text-sm font-semibold" style={{ color: `${whitewash}CC` }}>
+              <Link href="/about" className="transition-colors hover:text-white">
                 About
               </Link>
-              <Link href="/discover" className="transition-colors hover:text-[#F5F3EF]">
+              <Link href="/discover" className="transition-colors hover:text-white">
                 Discover
               </Link>
               <a
                 href="https://github.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="transition-colors hover:text-[#F5F3EF]">
+                className="transition-colors hover:text-white"
+              >
                 GitHub
               </a>
             </nav>
           </div>
-          <div className="mt-10 border-t border-white/10 pt-6 text-xs" style={{ color: "#6B655E" }}>
+          <div className="mt-10 border-t border-white/20 pt-6 text-xs" style={{ color: `${whitewash}99` }}>
             © {new Date().getFullYear()} Family Recipe. All rights reserved.
           </div>
         </div>
