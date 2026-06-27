@@ -343,16 +343,16 @@ export default function DiscoverV5() {
         .v5-fade {
           animation: v5-reveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
         }
-        @keyframes v5-shimmer {
-          0% { background-position: 0% 50%; }
-          100% { background-position: 200% 50%; }
+        .v5-card {
+          transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1),
+                      box-shadow 500ms cubic-bezier(0.22, 1, 0.36, 1),
+                      border-color 500ms cubic-bezier(0.22, 1, 0.36, 1);
         }
-        .v5-card-wrap {
-          background: linear-gradient(90deg, ${amber}, ${blush}, ${amber});
-          background-size: 200% 100%;
-        }
-        .v5-card-wrap:hover {
-          animation: v5-shimmer 1.2s linear infinite;
+        .v5-card:hover {
+          transform: translateY(-4px);
+          border-color: ${amber}73;
+          box-shadow: 0 20px 40px -12px ${amber}38,
+                      0 0 0 1px ${amber}1f;
         }
       `}</style>
 
@@ -471,67 +471,66 @@ export default function DiscoverV5() {
 
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {recipes.map((recipe, index) => (
-              <div
+              <article
                 key={recipe.id}
-                className="v5-fade v5-card-wrap group relative rounded-2xl p-[1px] transition-transform duration-500 hover:-translate-y-1"
-                style={{ animationDelay: `${120 + index * 80}ms` }}
+                className="v5-fade v5-card group relative flex flex-col overflow-hidden rounded-2xl border"
+                style={{
+                  animationDelay: `${120 + index * 80}ms`,
+                  backgroundColor: palette.card,
+                  borderColor: palette.border,
+                }}
               >
-                <article
-                  className="relative flex flex-1 flex-col overflow-hidden rounded-2xl"
-                  style={{ backgroundColor: palette.card }}
-                >
-                  <div className="relative aspect-[4/3] w-full overflow-hidden">
-                    <Image
-                      src={recipe.imageUrl}
-                      alt={recipe.title}
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover transition-all duration-700 group-hover:scale-110 group-hover:saturate-[1.15]"
-                    />
-                    <div
-                      className="absolute inset-0 bg-gradient-to-t to-transparent transition-colors duration-300"
-                      style={{
-                        background: `linear-gradient(to top, ${palette.cardOverlay}, ${palette.cardOverlay}30, transparent)`,
-                      }}
-                    />
-                    <div className="absolute bottom-3 left-3 flex items-center gap-2">
-                      <span
-                        className="rounded-full px-2.5 py-1 text-xs font-medium backdrop-blur-md transition-colors duration-300"
-                        style={{ backgroundColor: palette.glass, color: palette.heading }}
-                      >
-                        {recipe.ingredients.length} ingredients
-                      </span>
-                      <span
-                        className="rounded-full px-2.5 py-1 text-xs font-semibold backdrop-blur-md"
-                        style={{ backgroundColor: amber, color: palette.accentText }}
-                      >
-                        {recipe.steps.length} steps
-                      </span>
-                    </div>
+                <div className="relative aspect-[4/3] w-full overflow-hidden">
+                  <Image
+                    src={recipe.imageUrl}
+                    alt={recipe.title}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background: `linear-gradient(to top, ${palette.cardOverlay}, ${palette.cardOverlay}30, transparent)`,
+                    }}
+                  />
+                  <div className="absolute bottom-3 left-3 flex items-center gap-2">
+                    <span
+                      className="rounded-full px-2.5 py-1 text-xs font-medium backdrop-blur-md transition-colors duration-300"
+                      style={{ backgroundColor: palette.glass, color: palette.heading }}
+                    >
+                      {recipe.ingredients.length} ingredients
+                    </span>
+                    <span
+                      className="rounded-full px-2.5 py-1 text-xs font-semibold backdrop-blur-md"
+                      style={{ backgroundColor: amber, color: palette.accentText }}
+                    >
+                      {recipe.steps.length} steps
+                    </span>
                   </div>
+                </div>
 
-                  <div className="flex flex-1 flex-col gap-2 p-5">
-                    <h2
-                      className="text-lg font-medium leading-snug transition-colors duration-300"
-                      style={{ fontFamily: "var(--font-space-grotesk), system-ui, sans-serif", color: palette.heading }}
-                    >
-                      {recipe.title}
-                    </h2>
-                    <p
-                      className="line-clamp-2 text-sm leading-relaxed transition-colors duration-300"
-                      style={{ color: palette.muted }}
-                    >
-                      {recipe.description}
-                    </p>
-                    <div
-                      className="mt-auto pt-4 text-xs font-medium transition-colors duration-300"
-                      style={{ color: palette.subtle }}
-                    >
-                      by {recipe.authorName}
-                    </div>
+                <div className="flex flex-1 flex-col gap-2 p-5">
+                  <h2
+                    className="text-lg font-medium leading-snug transition-colors duration-300"
+                    style={{ fontFamily: "var(--font-space-grotesk), system-ui, sans-serif", color: palette.heading }}
+                  >
+                    {recipe.title}
+                  </h2>
+                  <p
+                    className="line-clamp-2 text-sm leading-relaxed transition-colors duration-300"
+                    style={{ color: palette.muted }}
+                  >
+                    {recipe.description}
+                  </p>
+                  <div
+                    className="mt-auto pt-4 text-xs font-medium transition-colors duration-300"
+                    style={{ color: palette.subtle }}
+                  >
+                    by {recipe.authorName}
                   </div>
-                </article>
-              </div>
+                </div>
+              </article>
             ))}
           </div>
         </div>
