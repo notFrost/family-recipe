@@ -17,7 +17,10 @@ export default function VersionPicker({
   current,
   onSelect,
 }: VersionPickerProps) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.innerWidth >= 768;
+  });
   const containerRef = useRef<HTMLDivElement>(null);
   const currentVariant = variants.find((v) => v.id === current) ?? variants[0];
 
