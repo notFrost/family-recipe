@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Space_Grotesk, Inter } from "next/font/google";
-import { Search } from "lucide-react";
+import { Search, Sun, Moon } from "lucide-react";
+import { useState } from "react";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -236,18 +237,77 @@ const recipes: MockRecipe[] = [
   },
 ];
 
-const obsidian = "#0E0E10";
-const ink = "#15151A";
-const warmGray = "#8A8279";
 const amber = "#D4A056";
 const blush = "#C98B8B";
 
-function Logo() {
+const palettes = {
+  light: {
+    bg: "#F7F5F0",
+    text: "#1A1A1A",
+    heading: "#111111",
+    muted: "#6B655E",
+    subtle: "#9B9590",
+    card: "#FFFFFF",
+    cardOverlay: "#FFFFFF",
+    border: "rgba(0,0,0,0.08)",
+    glass: "rgba(255,255,255,0.65)",
+    glassHover: "rgba(255,255,255,0.85)",
+    inputBg: "rgba(255,255,255,0.5)",
+    glowOpacity: 0.12,
+    accentText: "#1A1A1A",
+  },
+  dark: {
+    bg: "#0E0E10",
+    text: "#F5F3EF",
+    heading: "#F5F3EF",
+    muted: "#8A8279",
+    subtle: "#6B655E",
+    card: "#15151A",
+    cardOverlay: "#15151A",
+    border: "rgba(255,255,255,0.10)",
+    glass: "rgba(255,255,255,0.05)",
+    glassHover: "rgba(255,255,255,0.10)",
+    inputBg: "rgba(255,255,255,0.05)",
+    glowOpacity: 0.20,
+    accentText: "#0E0E10",
+  },
+};
+
+type Palette = typeof palettes.light;
+
+function ModeToggle({
+  isDark,
+  onToggle,
+  palette,
+}: {
+  isDark: boolean;
+  onToggle: () => void;
+  palette: Palette;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      className="flex h-9 w-9 items-center justify-center rounded-full border transition-all duration-300 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+      style={{
+        borderColor: palette.border,
+        backgroundColor: palette.glass,
+        color: palette.heading,
+        backdropFilter: "blur(12px)",
+      }}
+    >
+      {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+    </button>
+  );
+}
+
+function Logo({ palette }: { palette: Palette }) {
   return (
     <Link
       href="/"
-      className="flex items-center gap-3 text-lg font-semibold tracking-tight"
-      style={{ fontFamily: "var(--font-space-grotesk), system-ui, sans-serif", color: "#F5F3EF" }}
+      className="flex items-center gap-3 text-lg font-semibold tracking-tight transition-colors duration-300"
+      style={{ fontFamily: "var(--font-space-grotesk), system-ui, sans-serif", color: palette.heading }}
     >
       <span
         className="flex h-9 w-9 items-center justify-center rounded-lg text-base"
@@ -261,10 +321,13 @@ function Logo() {
 }
 
 export default function DiscoverV5() {
+  const [isDark, setIsDark] = useState(false);
+  const palette = isDark ? palettes.dark : palettes.light;
+
   return (
     <div
-      className={`${spaceGrotesk.variable} ${inter.variable} flex min-h-screen flex-col`}
-      style={{ backgroundColor: obsidian, color: "#F5F3EF", fontFamily: "var(--font-inter), system-ui, sans-serif" }}
+      className={`${spaceGrotesk.variable} ${inter.variable} flex min-h-screen flex-col transition-colors duration-300`}
+      style={{ backgroundColor: palette.bg, color: palette.text, fontFamily: "var(--font-inter), system-ui, sans-serif" }}
     >
       <style jsx global>{`
         @keyframes v5-reveal {
@@ -293,20 +356,29 @@ export default function DiscoverV5() {
         }
       `}</style>
 
-      <header className="sticky top-0 z-50 border-b border-white/10" style={{ backgroundColor: `${obsidian}CC`, backdropFilter: "blur(16px)" }}>
+      <header
+        className="sticky top-0 z-50 border-b backdrop-blur transition-colors duration-300"
+        style={{ borderColor: palette.border, backgroundColor: palette.glass }}
+      >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 sm:px-8 lg:px-12">
           <div className="flex items-center gap-8">
-            <Logo />
+            <Logo palette={palette} />
             <nav className="hidden items-center gap-6 md:flex">
               <Link
                 href="/discover"
-                className="text-sm font-medium text-[#BFB9B0] transition-colors hover:text-[#F5F3EF]"
+                className="text-sm font-medium transition-colors duration-300"
+                style={{ color: palette.muted }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = palette.heading)}
+                onMouseLeave={(e) => (e.currentTarget.style.color = palette.muted)}
               >
                 Discover
               </Link>
               <Link
                 href="/families"
-                className="text-sm font-medium text-[#BFB9B0] transition-colors hover:text-[#F5F3EF]"
+                className="text-sm font-medium transition-colors duration-300"
+                style={{ color: palette.muted }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = palette.heading)}
+                onMouseLeave={(e) => (e.currentTarget.style.color = palette.muted)}
               >
                 Families
               </Link>
@@ -314,16 +386,20 @@ export default function DiscoverV5() {
           </div>
 
           <div className="flex items-center gap-3">
+            <ModeToggle isDark={isDark} onToggle={() => setIsDark((d) => !d)} palette={palette} />
             <Link
               href="/login"
-              className="hidden rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-[#E8E4DF] transition-colors hover:bg-white/10 sm:inline-flex"
+              className="hidden rounded-full border px-4 py-2 text-sm font-medium transition-all duration-300 sm:inline-flex"
+              style={{ borderColor: palette.border, backgroundColor: palette.glass, color: palette.heading }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = palette.glassHover)}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = palette.glass)}
             >
               Log in
             </Link>
             <Link
               href="/signup"
-              className="rounded-full px-4 py-2 text-sm font-semibold transition-colors"
-              style={{ backgroundColor: amber, color: obsidian }}
+              className="rounded-full px-4 py-2 text-sm font-semibold transition-all duration-300"
+              style={{ backgroundColor: amber, color: palette.accentText }}
             >
               Sign up
             </Link>
@@ -333,8 +409,14 @@ export default function DiscoverV5() {
 
       <main className="relative flex-1">
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -left-1/4 -top-1/4 h-[600px] w-[600px] rounded-full opacity-20 blur-[120px]" style={{ backgroundColor: amber }} />
-          <div className="absolute -right-1/4 top-1/3 h-[500px] w-[500px] rounded-full opacity-15 blur-[100px]" style={{ backgroundColor: blush }} />
+          <div
+            className="absolute -left-1/4 -top-1/4 h-[600px] w-[600px] rounded-full blur-[120px]"
+            style={{ backgroundColor: amber, opacity: palette.glowOpacity }}
+          />
+          <div
+            className="absolute -right-1/4 top-1/3 h-[500px] w-[500px] rounded-full blur-[100px]"
+            style={{ backgroundColor: blush, opacity: palette.glowOpacity * 0.75 }}
+          />
         </div>
 
         <div className="relative mx-auto max-w-7xl px-6 py-16 sm:px-8 lg:px-12">
@@ -344,12 +426,15 @@ export default function DiscoverV5() {
                 Community Cookbook
               </p>
               <h1
-                className="text-4xl font-medium tracking-tight sm:text-5xl lg:text-6xl"
-                style={{ fontFamily: "var(--font-space-grotesk), system-ui, sans-serif" }}
+                className="text-4xl font-medium tracking-tight transition-colors duration-300 sm:text-5xl lg:text-6xl"
+                style={{ fontFamily: "var(--font-space-grotesk), system-ui, sans-serif", color: palette.heading }}
               >
                 Discover recipes
               </h1>
-              <p className="mt-4 text-lg leading-relaxed" style={{ color: warmGray }}>
+              <p
+                className="mt-4 text-lg leading-relaxed transition-colors duration-300"
+                style={{ color: palette.muted }}
+              >
                 Browse public recipes shared by the community — curated for the modern kitchen.
               </p>
             </div>
@@ -367,12 +452,17 @@ export default function DiscoverV5() {
                 name="q"
                 type="search"
                 placeholder="Search recipes…"
-                className="h-12 flex-1 rounded-full border border-white/10 bg-white/5 px-5 text-sm text-[#F5F3EF] placeholder:text-[#6B655E] backdrop-blur-md transition-colors focus-visible:outline-none focus-visible:border-[#D4A056]/50 focus-visible:bg-white/10"
+                className="h-12 flex-1 rounded-full border px-5 text-sm backdrop-blur-md transition-colors duration-300 focus-visible:outline-none"
+                style={{
+                  borderColor: palette.border,
+                  backgroundColor: palette.inputBg,
+                  color: palette.heading,
+                }}
               />
               <button
                 type="submit"
-                className="h-12 rounded-full px-6 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4A056] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0E0E10]"
-                style={{ backgroundColor: amber, color: obsidian }}
+                className="h-12 rounded-full px-6 text-sm font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                style={{ backgroundColor: amber, color: palette.accentText }}
               >
                 Search
               </button>
@@ -388,7 +478,7 @@ export default function DiscoverV5() {
               >
                 <article
                   className="relative flex flex-1 flex-col overflow-hidden rounded-2xl transition-colors duration-500"
-                  style={{ backgroundColor: ink }}
+                  style={{ backgroundColor: palette.card }}
                 >
                   <div className="relative aspect-[4/3] w-full overflow-hidden">
                     <Image
@@ -398,12 +488,23 @@ export default function DiscoverV5() {
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       className="object-cover transition-all duration-700 group-hover:scale-110 group-hover:saturate-[1.15]"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#15151A] via-[#15151A]/30 to-transparent" />
+                    <div
+                      className="absolute inset-0 bg-gradient-to-t to-transparent transition-colors duration-300"
+                      style={{
+                        background: `linear-gradient(to top, ${palette.cardOverlay}, ${palette.cardOverlay}30, transparent)`,
+                      }}
+                    />
                     <div className="absolute bottom-3 left-3 flex items-center gap-2">
-                      <span className="rounded-full bg-white/10 px-2.5 py-1 text-xs font-medium text-[#F5F3EF] backdrop-blur-md">
+                      <span
+                        className="rounded-full px-2.5 py-1 text-xs font-medium backdrop-blur-md transition-colors duration-300"
+                        style={{ backgroundColor: palette.glass, color: palette.heading }}
+                      >
                         {recipe.ingredients.length} ingredients
                       </span>
-                      <span className="rounded-full px-2.5 py-1 text-xs font-medium text-[#0E0E10] backdrop-blur-md" style={{ backgroundColor: amber }}>
+                      <span
+                        className="rounded-full px-2.5 py-1 text-xs font-semibold backdrop-blur-md"
+                        style={{ backgroundColor: amber, color: palette.accentText }}
+                      >
                         {recipe.steps.length} steps
                       </span>
                     </div>
@@ -411,15 +512,21 @@ export default function DiscoverV5() {
 
                   <div className="flex flex-1 flex-col gap-2 p-5">
                     <h2
-                      className="text-lg font-medium leading-snug"
-                      style={{ fontFamily: "var(--font-space-grotesk), system-ui, sans-serif", color: "#F5F3EF" }}
+                      className="text-lg font-medium leading-snug transition-colors duration-300"
+                      style={{ fontFamily: "var(--font-space-grotesk), system-ui, sans-serif", color: palette.heading }}
                     >
                       {recipe.title}
                     </h2>
-                    <p className="line-clamp-2 text-sm leading-relaxed" style={{ color: warmGray }}>
+                    <p
+                      className="line-clamp-2 text-sm leading-relaxed transition-colors duration-300"
+                      style={{ color: palette.muted }}
+                    >
                       {recipe.description}
                     </p>
-                    <div className="mt-auto pt-4 text-xs font-medium" style={{ color: "#6B655E" }}>
+                    <div
+                      className="mt-auto pt-4 text-xs font-medium transition-colors duration-300"
+                      style={{ color: palette.subtle }}
+                    >
                       by {recipe.authorName}
                     </div>
                   </div>
@@ -430,32 +537,57 @@ export default function DiscoverV5() {
         </div>
       </main>
 
-      <footer className="border-t border-white/10 py-12" style={{ backgroundColor: obsidian }}>
+      <footer
+        className="border-t py-12 transition-colors duration-300"
+        style={{ borderColor: palette.border, backgroundColor: palette.bg }}
+      >
         <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
           <div className="flex flex-col items-start justify-between gap-8 md:flex-row">
             <div>
-              <Logo />
-              <p className="mt-3 max-w-xs text-sm leading-relaxed" style={{ color: warmGray }}>
+              <Logo palette={palette} />
+              <p
+                className="mt-3 max-w-xs text-sm leading-relaxed transition-colors duration-300"
+                style={{ color: palette.muted }}
+              >
                 Store your family recipes, discover new ones, and keep your family&apos;s cooking together.
               </p>
             </div>
-            <nav className="flex flex-wrap gap-6 text-sm font-medium" style={{ color: warmGray }}>
-              <Link href="/about" className="transition-colors hover:text-[#F5F3EF]">
+            <nav className="flex flex-wrap gap-6 text-sm font-medium">
+              <Link
+                href="/about"
+                className="transition-colors duration-300"
+                style={{ color: palette.muted }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = palette.heading)}
+                onMouseLeave={(e) => (e.currentTarget.style.color = palette.muted)}
+              >
                 About
               </Link>
-              <Link href="/discover" className="transition-colors hover:text-[#F5F3EF]">
+              <Link
+                href="/discover"
+                className="transition-colors duration-300"
+                style={{ color: palette.muted }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = palette.heading)}
+                onMouseLeave={(e) => (e.currentTarget.style.color = palette.muted)}
+              >
                 Discover
               </Link>
               <a
                 href="https://github.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="transition-colors hover:text-[#F5F3EF]">
+                className="transition-colors duration-300"
+                style={{ color: palette.muted }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = palette.heading)}
+                onMouseLeave={(e) => (e.currentTarget.style.color = palette.muted)}
+              >
                 GitHub
               </a>
             </nav>
           </div>
-          <div className="mt-10 border-t border-white/10 pt-6 text-xs" style={{ color: "#6B655E" }}>
+          <div
+            className="mt-10 border-t pt-6 text-xs transition-colors duration-300"
+            style={{ borderColor: palette.border, color: palette.subtle }}
+          >
             © {new Date().getFullYear()} Family Recipe. All rights reserved.
           </div>
         </div>

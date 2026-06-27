@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Inter } from "next/font/google";
-import { Search } from "lucide-react";
+import { Search, Sun, Moon } from "lucide-react";
+import { useState } from "react";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -230,19 +231,71 @@ const recipes: MockRecipe[] = [
   },
 ];
 
-const sage = "#b7c4a3";
-const sageDark = "#9caf87";
+const palettes = {
+  light: {
+    bg: "#fafaf9",
+    text: "#292524",
+    heading: "#1c1917",
+    muted: "#78716c",
+    subtle: "#a8a29e",
+    border: "#e7e5e4",
+    borderSoft: "#f5f5f4",
+    card: "#ffffff",
+    accent: "#b7c4a3",
+    accentHover: "#a8b896",
+  },
+  dark: {
+    bg: "#1c1c1a",
+    text: "#e7e5e4",
+    heading: "#fafaf9",
+    muted: "#a8a29e",
+    subtle: "#78716c",
+    border: "#44403c",
+    borderSoft: "#292524",
+    card: "#272724",
+    accent: "#9caf87",
+    accentHover: "#8fa076",
+  },
+};
 
-function Logo() {
+type Palette = typeof palettes.light;
+
+function ModeToggle({
+  isDark,
+  onToggle,
+  palette,
+}: {
+  isDark: boolean;
+  onToggle: () => void;
+  palette: Palette;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      className="flex h-9 w-9 items-center justify-center rounded-full border transition-all duration-300 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+      style={{
+        borderColor: palette.border,
+        backgroundColor: palette.card,
+        color: palette.heading,
+      }}
+    >
+      {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+    </button>
+  );
+}
+
+function Logo({ palette }: { palette: Palette }) {
   return (
     <Link
       href="/"
-      className="flex items-center gap-2.5 text-lg font-semibold tracking-tight text-stone-800"
-      style={{ fontFamily: "var(--font-inter), system-ui, sans-serif" }}
+      className="flex items-center gap-2.5 text-lg font-semibold tracking-tight transition-colors duration-300"
+      style={{ fontFamily: "var(--font-inter), system-ui, sans-serif", color: palette.heading }}
     >
       <span
-        className="flex h-9 w-9 items-center justify-center rounded-xl text-base text-stone-800"
-        style={{ backgroundColor: sage }}
+        className="flex h-9 w-9 items-center justify-center rounded-xl text-base transition-colors duration-300"
+        style={{ backgroundColor: palette.accent, color: palette.heading }}
       >
         🍽️
       </span>
@@ -252,10 +305,13 @@ function Logo() {
 }
 
 export default function DiscoverV1() {
+  const [isDark, setIsDark] = useState(false);
+  const palette = isDark ? palettes.dark : palettes.light;
+
   return (
     <div
-      className={`${inter.variable} flex min-h-screen flex-col bg-[#fafaf9] text-stone-800`}
-      style={{ fontFamily: "var(--font-inter), system-ui, sans-serif" }}
+      className={`${inter.variable} flex min-h-screen flex-col transition-colors duration-300`}
+      style={{ fontFamily: "var(--font-inter), system-ui, sans-serif", backgroundColor: palette.bg, color: palette.text }}
     >
       <style jsx global>{`
         @keyframes v1-reveal {
@@ -273,20 +329,25 @@ export default function DiscoverV1() {
         }
       `}</style>
 
-      <header className="sticky top-0 z-50 border-b border-stone-200/60 bg-[#fafaf9]/90 backdrop-blur">
+      <header
+        className="sticky top-0 z-50 border-b backdrop-blur transition-colors duration-300"
+        style={{ borderColor: palette.border, backgroundColor: `${palette.bg}E6` }}
+      >
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-8">
-            <Logo />
+            <Logo palette={palette} />
             <nav className="hidden items-center gap-6 md:flex">
               <Link
                 href="/discover"
-                className="text-sm font-medium text-stone-500 transition-colors hover:text-stone-900"
+                className="text-sm font-medium transition-colors duration-300 hover:text-[inherit]"
+                style={{ color: palette.muted }}
               >
                 Discover
               </Link>
               <Link
                 href="/families"
-                className="text-sm font-medium text-stone-500 transition-colors hover:text-stone-900"
+                className="text-sm font-medium transition-colors duration-300 hover:text-[inherit]"
+                style={{ color: palette.muted }}
               >
                 Families
               </Link>
@@ -294,16 +355,18 @@ export default function DiscoverV1() {
           </div>
 
           <div className="flex items-center gap-3">
+            <ModeToggle isDark={isDark} onToggle={() => setIsDark((d) => !d)} palette={palette} />
             <Link
               href="/login"
-              className="hidden text-sm font-medium text-stone-600 underline-offset-4 transition-colors hover:text-stone-900 hover:underline sm:inline-block"
+              className="hidden text-sm font-medium underline-offset-4 transition-colors duration-300 hover:underline sm:inline-block"
+              style={{ color: palette.text }}
             >
               Log in
             </Link>
             <Link
               href="/signup"
-              className="rounded-full px-4 py-2 text-sm font-medium text-stone-800 transition-colors hover:brightness-95"
-              style={{ backgroundColor: sage }}
+              className="rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 hover:brightness-95"
+              style={{ backgroundColor: palette.accent, color: palette.heading }}
             >
               Sign up
             </Link>
@@ -315,10 +378,16 @@ export default function DiscoverV1() {
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="v1-fade mb-12 flex flex-col items-start justify-between gap-8 md:flex-row md:items-end">
             <div className="max-w-2xl">
-              <h1 className="text-4xl font-light tracking-tight text-stone-900 sm:text-5xl lg:text-6xl">
+              <h1
+                className="text-4xl font-light tracking-tight transition-colors duration-300 sm:text-5xl lg:text-6xl"
+                style={{ color: palette.heading }}
+              >
                 Discover recipes
               </h1>
-              <p className="mt-4 text-base leading-relaxed text-stone-500">
+              <p
+                className="mt-4 text-base leading-relaxed transition-colors duration-300"
+                style={{ color: palette.muted }}
+              >
                 Simple, seasonal dishes shared by a community that loves good
                 food.
               </p>
@@ -333,19 +402,27 @@ export default function DiscoverV1() {
                 Search recipes
               </label>
               <div className="relative flex-1">
-                <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
+                <Search
+                  className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 transition-colors duration-300"
+                  style={{ color: palette.subtle }}
+                />
                 <input
                   id="v1-q"
                   name="q"
                   type="search"
                   placeholder="Search recipes…"
-                  className="h-12 w-full rounded-full border border-stone-200 bg-white pl-11 pr-5 text-sm text-stone-800 placeholder:text-stone-400 transition-colors focus-visible:outline-none focus-visible:border-stone-400"
+                  className="h-12 w-full rounded-full border pl-11 pr-5 text-sm transition-colors duration-300 placeholder:transition-colors placeholder:duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                  style={{
+                    borderColor: palette.border,
+                    backgroundColor: palette.card,
+                    color: palette.text,
+                  }}
                 />
               </div>
               <button
                 type="submit"
-                className="h-12 rounded-full px-5 text-sm font-medium text-stone-800 transition-colors hover:brightness-95"
-                style={{ backgroundColor: sage }}
+                className="h-12 rounded-full px-5 text-sm font-medium transition-all duration-300 hover:brightness-95"
+                style={{ backgroundColor: palette.accent, color: palette.heading }}
               >
                 Search
               </button>
@@ -356,8 +433,12 @@ export default function DiscoverV1() {
             {recipes.map((recipe, index) => (
               <article
                 key={recipe.id}
-                className="v1-fade group flex flex-col overflow-hidden rounded-2xl border border-stone-100 bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
-                style={{ animationDelay: `${80 + index * 60}ms` }}
+                className="v1-fade group flex flex-col overflow-hidden rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                style={{
+                  borderColor: palette.borderSoft,
+                  backgroundColor: palette.card,
+                  animationDelay: `${80 + index * 60}ms`,
+                }}
               >
                 <div className="relative aspect-[4/3] w-full overflow-hidden">
                   <Image
@@ -370,14 +451,23 @@ export default function DiscoverV1() {
                 </div>
 
                 <div className="flex flex-1 flex-col p-5">
-                  <h2 className="text-lg font-medium leading-snug text-stone-900">
+                  <h2
+                    className="text-lg font-medium leading-snug transition-colors duration-300"
+                    style={{ color: palette.heading }}
+                  >
                     {recipe.title}
                   </h2>
-                  <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-stone-500">
+                  <p
+                    className="mt-2 line-clamp-2 text-sm leading-relaxed transition-colors duration-300"
+                    style={{ color: palette.muted }}
+                  >
                     {recipe.description}
                   </p>
 
-                  <div className="mt-auto flex items-center justify-between border-t border-stone-100 pt-4 text-xs text-stone-400">
+                  <div
+                    className="mt-auto flex items-center justify-between border-t pt-4 text-xs transition-colors duration-300"
+                    style={{ borderColor: palette.borderSoft, color: palette.subtle }}
+                  >
                     <span>{recipe.ingredients.length} ingredients</span>
                     <span>{recipe.steps.length} steps</span>
                   </div>
@@ -388,26 +478,37 @@ export default function DiscoverV1() {
         </div>
       </main>
 
-      <footer className="border-t border-stone-200 bg-[#fafaf9] py-12">
+      <footer
+        className="border-t py-12 transition-colors duration-300"
+        style={{ borderColor: palette.border, backgroundColor: palette.bg }}
+      >
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-start justify-between gap-8 md:flex-row">
             <div>
-              <Logo />
-              <p className="mt-3 max-w-xs text-sm leading-relaxed text-stone-500">
+              <Logo palette={palette} />
+              <p
+                className="mt-3 max-w-xs text-sm leading-relaxed transition-colors duration-300"
+                style={{ color: palette.muted }}
+              >
                 Store your family recipes, discover new ones, and keep your
                 family&apos;s cooking together.
               </p>
             </div>
-            <nav className="flex flex-wrap gap-6 text-sm text-stone-500">
+            <nav
+              className="flex flex-wrap gap-6 text-sm transition-colors duration-300"
+              style={{ color: palette.muted }}
+            >
               <Link
                 href="/about"
-                className="transition-colors hover:text-stone-900"
+                className="transition-colors duration-300 hover:text-[inherit]"
+                style={{ color: palette.muted }}
               >
                 About
               </Link>
               <Link
                 href="/discover"
-                className="transition-colors hover:text-stone-900"
+                className="transition-colors duration-300 hover:text-[inherit]"
+                style={{ color: palette.muted }}
               >
                 Discover
               </Link>
@@ -415,13 +516,17 @@ export default function DiscoverV1() {
                 href="https://github.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="transition-colors hover:text-stone-900"
+                className="transition-colors duration-300 hover:text-[inherit]"
+                style={{ color: palette.muted }}
               >
                 GitHub
               </a>
             </nav>
           </div>
-          <div className="mt-10 border-t border-stone-200 pt-6 text-xs text-stone-400">
+          <div
+            className="mt-10 border-t pt-6 text-xs transition-colors duration-300"
+            style={{ borderColor: palette.border, color: palette.subtle }}
+          >
             © {new Date().getFullYear()} Family Recipe. All rights reserved.
           </div>
         </div>
