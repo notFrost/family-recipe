@@ -2,24 +2,14 @@
 
 import { useState, useEffect, useCallback } from "react";
 import DiscoverV1 from "@/app/components/design-variants/DiscoverV1";
-import DiscoverV2 from "@/app/components/design-variants/DiscoverV2";
-import DiscoverV3 from "@/app/components/design-variants/DiscoverV3";
 import DiscoverV4 from "@/app/components/design-variants/DiscoverV4";
 import DiscoverV5 from "@/app/components/design-variants/DiscoverV5";
-import DiscoverV6 from "@/app/components/design-variants/DiscoverV6";
-import DiscoverV7 from "@/app/components/design-variants/DiscoverV7";
-import DiscoverV8 from "@/app/components/design-variants/DiscoverV8";
 import VersionPicker from "@/app/components/design-variants/VersionPicker";
 
 const VARIANTS = [
   { id: 1, label: "Scandinavian Minimalist", Component: DiscoverV1 },
-  { id: 2, label: "Scandinavian V2", Component: DiscoverV2 },
-  { id: 3, label: "Modern Glassmorphism", Component: DiscoverV3 },
-  { id: 4, label: "Warm & Homey", Component: DiscoverV4 },
-  { id: 5, label: "Modern V2", Component: DiscoverV5 },
-  { id: 6, label: "Mediterranean Sun", Component: DiscoverV6 },
-  { id: 7, label: "Warm & Homey V2", Component: DiscoverV7 },
-  { id: 8, label: "Mediterranean V2", Component: DiscoverV8 },
+  { id: 2, label: "Warm & Homey", Component: DiscoverV4 },
+  { id: 3, label: "Modern Glassmorphism", Component: DiscoverV5 },
 ] as const;
 
 export default function DiscoverPreviewPage() {
@@ -27,7 +17,7 @@ export default function DiscoverPreviewPage() {
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     const key = Number(e.key);
-    if (key >= 1 && key <= 8) {
+    if (key >= 1 && key <= 3) {
       setSelected(key);
     }
   }, []);
