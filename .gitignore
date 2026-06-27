@@ -34,9 +34,6 @@ yarn-error.log*
 *.log
 server-out.txt
 server-err.txt
-.dev-server-out.log
-.dev-server-err.log
-
 # env files (can opt-in for committing if needed)
 .env*
 

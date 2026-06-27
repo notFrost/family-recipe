@@ -7,6 +7,7 @@ import DiscoverV3 from "@/app/components/design-variants/DiscoverV3";
 import DiscoverV4 from "@/app/components/design-variants/DiscoverV4";
 import DiscoverV5 from "@/app/components/design-variants/DiscoverV5";
 import DiscoverV6 from "@/app/components/design-variants/DiscoverV6";
+import VersionPicker from "@/app/components/design-variants/VersionPicker";
 
 const VARIANTS = [
   { id: 1, label: "Scandinavian Minimalist", Component: DiscoverV1 },
@@ -40,35 +41,11 @@ export default function DiscoverPreviewPage() {
         </div>
       ))}
 
-      {/* Floating version picker */}
-      <div className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2">
-        <div className="rounded-2xl border border-white/30 bg-white/70 shadow-lg shadow-black/10 backdrop-blur-md">
-          <div className="px-4 pt-3 pb-2">
-            <p className="text-center text-[11px] font-semibold uppercase tracking-widest text-zinc-400">
-              Design Preview — pick a variant
-            </p>
-            <div className="mt-2 flex flex-wrap items-center justify-center gap-1">
-              {VARIANTS.map((v) => (
-                <button
-                  key={v.id}
-                  onClick={() => setSelected(v.id)}
-                  className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
-                    selected === v.id
-                      ? "bg-zinc-900 text-white shadow-sm"
-                      : "bg-white/60 text-zinc-600 hover:bg-white hover:text-zinc-900"
-                  }`}
-                >
-                  <span className="mr-1 opacity-60">V{v.id}</span>
-                  {v.label}
-                </button>
-              ))}
-            </div>
-            <p className="mt-2 text-center text-[10px] text-zinc-400">
-              Press <kbd className="inline rounded border border-zinc-200 bg-zinc-100 px-1 py-px font-mono text-[10px] text-zinc-500">1</kbd>–<kbd className="inline rounded border border-zinc-200 bg-zinc-100 px-1 py-px font-mono text-[10px] text-zinc-500">6</kbd> to switch
-            </p>
-          </div>
-        </div>
-      </div>
+      <VersionPicker
+        variants={VARIANTS}
+        current={selected}
+        onSelect={setSelected}
+      />
     </>
   );
 }
