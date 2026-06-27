@@ -2,12 +2,19 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Fraunces } from "next/font/google";
+import { Space_Grotesk, DM_Sans } from "next/font/google";
+import { Search, ChefHat, ListOrdered } from "lucide-react";
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space",
   subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
+  weight: ["500", "600", "700"],
+});
+
+const dmSans = DM_Sans({
+  variable: "--font-dm",
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
 });
 
 interface MockRecipe {
@@ -229,25 +236,25 @@ const recipes: MockRecipe[] = [
   },
 ];
 
-const tags = [
-  "NEW",
-  "FAMILY FAVE",
-  "QUICK",
-  "VEGGIE",
-  "COMFORT",
-  "FRESH",
-  "WEEKEND",
-  "BREAKFAST",
-];
+const mustard = "#f4d03f";
+const avocado = "#7d8c5c";
+const burntOrange = "#d35400";
+const ink = "#3e2723";
+const cream = "#fff8e1";
+
+const accentBar = [mustard, avocado, burntOrange, mustard, avocado, burntOrange, mustard, avocado];
 
 function Logo() {
   return (
     <Link
       href="/"
-      className="flex items-center gap-2.5 text-xl font-extrabold tracking-tight text-[#1a1a1a]"
-      style={{ fontFamily: "var(--font-fraunces), Georgia, serif" }}
+      className="flex items-center gap-2.5 text-xl font-bold tracking-tight"
+      style={{ fontFamily: "var(--font-space), system-ui, sans-serif", color: ink }}
     >
-      <span className="flex h-9 w-9 items-center justify-center rounded-lg border-2 border-[#1a1a1a] bg-[#fff8ef] text-base">
+      <span
+        className="flex h-9 w-9 items-center justify-center rounded-md border-2 text-base"
+        style={{ backgroundColor: mustard, borderColor: ink }}
+      >
         🍽️
       </span>
       Family Recipe
@@ -258,38 +265,48 @@ function Logo() {
 export default function DiscoverV5() {
   return (
     <div
-      className={`${fraunces.variable} flex min-h-screen flex-col bg-[#ffefdb] text-[#1a1a1a]`}
+      className={`${spaceGrotesk.variable} ${dmSans.variable} flex min-h-screen flex-col`}
+      style={{
+        fontFamily: "var(--font-dm), system-ui, sans-serif",
+        backgroundColor: cream,
+        color: ink,
+      }}
     >
       <style jsx global>{`
-        @keyframes slideIn {
+        @keyframes v5-reveal {
           from {
             opacity: 0;
-            transform: translateY(30px) rotate(-1deg);
+            transform: translateY(20px) rotate(-1deg);
           }
           to {
             opacity: 1;
             transform: translateY(0) rotate(0);
           }
         }
-        .v5-card {
-          animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+        .v5-fade {
+          animation: v5-reveal 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
         }
       `}</style>
 
-      <header className="sticky top-0 z-50 border-b-2 border-[#1a1a1a] bg-[#fff8ef] shadow-[0_4px_0_0_#1a1a1a]">
+      <header
+        className="sticky top-0 z-50 border-b-4 bg-[#fff8e1]"
+        style={{ borderColor: ink }}
+      >
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-8">
             <Logo />
             <nav className="hidden items-center gap-6 md:flex">
               <Link
                 href="/discover"
-                className="text-xs font-extrabold uppercase tracking-widest text-[#1a1a1a]/80 transition-colors hover:text-[#1a1a1a]"
+                className="text-sm font-bold uppercase tracking-widest transition-opacity hover:opacity-70"
+                style={{ color: ink }}
               >
                 Discover
               </Link>
               <Link
                 href="/families"
-                className="text-xs font-extrabold uppercase tracking-widest text-[#1a1a1a]/80 transition-colors hover:text-[#1a1a1a]"
+                className="text-sm font-bold uppercase tracking-widest transition-opacity hover:opacity-70"
+                style={{ color: ink }}
               >
                 Families
               </Link>
@@ -299,13 +316,15 @@ export default function DiscoverV5() {
           <div className="flex items-center gap-3">
             <Link
               href="/login"
-              className="hidden h-10 items-center rounded-full border-2 border-[#1a1a1a] bg-[#fff8ef] px-4 text-xs font-extrabold uppercase tracking-widest text-[#1a1a1a] shadow-[3px_3px_0_0_#1a1a1a] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0_0_#1a1a1a] sm:inline-flex"
+              className="hidden rounded-lg border-2 px-4 py-2 text-sm font-bold shadow-[3px_3px_0px_0px_#3e2723] transition-all hover:translate-x-px hover:translate-y-px hover:shadow-none sm:inline-flex"
+              style={{ borderColor: ink, color: ink }}
             >
               Log in
             </Link>
             <Link
               href="/signup"
-              className="flex h-10 items-center rounded-full border-2 border-[#1a1a1a] bg-[#f4a261] px-4 text-xs font-extrabold uppercase tracking-widest text-[#1a1a1a] shadow-[3px_3px_0_0_#1a1a1a] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0_0_#1a1a1a]"
+              className="rounded-lg border-2 px-4 py-2 text-sm font-bold shadow-[3px_3px_0px_0px_#3e2723] transition-all hover:translate-x-px hover:translate-y-px hover:shadow-none"
+              style={{ borderColor: ink, backgroundColor: mustard, color: ink }}
             >
               Sign up
             </Link>
@@ -314,47 +333,51 @@ export default function DiscoverV5() {
       </header>
 
       <main className="relative flex-1">
-        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-          <div className="relative mb-12 overflow-hidden rounded-3xl bg-[#c73e1d] px-6 py-10 text-[#fff8ef] shadow-xl sm:px-10 sm:py-14">
-            <div className="absolute -right-10 -top-10 h-48 w-48 rounded-full bg-[#f4a261]/30" />
-            <div className="absolute -bottom-12 -left-12 h-40 w-40 rounded-full bg-[#2a9d8f]/30" />
-            <div className="relative">
-              <p className="mb-2 text-sm font-bold uppercase tracking-widest text-[#ffefdb]/80">
-                Community Collection
-              </p>
-              <h1
-                className="text-4xl font-extrabold leading-none tracking-tight sm:text-6xl"
-                style={{ fontFamily: "var(--font-fraunces), Georgia, serif" }}
-              >
-                Discover
-                <br />
-                Recipes
-              </h1>
-              <p className="mt-4 max-w-md text-base leading-relaxed text-[#ffefdb]/90">
-                Bold flavors, timeless techniques, and the stories behind every
-                dish.
-              </p>
-            </div>
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:px-8">
+          <div className="v5-fade mb-12 text-center">
+            <h1
+              className="text-5xl font-bold uppercase tracking-tight sm:text-6xl"
+              style={{ fontFamily: "var(--font-space), system-ui, sans-serif", color: ink }}
+            >
+              Discover recipes
+            </h1>
+            <p className="mx-auto mt-4 max-w-xl text-base font-medium leading-relaxed opacity-80">
+              Bold flavors, bright plates, and a dash of nostalgia — browse the
+              community cookbook.
+            </p>
           </div>
 
           <form
             action="/discover"
             method="get"
-            className="mx-auto mb-10 flex w-full max-w-xl gap-3"
+            className="v5-fade mx-auto mb-12 flex w-full max-w-lg items-center gap-2"
           >
             <label htmlFor="v5-q" className="sr-only">
               Search recipes
             </label>
-            <input
-              id="v5-q"
-              name="q"
-              type="search"
-              placeholder="Find your next favorite…"
-              className="h-12 flex-1 rounded-full border-2 border-[#1a1a1a] bg-[#fff8ef] px-5 text-sm font-semibold text-[#1a1a1a] placeholder:text-[#1a1a1a]/40 shadow-[4px_4px_0px_0px_#1a1a1a] transition-all focus-visible:outline-none focus-visible:shadow-[2px_2px_0px_0px_#1a1a1a]"
-            />
+            <div className="relative flex-1">
+              <Search
+                className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2"
+                style={{ color: ink }}
+              />
+              <input
+                id="v5-q"
+                name="q"
+                type="search"
+                placeholder="Search recipes…"
+                className="h-13 w-full rounded-lg border-2 bg-white pl-11 pr-4 text-sm placeholder:opacity-50 focus-visible:outline-none"
+                style={{ borderColor: ink, color: ink, height: "3.25rem" }}
+              />
+            </div>
             <button
               type="submit"
-              className="h-12 rounded-full bg-[#2a9d8f] px-6 text-sm font-bold text-white shadow-[4px_4px_0px_0px_#1a1a1a] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#1a1a1a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2a9d8f] focus-visible:ring-offset-2"
+              className="h-13 rounded-lg border-2 px-5 text-sm font-bold shadow-[4px_4px_0px_0px_#3e2723] transition-all hover:translate-x-px hover:translate-y-px hover:shadow-none"
+              style={{
+                borderColor: ink,
+                backgroundColor: mustard,
+                color: ink,
+                height: "3.25rem",
+              }}
             >
               Search
             </button>
@@ -364,40 +387,52 @@ export default function DiscoverV5() {
             {recipes.map((recipe, index) => (
               <article
                 key={recipe.id}
-                className="v5-card group relative flex flex-col overflow-hidden rounded-2xl border-2 border-[#1a1a1a] bg-[#fff8ef] shadow-[6px_6px_0px_0px_#1a1a1a] transition-all duration-300 hover:-translate-y-1 hover:shadow-[3px_3px_0px_0px_#1a1a1a]"
-                style={{ animationDelay: `${index * 70}ms` }}
+                className="v5-fade group flex flex-col overflow-hidden rounded-xl border-2 bg-white transition-all hover:-translate-y-1"
+                style={{
+                  animationDelay: `${80 + index * 60}ms`,
+                  borderColor: ink,
+                  boxShadow: "5px 5px 0px 0px #3e2723",
+                }}
               >
-                <div className="relative aspect-[4/3] w-full overflow-hidden border-b-2 border-[#1a1a1a]">
+                <div
+                  className="h-2 w-full"
+                  style={{ backgroundColor: accentBar[index] }}
+                />
+                <div className="relative aspect-[4/3] w-full overflow-hidden border-b-2" style={{ borderColor: ink }}>
                   <Image
                     src={recipe.imageUrl}
                     alt={recipe.title}
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
-                  <div className="absolute left-3 top-3 rounded-full bg-[#f4a261] px-3 py-1 text-xs font-extrabold text-[#1a1a1a] shadow-sm">
-                    {tags[index]}
-                  </div>
                 </div>
 
                 <div className="flex flex-1 flex-col p-5">
                   <h2
-                    className="text-xl font-bold leading-tight text-[#1a1a1a]"
-                    style={{ fontFamily: "var(--font-fraunces), Georgia, serif" }}
+                    className="text-lg font-bold leading-snug uppercase"
+                    style={{ fontFamily: "var(--font-space), system-ui, sans-serif", color: ink }}
                   >
                     {recipe.title}
                   </h2>
-                  <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-[#1a1a1a]/70">
+                  <p className="mt-2 line-clamp-2 text-sm leading-relaxed opacity-80">
                     {recipe.description}
                   </p>
 
-                  <div className="mt-auto flex items-center justify-between border-t-2 border-dashed border-[#1a1a1a]/20 pt-4">
-                    <div className="flex flex-col gap-0.5 text-xs font-bold text-[#1a1a1a]/70">
-                      <span>{recipe.ingredients.length} ingredients</span>
-                      <span>{recipe.steps.length} steps</span>
-                    </div>
-                    <span className="text-xs font-bold text-[#c73e1d]">
-                      @{recipe.authorName}
+                  <div className="mt-auto flex items-center gap-2 pt-4 text-xs font-bold">
+                    <span
+                      className="flex items-center gap-1 rounded-md border-2 px-2 py-1"
+                      style={{ borderColor: ink, backgroundColor: mustard }}
+                    >
+                      <ChefHat className="h-3.5 w-3.5" />
+                      {recipe.ingredients.length}
+                    </span>
+                    <span
+                      className="flex items-center gap-1 rounded-md border-2 px-2 py-1"
+                      style={{ borderColor: ink, backgroundColor: avocado, color: cream }}
+                    >
+                      <ListOrdered className="h-3.5 w-3.5" />
+                      {recipe.steps.length}
                     </span>
                   </div>
                 </div>
@@ -407,49 +442,47 @@ export default function DiscoverV5() {
         </div>
       </main>
 
-      <footer className="border-t-2 border-[#1a1a1a] bg-[#1a1a1a] py-12 text-[#fff8ef]">
+      <footer className="border-t-4 py-12" style={{ backgroundColor: ink, borderColor: mustard }}>
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-start justify-between gap-8 md:flex-row">
             <div>
               <Link
                 href="/"
-                className="flex items-center gap-2.5 text-2xl font-extrabold tracking-tight text-[#fff8ef]"
-                style={{ fontFamily: "var(--font-fraunces), Georgia, serif" }}
+                className="flex items-center gap-2.5 text-xl font-bold tracking-tight"
+                style={{ fontFamily: "var(--font-space), system-ui, sans-serif", color: cream }}
               >
-                <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#c73e1d] text-lg">
+                <span
+                  className="flex h-9 w-9 items-center justify-center rounded-md border-2 text-base"
+                  style={{ backgroundColor: mustard, borderColor: cream, color: ink }}
+                >
                   🍽️
                 </span>
                 Family Recipe
               </Link>
-              <p className="mt-3 max-w-xs text-sm leading-relaxed text-[#fff8ef]/70">
-                Bold recipes, timeless traditions, and the stories behind every
-                family meal.
+              <p className="mt-3 max-w-xs text-sm font-medium leading-relaxed" style={{ color: "#fff8e1aa" }}>
+                Store your family recipes, discover new ones, and keep your
+                family&apos;s cooking together.
               </p>
             </div>
-            <nav className="flex flex-wrap gap-8 text-sm font-extrabold uppercase tracking-widest text-[#fff8ef]/80">
-              <Link
-                href="/about"
-                className="transition-colors hover:text-[#fff8ef]"
-              >
+            <nav className="flex flex-wrap gap-6 text-sm font-bold" style={{ color: "#fff8e1cc" }}>
+              <Link href="/about" className="transition-colors hover:text-cream" style={{ color: "#fff8e1cc" }}>
                 About
               </Link>
-              <Link
-                href="/discover"
-                className="transition-colors hover:text-[#fff8ef]"
-              >
+              <Link href="/discover" className="transition-colors hover:text-cream" style={{ color: "#fff8e1cc" }}>
                 Discover
               </Link>
               <a
                 href="https://github.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="transition-colors hover:text-[#fff8ef]"
+                className="transition-colors hover:text-cream"
+                style={{ color: "#fff8e1cc" }}
               >
                 GitHub
               </a>
             </nav>
           </div>
-          <div className="mt-10 border-t border-[#fff8ef]/10 pt-6 text-xs text-[#fff8ef]/50">
+          <div className="mt-10 border-t border-white/10 pt-6 text-xs font-bold uppercase tracking-widest" style={{ color: "#fff8e180" }}>
             © {new Date().getFullYear()} Family Recipe. All rights reserved.
           </div>
         </div>

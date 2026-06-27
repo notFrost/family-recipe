@@ -2,18 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Playfair_Display, Lora } from "next/font/google";
+import { Nunito } from "next/font/google";
+import { Search, ChefHat, ListOrdered, Heart } from "lucide-react";
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+const nunito = Nunito({
+  variable: "--font-nunito",
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
-});
-
-const lora = Lora({
-  variable: "--font-lora",
-  subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: ["400", "600", "700"],
 });
 
 interface MockRecipe {
@@ -235,14 +230,20 @@ const recipes: MockRecipe[] = [
   },
 ];
 
+const caramel = "#d97706";
+const cream = "#fffaf3";
+
 function Logo() {
   return (
     <Link
       href="/"
-      className="flex items-center gap-2.5 text-lg font-semibold tracking-tight text-stone-900"
-      style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+      className="flex items-center gap-2.5 text-xl font-bold tracking-tight"
+      style={{ fontFamily: "var(--font-nunito), system-ui, sans-serif", color: "#3e2723" }}
     >
-      <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-700 text-base text-amber-50">
+      <span
+        className="flex h-9 w-9 items-center justify-center rounded-xl text-base text-white"
+        style={{ backgroundColor: caramel }}
+      >
         🍽️
       </span>
       Family Recipe
@@ -253,40 +254,45 @@ function Logo() {
 export default function DiscoverV4() {
   return (
     <div
-      className={`${playfair.variable} ${lora.variable} flex min-h-screen flex-col bg-[#f7f2eb] text-stone-800`}
+      className={`${nunito.variable} flex min-h-screen flex-col`}
+      style={{
+        fontFamily: "var(--font-nunito), system-ui, sans-serif",
+        backgroundColor: cream,
+        color: "#3e2723",
+      }}
     >
       <style jsx global>{`
-        @keyframes gentleReveal {
+        @keyframes v4-reveal {
           from {
             opacity: 0;
-            transform: translateY(12px);
+            transform: translateY(16px) scale(0.98);
           }
           to {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
           }
         }
-        .v4-card {
-          animation: gentleReveal 0.6s ease-out both;
+        .v4-fade {
+          animation: v4-reveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
         }
       `}</style>
 
-      <header className="sticky top-0 z-50 border-b border-stone-200 bg-[#f7f2eb]/95 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+      <header className="sticky top-0 z-50 bg-white/80 shadow-sm backdrop-blur">
+        <div className="mx-auto flex max-w-6xl items-center justify-between rounded-b-2xl px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-8">
             <Logo />
             <nav className="hidden items-center gap-6 md:flex">
               <Link
                 href="/discover"
-                className="text-sm font-medium text-stone-600 transition-colors hover:text-stone-900"
-                style={{ fontFamily: "var(--font-lora), Georgia, serif" }}
+                className="rounded-full px-3 py-1.5 text-sm font-semibold transition-colors hover:bg-amber-100"
+                style={{ color: "#3e2723" }}
               >
                 Discover
               </Link>
               <Link
                 href="/families"
-                className="text-sm font-medium text-stone-600 transition-colors hover:text-stone-900"
-                style={{ fontFamily: "var(--font-lora), Georgia, serif" }}
+                className="rounded-full px-3 py-1.5 text-sm font-semibold transition-colors hover:bg-amber-100"
+                style={{ color: "#3e2723" }}
               >
                 Families
               </Link>
@@ -296,15 +302,15 @@ export default function DiscoverV4() {
           <div className="flex items-center gap-3">
             <Link
               href="/login"
-              className="hidden rounded-lg border border-stone-300 bg-[#fffdf8] px-4 py-2 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-100 sm:inline-flex"
-              style={{ fontFamily: "var(--font-lora), Georgia, serif" }}
+              className="hidden rounded-full border-2 px-4 py-2 text-sm font-semibold transition-colors hover:bg-amber-100 sm:inline-flex"
+              style={{ borderColor: caramel, color: "#3e2723" }}
             >
               Log in
             </Link>
             <Link
               href="/signup"
-              className="rounded-lg bg-amber-800 px-4 py-2 text-sm font-semibold text-amber-50 shadow-sm transition-colors hover:bg-amber-900"
-              style={{ fontFamily: "var(--font-lora), Georgia, serif" }}
+              className="rounded-full px-4 py-2 text-sm font-semibold text-white shadow-md transition-all hover:shadow-lg"
+              style={{ backgroundColor: caramel }}
             >
               Sign up
             </Link>
@@ -313,52 +319,44 @@ export default function DiscoverV4() {
       </header>
 
       <main className="relative flex-1">
-        <div
-          className="relative mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 1px 1px, rgba(120, 113, 108, 0.08) 1px, transparent 0)",
-            backgroundSize: "24px 24px",
-          }}
-        >
-          <div className="mb-10 text-center">
-            <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-amber-700">
-              From Our Kitchen to Yours
-            </p>
-            <h1
-              className="text-4xl font-semibold tracking-tight text-stone-900 sm:text-5xl"
-              style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
-            >
-              Discover Recipes
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:px-8">
+          <div className="v4-fade mb-12 text-center">
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl" style={{ color: "#3e2723" }}>
+              Discover recipes
             </h1>
-            <p
-              className="mx-auto mt-3 max-w-lg text-base leading-relaxed text-stone-600"
-              style={{ fontFamily: "var(--font-lora), Georgia, serif" }}
-            >
-              Browse public recipes shared by the community — each one a story
-              worth savoring.
+            <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed opacity-80">
+              Cozy, crowd-pleasing dishes gathered from family kitchens — ready
+              to warm your table.
             </p>
           </div>
 
           <form
             action="/discover"
             method="get"
-            className="mx-auto mb-10 flex w-full max-w-md flex-col gap-2 sm:flex-row"
+            className="v4-fade mx-auto mb-12 flex w-full max-w-lg items-center gap-2 rounded-full border bg-white p-1.5 shadow-sm"
+            style={{ borderColor: "#fed7aa" }}
           >
             <label htmlFor="v4-q" className="sr-only">
               Search recipes
             </label>
-            <input
-              id="v4-q"
-              name="q"
-              type="search"
-              placeholder="Search by title…"
-              className="h-11 flex-1 rounded-lg border border-stone-300 bg-[#fffdf8] px-4 text-sm text-stone-800 placeholder:text-stone-400 shadow-sm transition-colors focus-visible:outline-none focus-visible:border-amber-600 focus-visible:ring-1 focus-visible:ring-amber-600"
-              style={{ fontFamily: "var(--font-lora), Georgia, serif" }}
-            />
+            <div className="relative flex-1">
+              <Search
+                className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2"
+                style={{ color: caramel }}
+              />
+              <input
+                id="v4-q"
+                name="q"
+                type="search"
+                placeholder="Search recipes…"
+                className="h-11 w-full rounded-full border-0 bg-transparent pl-11 pr-4 text-sm placeholder:opacity-50 focus-visible:outline-none"
+                style={{ color: "#3e2723" }}
+              />
+            </div>
             <button
               type="submit"
-              className="h-11 rounded-lg bg-amber-800 px-5 text-sm font-semibold text-amber-50 shadow-sm transition-colors hover:bg-amber-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2 focus-visible:ring-offset-[#f7f2eb]"
+              className="h-11 rounded-full px-6 text-sm font-semibold text-white transition-transform hover:scale-105"
+              style={{ backgroundColor: caramel }}
             >
               Search
             </button>
@@ -368,11 +366,10 @@ export default function DiscoverV4() {
             {recipes.map((recipe, index) => (
               <article
                 key={recipe.id}
-                className="v4-card group relative flex flex-col overflow-hidden rounded-sm border border-stone-200 bg-[#fffdf8] shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-                style={{ animationDelay: `${index * 70}ms` }}
+                className="v4-fade group flex flex-col overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl"
+                style={{ animationDelay: `${80 + index * 60}ms` }}
               >
-                <div className="absolute left-2 right-2 top-0 h-1 bg-amber-700/20" />
-                <div className="relative aspect-[4/3] w-full overflow-hidden border-b border-stone-200">
+                <div className="relative aspect-[4/3] w-full overflow-hidden rounded-t-2xl">
                   <Image
                     src={recipe.imageUrl}
                     alt={recipe.title}
@@ -380,33 +377,37 @@ export default function DiscoverV4() {
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
+                  <button
+                    aria-label={`Save ${recipe.title}`}
+                    className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-amber-600 shadow-sm transition-transform hover:scale-110"
+                  >
+                    <Heart className="h-4 w-4" />
+                  </button>
                 </div>
 
                 <div className="flex flex-1 flex-col p-5">
-                  <h2
-                    className="text-xl font-semibold leading-snug text-stone-900"
-                    style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
-                  >
+                  <h2 className="text-lg font-bold leading-snug" style={{ color: "#3e2723" }}>
                     {recipe.title}
                   </h2>
-                  <p
-                    className="mt-2 line-clamp-2 text-sm leading-relaxed text-stone-600"
-                    style={{ fontFamily: "var(--font-lora), Georgia, serif" }}
-                  >
+                  <p className="mt-2 line-clamp-2 text-sm leading-relaxed opacity-75">
                     {recipe.description}
                   </p>
 
-                  <div className="mt-auto border-t border-stone-200 pt-4">
-                    <div className="flex items-center justify-between text-xs text-stone-500">
-                      <span>{recipe.ingredients.length} ingredients</span>
-                      <span>{recipe.steps.length} steps</span>
-                    </div>
-                    <p
-                      className="mt-2 text-xs italic text-stone-400"
-                      style={{ fontFamily: "var(--font-lora), Georgia, serif" }}
+                  <div className="mt-auto flex items-center gap-3 pt-4 text-xs font-semibold opacity-70">
+                    <span
+                      className="flex items-center gap-1 rounded-full px-2.5 py-1"
+                      style={{ backgroundColor: "#fff7ed", color: caramel }}
                     >
-                      Shared by {recipe.authorName}
-                    </p>
+                      <ChefHat className="h-3.5 w-3.5" />
+                      {recipe.ingredients.length} ingredients
+                    </span>
+                    <span
+                      className="flex items-center gap-1 rounded-full px-2.5 py-1"
+                      style={{ backgroundColor: "#fff7ed", color: caramel }}
+                    >
+                      <ListOrdered className="h-3.5 w-3.5" />
+                      {recipe.steps.length} steps
+                    </span>
                   </div>
                 </div>
               </article>
@@ -415,49 +416,34 @@ export default function DiscoverV4() {
         </div>
       </main>
 
-      <footer className="border-t border-stone-200 bg-[#f7f2eb] py-12">
+      <footer className="bg-white py-12" style={{ color: "#3e2723" }}>
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-start justify-between gap-8 md:flex-row">
             <div>
               <Logo />
-              <p
-                className="mt-3 max-w-xs text-sm leading-relaxed text-stone-600"
-                style={{ fontFamily: "var(--font-lora), Georgia, serif" }}
-              >
+              <p className="mt-3 max-w-xs text-sm leading-relaxed opacity-70">
                 Store your family recipes, discover new ones, and keep your
-                family&apos;s cooking together — even when you move out.
+                family&apos;s cooking together.
               </p>
             </div>
-            <nav
-              className="flex flex-wrap gap-6 text-sm text-stone-600"
-              style={{ fontFamily: "var(--font-lora), Georgia, serif" }}
-            >
-              <Link
-                href="/about"
-                className="transition-colors hover:text-stone-900"
-              >
+            <nav className="flex flex-wrap gap-6 text-sm font-semibold opacity-80">
+              <Link href="/about" className="transition-opacity hover:opacity-100">
                 About
               </Link>
-              <Link
-                href="/discover"
-                className="transition-colors hover:text-stone-900"
-              >
+              <Link href="/discover" className="transition-opacity hover:opacity-100">
                 Discover
               </Link>
               <a
                 href="https://github.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="transition-colors hover:text-stone-900"
+                className="transition-opacity hover:opacity-100"
               >
                 GitHub
               </a>
             </nav>
           </div>
-          <div
-            className="mt-10 border-t border-stone-200 pt-6 text-xs text-stone-500"
-            style={{ fontFamily: "var(--font-lora), Georgia, serif" }}
-          >
+          <div className="mt-10 border-t border-amber-100 pt-6 text-xs opacity-60">
             © {new Date().getFullYear()} Family Recipe. All rights reserved.
           </div>
         </div>
