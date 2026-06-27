@@ -3,8 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Nunito } from "next/font/google";
-import { Search, ChefHat, ListOrdered, Heart, Sun, Moon } from "lucide-react";
-import { useState } from "react";
+import { Search, ChefHat, ListOrdered, Heart } from "lucide-react";
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -262,32 +261,6 @@ const palettes = {
 
 type Palette = typeof palettes.light;
 
-function ModeToggle({
-  isDark,
-  onToggle,
-  palette,
-}: {
-  isDark: boolean;
-  onToggle: () => void;
-  palette: Palette;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onToggle}
-      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      className="flex h-9 w-9 items-center justify-center rounded-full border-2 transition-all duration-300 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-      style={{
-        borderColor: caramel,
-        backgroundColor: palette.card,
-        color: palette.text,
-      }}
-    >
-      {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-    </button>
-  );
-}
-
 function Logo({ palette }: { palette: Palette }) {
   return (
     <Link
@@ -306,9 +279,8 @@ function Logo({ palette }: { palette: Palette }) {
   );
 }
 
-export default function DiscoverV4() {
-  const [isDark, setIsDark] = useState(false);
-  const palette = isDark ? palettes.dark : palettes.light;
+export default function DiscoverV4({ isDark }: { isDark?: boolean }) {
+  const palette = (isDark ?? false) ? palettes.dark : palettes.light;
 
   return (
     <div
@@ -365,7 +337,6 @@ export default function DiscoverV4() {
           </div>
 
           <div className="flex items-center gap-3">
-            <ModeToggle isDark={isDark} onToggle={() => setIsDark((d) => !d)} palette={palette} />
             <Link
               href="/login"
               className="hidden rounded-full border-2 px-4 py-2 text-sm font-semibold transition-colors duration-300 hover:brightness-95 sm:inline-flex"

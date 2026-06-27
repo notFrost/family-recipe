@@ -3,8 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Inter } from "next/font/google";
-import { Search, Sun, Moon } from "lucide-react";
-import { useState } from "react";
+import { Search } from "lucide-react";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -260,32 +259,6 @@ const palettes = {
 
 type Palette = typeof palettes.light;
 
-function ModeToggle({
-  isDark,
-  onToggle,
-  palette,
-}: {
-  isDark: boolean;
-  onToggle: () => void;
-  palette: Palette;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onToggle}
-      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      className="flex h-9 w-9 items-center justify-center rounded-full border transition-all duration-300 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-      style={{
-        borderColor: palette.border,
-        backgroundColor: palette.card,
-        color: palette.heading,
-      }}
-    >
-      {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-    </button>
-  );
-}
-
 function Logo({ palette }: { palette: Palette }) {
   return (
     <Link
@@ -304,9 +277,8 @@ function Logo({ palette }: { palette: Palette }) {
   );
 }
 
-export default function DiscoverV1() {
-  const [isDark, setIsDark] = useState(false);
-  const palette = isDark ? palettes.dark : palettes.light;
+export default function DiscoverV1({ isDark }: { isDark?: boolean }) {
+  const palette = (isDark ?? false) ? palettes.dark : palettes.light;
 
   return (
     <div
@@ -355,7 +327,6 @@ export default function DiscoverV1() {
           </div>
 
           <div className="flex items-center gap-3">
-            <ModeToggle isDark={isDark} onToggle={() => setIsDark((d) => !d)} palette={palette} />
             <Link
               href="/login"
               className="hidden text-sm font-medium underline-offset-4 transition-colors duration-300 hover:underline sm:inline-block"

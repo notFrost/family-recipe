@@ -3,8 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Space_Grotesk, Inter } from "next/font/google";
-import { Search, Sun, Moon } from "lucide-react";
-import { useState } from "react";
+import { Search } from "lucide-react";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -275,33 +274,6 @@ const palettes = {
 
 type Palette = typeof palettes.light;
 
-function ModeToggle({
-  isDark,
-  onToggle,
-  palette,
-}: {
-  isDark: boolean;
-  onToggle: () => void;
-  palette: Palette;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onToggle}
-      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      className="flex h-9 w-9 items-center justify-center rounded-full border transition-all duration-300 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-      style={{
-        borderColor: palette.border,
-        backgroundColor: palette.glass,
-        color: palette.heading,
-        backdropFilter: "blur(12px)",
-      }}
-    >
-      {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-    </button>
-  );
-}
-
 function Logo({ palette }: { palette: Palette }) {
   return (
     <Link
@@ -320,9 +292,8 @@ function Logo({ palette }: { palette: Palette }) {
   );
 }
 
-export default function DiscoverV5() {
-  const [isDark, setIsDark] = useState(false);
-  const palette = isDark ? palettes.dark : palettes.light;
+export default function DiscoverV5({ isDark }: { isDark?: boolean }) {
+  const palette = (isDark ?? false) ? palettes.dark : palettes.light;
 
   return (
     <div
@@ -386,7 +357,6 @@ export default function DiscoverV5() {
           </div>
 
           <div className="flex items-center gap-3">
-            <ModeToggle isDark={isDark} onToggle={() => setIsDark((d) => !d)} palette={palette} />
             <Link
               href="/login"
               className="hidden rounded-full border px-4 py-2 text-sm font-medium transition-all duration-300 sm:inline-flex"

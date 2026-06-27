@@ -14,6 +14,7 @@ const VARIANTS = [
 
 export default function DiscoverPreviewPage() {
   const [selected, setSelected] = useState<number>(1);
+  const [isDark, setIsDark] = useState(false);
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     const key = Number(e.key);
@@ -31,7 +32,7 @@ export default function DiscoverPreviewPage() {
     <>
       {VARIANTS.map((v) => (
         <div key={v.id} style={{ display: v.id === selected ? "block" : "none" }}>
-          <v.Component />
+          <v.Component isDark={isDark} />
         </div>
       ))}
 
@@ -39,6 +40,8 @@ export default function DiscoverPreviewPage() {
         variants={VARIANTS}
         current={selected}
         onSelect={setSelected}
+        isDark={isDark}
+        onToggleDark={() => setIsDark((prev) => !prev)}
       />
     </>
   );

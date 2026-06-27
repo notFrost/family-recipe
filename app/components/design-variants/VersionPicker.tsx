@@ -1,21 +1,26 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Sun, Moon } from "lucide-react";
 
 export interface VersionPickerProps {
   variants: readonly {
     id: number;
     label: string;
-    Component: React.ComponentType;
+    Component: React.ComponentType<{ isDark?: boolean }>;
   }[];
   current: number;
   onSelect: (id: number) => void;
+  isDark: boolean;
+  onToggleDark: () => void;
 }
 
 export default function VersionPicker({
   variants,
   current,
   onSelect,
+  isDark,
+  onToggleDark,
 }: VersionPickerProps) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -74,115 +79,137 @@ export default function VersionPicker({
             </button>
           );
         })}
+        <div
+          className="mx-1.5 h-5 w-px bg-zinc-300/70"
+          aria-hidden="true"
+        />
+        <button
+          type="button"
+          onClick={onToggleDark}
+          aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+          className="flex h-9 w-9 items-center justify-center rounded-full text-zinc-700 outline-none transition-all duration-300 hover:scale-105 hover:bg-white/60 hover:text-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-900/20 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+        >
+          {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+        </button>
       </div>
 
       {/* Mobile: collapsed pill + expandable sheet */}
-      <div className="relative rounded-full border border-white/40 bg-white/70 shadow-lg shadow-black/10 backdrop-blur-md transition-colors hover:bg-white/80 md:hidden">
-        <button
-          type="button"
-          onClick={() => setOpen((prev) => !prev)}
-          aria-expanded={open}
-          aria-haspopup="listbox"
-          className="flex h-11 max-w-[92vw] items-center gap-2 px-4 text-sm font-medium text-zinc-800 outline-none focus-visible:ring-2 focus-visible:ring-zinc-900/20 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
-        >
-          <span className="shrink-0 rounded-md bg-zinc-900 px-1.5 py-0.5 text-[10px] font-bold text-white">
-            V{current}
-          </span>
-          <span className="max-w-[140px] truncate">
-            {currentVariant?.label ?? "Select variant"}
-          </span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-            className={`shrink-0 text-zinc-500 transition-transform duration-300 ease-out ${
-              open ? "rotate-180" : ""
+      <div className="flex items-center gap-2 md:hidden">
+        <div className="relative rounded-full border border-white/40 bg-white/70 shadow-lg shadow-black/10 backdrop-blur-md transition-colors hover:bg-white/80">
+          <button
+            type="button"
+            onClick={() => setOpen((prev) => !prev)}
+            aria-expanded={open}
+            aria-haspopup="listbox"
+            className="flex h-11 max-w-[92vw] items-center gap-2 px-4 text-sm font-medium text-zinc-800 outline-none focus-visible:ring-2 focus-visible:ring-zinc-900/20 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+          >
+            <span className="shrink-0 rounded-md bg-zinc-900 px-1.5 py-0.5 text-[10px] font-bold text-white">
+              V{current}
+            </span>
+            <span className="max-w-[140px] truncate">
+              {currentVariant?.label ?? "Select variant"}
+            </span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+              className={`shrink-0 text-zinc-500 transition-transform duration-300 ease-out ${
+                open ? "rotate-180" : ""
+              }`}
+            >
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </button>
+
+          <div
+            className={`absolute bottom-full left-1/2 mb-2 -translate-x-1/2 overflow-hidden rounded-2xl border border-white/40 bg-white/85 shadow-xl shadow-black/10 backdrop-blur-md transition-all duration-300 ease-out ${
+              open
+                ? "max-h-80 translate-y-0 opacity-100"
+                : "pointer-events-none max-h-0 translate-y-2 opacity-0"
             }`}
           >
-            <path d="m6 9 6 6 6-6" />
-          </svg>
-        </button>
-
-        <div
-          className={`absolute bottom-full left-1/2 mb-2 -translate-x-1/2 overflow-hidden rounded-2xl border border-white/40 bg-white/85 shadow-xl shadow-black/10 backdrop-blur-md transition-all duration-300 ease-out ${
-            open
-              ? "max-h-80 translate-y-0 opacity-100"
-              : "pointer-events-none max-h-0 translate-y-2 opacity-0"
-          }`}
-        >
-          <ul
-            role="listbox"
-            aria-label="Design variants"
-            className="min-w-[220px] max-w-[92vw] py-1"
-          >
-            {variants.map((v) => {
-              const isSelected = v.id === current;
-              return (
-                <li key={v.id} role="option" aria-selected={isSelected}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onSelect(v.id);
-                      setOpen(false);
-                    }}
-                    className={`flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm transition-colors ${
-                      isSelected
-                        ? "bg-zinc-900 text-white"
-                        : "text-zinc-700 hover:bg-white/60 hover:text-zinc-900"
-                    }`}
-                  >
-                    <span
-                      className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold ${
+            <ul
+              role="listbox"
+              aria-label="Design variants"
+              className="min-w-[220px] max-w-[92vw] py-1"
+            >
+              {variants.map((v) => {
+                const isSelected = v.id === current;
+                return (
+                  <li key={v.id} role="option" aria-selected={isSelected}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onSelect(v.id);
+                        setOpen(false);
+                      }}
+                      className={`flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm transition-colors ${
                         isSelected
-                          ? "bg-white/20 text-white"
-                          : "bg-zinc-200 text-zinc-600"
+                          ? "bg-zinc-900 text-white"
+                          : "text-zinc-700 hover:bg-white/60 hover:text-zinc-900"
                       }`}
                     >
-                      V{v.id}
-                    </span>
-                    <span className="flex-1 truncate">{v.label}</span>
-                    {isSelected && (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        aria-hidden="true"
-                        className="shrink-0 text-white"
+                      <span
+                        className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold ${
+                          isSelected
+                            ? "bg-white/20 text-white"
+                            : "bg-zinc-200 text-zinc-600"
+                        }`}
                       >
-                        <path d="M20 6 9 17l-5-5" />
-                      </svg>
-                    )}
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+                        V{v.id}
+                      </span>
+                      <span className="flex-1 truncate">{v.label}</span>
+                      {isSelected && (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          aria-hidden="true"
+                          className="shrink-0 text-white"
+                        >
+                          <path d="M20 6 9 17l-5-5" />
+                        </svg>
+                      )}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
 
-          <p className="border-t border-zinc-200/60 px-3 py-2 text-center text-[10px] text-zinc-400">
-            Press{" "}
-            <kbd className="inline rounded border border-zinc-200 bg-zinc-100 px-1 py-px font-mono text-[10px] text-zinc-500">
-              1
-            </kbd>
-            –
-            <kbd className="inline rounded border border-zinc-200 bg-zinc-100 px-1 py-px font-mono text-[10px] text-zinc-500">
-              6
-            </kbd>{" "}
-            to switch
-          </p>
+            <p className="border-t border-zinc-200/60 px-3 py-2 text-center text-[10px] text-zinc-400">
+              Press{" "}
+              <kbd className="inline rounded border border-zinc-200 bg-zinc-100 px-1 py-px font-mono text-[10px] text-zinc-500">
+                1
+              </kbd>
+              –
+              <kbd className="inline rounded border border-zinc-200 bg-zinc-100 px-1 py-px font-mono text-[10px] text-zinc-500">
+                6
+              </kbd>{" "}
+              to switch
+            </p>
+          </div>
         </div>
+        <button
+          type="button"
+          onClick={onToggleDark}
+          aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/40 bg-white/70 text-zinc-700 shadow-lg shadow-black/10 outline-none backdrop-blur-md transition-all duration-300 hover:scale-105 hover:bg-white/80 hover:text-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-900/20 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+        >
+          {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+        </button>
       </div>
     </div>
   );
