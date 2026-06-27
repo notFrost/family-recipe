@@ -22,10 +22,6 @@ export default function VersionPicker({
   const currentVariant = variants.find((v) => v.id === current) ?? variants[0];
 
   useEffect(() => {
-    setOpen(window.innerWidth >= 768);
-  }, []);
-
-  useEffect(() => {
     if (!open) return;
 
     const handlePointerDown = (event: MouseEvent | TouchEvent) => {
@@ -49,7 +45,39 @@ export default function VersionPicker({
       ref={containerRef}
       className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2"
     >
-      <div className="relative rounded-full border border-white/40 bg-white/70 shadow-lg shadow-black/10 backdrop-blur-md transition-colors hover:bg-white/80">
+      {/* Desktop: always-visible horizontal bar */}
+      <div className="hidden rounded-full border border-white/40 bg-white/70 shadow-lg shadow-black/10 backdrop-blur-md transition-colors hover:bg-white/80 md:flex md:items-center">
+        {variants.map((v) => {
+          const isSelected = v.id === current;
+          return (
+            <button
+              key={v.id}
+              type="button"
+              onClick={() => onSelect(v.id)}
+              aria-pressed={isSelected}
+              className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium outline-none transition-colors first:rounded-l-full last:rounded-r-full focus-visible:ring-2 focus-visible:ring-zinc-900/20 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent ${
+                isSelected
+                  ? "bg-zinc-900 text-white"
+                  : "text-zinc-700 hover:bg-white/60 hover:text-zinc-900"
+              }`}
+            >
+              <span
+                className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold ${
+                  isSelected
+                    ? "bg-white/20 text-white"
+                    : "bg-zinc-200 text-zinc-600"
+                }`}
+              >
+                V{v.id}
+              </span>
+              <span className="truncate">{v.label}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Mobile: collapsed pill + expandable sheet */}
+      <div className="relative rounded-full border border-white/40 bg-white/70 shadow-lg shadow-black/10 backdrop-blur-md transition-colors hover:bg-white/80 md:hidden">
         <button
           type="button"
           onClick={() => setOpen((prev) => !prev)}
@@ -60,7 +88,7 @@ export default function VersionPicker({
           <span className="shrink-0 rounded-md bg-zinc-900 px-1.5 py-0.5 text-[10px] font-bold text-white">
             V{current}
           </span>
-          <span className="max-w-[140px] truncate md:max-w-[180px]">
+          <span className="max-w-[140px] truncate">
             {currentVariant?.label ?? "Select variant"}
           </span>
           <svg
@@ -92,7 +120,7 @@ export default function VersionPicker({
           <ul
             role="listbox"
             aria-label="Design variants"
-            className="min-w-[220px] max-w-[92vw] py-1 md:min-w-[260px]"
+            className="min-w-[220px] max-w-[92vw] py-1"
           >
             {variants.map((v) => {
               const isSelected = v.id === current;
