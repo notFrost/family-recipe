@@ -1,4 +1,14 @@
-export type ThemeId = "amber" | "emerald" | "rose" | "sapphire" | "violet" | "slate";
+export type ThemeId =
+  | "amber"
+  | "emerald"
+  | "rose"
+  | "sapphire"
+  | "violet"
+  | "slate"
+  | "teal"
+  | "marigold"
+  | "plum"
+  | "mocha";
 
 export interface ThemeModeTokens {
   /** Primary brand color used for buttons, active states, and logo accents. */
@@ -169,6 +179,102 @@ export const THEMES: Theme[] = [
       card: "#1e293b",
       border: "#334155",
       buttonText: "#0f172a",
+    },
+  },
+  {
+    id: "teal",
+    label: "Teal",
+    light: {
+      primary: "#0d9488",
+      secondary: "#2dd4bf",
+      background: "#f0fdfa",
+      foreground: "#134e4a",
+      muted: "#0f766e",
+      card: "#ffffff",
+      border: "#99f6e4",
+      buttonText: "#ffffff",
+    },
+    dark: {
+      primary: "#2dd4bf",
+      secondary: "#5eead4",
+      background: "#042f2e",
+      foreground: "#f0fdfa",
+      muted: "#5eead4",
+      card: "#134e4a",
+      border: "#115e59",
+      buttonText: "#042f2e",
+    },
+  },
+  {
+    id: "marigold",
+    label: "Marigold",
+    light: {
+      primary: "#a16207",
+      secondary: "#eab308",
+      background: "#fefce8",
+      foreground: "#422006",
+      muted: "#854d0e",
+      card: "#ffffff",
+      border: "#fef08a",
+      buttonText: "#ffffff",
+    },
+    dark: {
+      primary: "#facc15",
+      secondary: "#fde047",
+      background: "#292011",
+      foreground: "#fefce8",
+      muted: "#fde68a",
+      card: "#422006",
+      border: "#854d0e",
+      buttonText: "#292011",
+    },
+  },
+  {
+    id: "plum",
+    label: "Plum",
+    light: {
+      primary: "#a21caf",
+      secondary: "#e879f9",
+      background: "#fdf4ff",
+      foreground: "#701a75",
+      muted: "#86198f",
+      card: "#ffffff",
+      border: "#f5d0fe",
+      buttonText: "#ffffff",
+    },
+    dark: {
+      primary: "#e879f9",
+      secondary: "#f0abfc",
+      background: "#4a044e",
+      foreground: "#fdf4ff",
+      muted: "#f0abfc",
+      card: "#701a75",
+      border: "#86198f",
+      buttonText: "#4a044e",
+    },
+  },
+  {
+    id: "mocha",
+    label: "Mocha",
+    light: {
+      primary: "#6f4e37",
+      secondary: "#a47148",
+      background: "#faf6f1",
+      foreground: "#3b2417",
+      muted: "#6b4f3a",
+      card: "#ffffff",
+      border: "#e7d8c9",
+      buttonText: "#ffffff",
+    },
+    dark: {
+      primary: "#c69c6d",
+      secondary: "#a47148",
+      background: "#241a12",
+      foreground: "#faf6f1",
+      muted: "#d8c3a5",
+      card: "#3b2417",
+      border: "#5c4433",
+      buttonText: "#241a12",
     },
   },
 ];
