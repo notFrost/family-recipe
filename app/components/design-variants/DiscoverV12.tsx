@@ -9,7 +9,6 @@ import {
   ListOrdered,
   Heart,
   Clock,
-  Tag,
 } from "lucide-react";
 import type { Theme } from "./theme";
 import { recipes } from "./mock-recipes";
@@ -77,7 +76,10 @@ function Logo({ palette }: { palette: Palette }) {
   );
 }
 
-function MediaPill({
+// One compact glassy stat pill for the on-photo row. Sized down from V11's
+// MediaPill (smaller text + tighter padding, no flex-grow/truncate) so three
+// can share a single non-wrapping line on a narrow card.
+function StatPill({
   palette,
   icon,
   children,
@@ -88,16 +90,16 @@ function MediaPill({
 }) {
   return (
     <span
-      className="flex min-w-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold backdrop-blur-md transition-colors duration-300"
+      className="flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-bold leading-none backdrop-blur-md transition-colors duration-300 sm:text-[11px]"
       style={{ backgroundColor: palette.pillGlass, color: palette.pillText }}
     >
       <span className="shrink-0">{icon}</span>
-      <span className="truncate">{children}</span>
+      <span>{children}</span>
     </span>
   );
 }
 
-export default function DiscoverV11({
+export default function DiscoverV12({
   isDark,
   theme,
 }: {
@@ -297,21 +299,21 @@ export default function DiscoverV11({
                       background: `linear-gradient(to top, ${palette.scrim} 0%, transparent 100%)`,
                     }}
                   />
-                  {/* Tidy 2×2 grid of glassy stat pills over the photo bottom.
-                      grid-cols-2 keeps it a clean 2-2 (never ragged like a wrap). */}
-                  <div className="absolute inset-x-3 bottom-3 grid grid-cols-2 gap-1.5">
-                    <MediaPill palette={palette} icon={<ChefHat className="h-3.5 w-3.5" />}>
-                      {recipe.ingredients.length} ingredients
-                    </MediaPill>
-                    <MediaPill palette={palette} icon={<ListOrdered className="h-3.5 w-3.5" />}>
-                      {recipe.steps.length} steps
-                    </MediaPill>
-                    <MediaPill palette={palette} icon={<Clock className="h-3.5 w-3.5" />}>
-                      {recipe.minutes} min
-                    </MediaPill>
-                    <MediaPill palette={palette} icon={<Tag className="h-3.5 w-3.5" />}>
-                      {recipe.category}
-                    </MediaPill>
+                  {/* Single non-wrapping row of three compact glassy stat pills.
+                      flex-nowrap pins them to one line; each pill is shrink-0 +
+                      whitespace-nowrap with tiny text/padding and minimal content
+                      (icon + number + short unit), so the row stays comfortably
+                      inside a ~260px card without wrapping or overflowing. */}
+                  <div className="absolute inset-x-3 bottom-3 flex flex-nowrap items-center gap-1.5">
+                    <StatPill palette={palette} icon={<ChefHat className="h-3 w-3" />}>
+                      {recipe.ingredients.length}
+                    </StatPill>
+                    <StatPill palette={palette} icon={<ListOrdered className="h-3 w-3" />}>
+                      {recipe.steps.length}
+                    </StatPill>
+                    <StatPill palette={palette} icon={<Clock className="h-3 w-3" />}>
+                      {recipe.minutes}m
+                    </StatPill>
                   </div>
                 </div>
 

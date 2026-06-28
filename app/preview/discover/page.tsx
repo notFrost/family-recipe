@@ -7,6 +7,7 @@ import DiscoverV6 from "@/app/components/design-variants/DiscoverV6";
 import DiscoverV9 from "@/app/components/design-variants/DiscoverV9";
 import DiscoverV10 from "@/app/components/design-variants/DiscoverV10";
 import DiscoverV11 from "@/app/components/design-variants/DiscoverV11";
+import DiscoverV12 from "@/app/components/design-variants/DiscoverV12";
 import VersionPicker from "@/app/components/design-variants/VersionPicker";
 import { DEFAULT_THEME, THEMES, type Theme } from "@/app/components/design-variants/theme";
 
@@ -16,7 +17,8 @@ const VARIANTS = [
   { id: 6, label: "Hearth", Component: DiscoverV6 },
   { id: 9, label: "Spread", Component: DiscoverV9 },
   { id: 10, label: "Warm & Homey V2", Component: DiscoverV10 },
-  { id: 11, label: "Warm & Homey V2 · Doodles", Component: DiscoverV11 },
+  { id: 11, label: "Warm & Homey V2 · 2×2 pills", Component: DiscoverV11 },
+  { id: 12, label: "Warm & Homey V2 · 1-line pills", Component: DiscoverV12 },
 ] as const;
 
 export default function DiscoverPreviewPage() {
