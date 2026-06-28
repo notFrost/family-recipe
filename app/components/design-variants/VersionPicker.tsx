@@ -2,17 +2,46 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Sun, Moon } from "lucide-react";
+import type { Theme } from "./theme";
 
 export interface VersionPickerProps {
   variants: readonly {
     id: number;
     label: string;
-    Component: React.ComponentType<{ isDark?: boolean }>;
+    Component: React.ComponentType<{ isDark?: boolean; theme: Theme }>;
   }[];
   current: number;
   onSelect: (id: number) => void;
   isDark: boolean;
   onToggleDark: () => void;
+  theme: Theme;
+  themes: readonly Theme[];
+  onSelectTheme: (theme: Theme) => void;
+}
+
+function ThemeSwatch({
+  theme,
+  selected,
+  onClick,
+}: {
+  theme: Theme;
+  selected: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={`${theme.label} theme`}
+      aria-pressed={selected}
+      className={`h-6 w-6 rounded-full border border-black/10 outline-none transition-transform duration-200 hover:scale-110 focus-visible:ring-2 focus-visible:ring-zinc-900/20 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent ${
+        selected ? "ring-2 ring-zinc-900 ring-offset-2" : ""
+      }`}
+      style={{
+        background: `linear-gradient(135deg, ${theme.light.primary}, ${theme.light.secondary})`,
+      }}
+    />
+  );
 }
 
 export default function VersionPicker({
@@ -21,6 +50,9 @@ export default function VersionPicker({
   onSelect,
   isDark,
   onToggleDark,
+  theme,
+  themes,
+  onSelectTheme,
 }: VersionPickerProps) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -83,6 +115,20 @@ export default function VersionPicker({
           className="mx-1.5 h-5 w-px bg-zinc-300/70"
           aria-hidden="true"
         />
+        <div className="flex items-center gap-1.5 px-2">
+          {themes.map((t) => (
+            <ThemeSwatch
+              key={t.id}
+              theme={t}
+              selected={t.id === theme.id}
+              onClick={() => onSelectTheme(t)}
+            />
+          ))}
+        </div>
+        <div
+          className="mx-1.5 h-5 w-px bg-zinc-300/70"
+          aria-hidden="true"
+        />
         <button
           type="button"
           onClick={onToggleDark}
@@ -131,14 +177,14 @@ export default function VersionPicker({
           <div
             className={`absolute bottom-full left-1/2 mb-2 -translate-x-1/2 overflow-hidden rounded-2xl border border-white/40 bg-white/85 shadow-xl shadow-black/10 backdrop-blur-md transition-all duration-300 ease-out ${
               open
-                ? "max-h-80 translate-y-0 opacity-100"
+                ? "max-h-96 translate-y-0 opacity-100"
                 : "pointer-events-none max-h-0 translate-y-2 opacity-0"
             }`}
           >
             <ul
               role="listbox"
               aria-label="Design variants"
-              className="min-w-[220px] max-w-[92vw] py-1"
+              className="min-w-[240px] max-w-[92vw] py-1"
             >
               {variants.map((v) => {
                 const isSelected = v.id === current;
@@ -189,6 +235,22 @@ export default function VersionPicker({
               })}
             </ul>
 
+            <div className="border-t border-zinc-200/60 px-3 py-2">
+              <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-zinc-400">
+                Theme
+              </p>
+              <div className="flex items-center gap-2">
+                {themes.map((t) => (
+                  <ThemeSwatch
+                    key={t.id}
+                    theme={t}
+                    selected={t.id === theme.id}
+                    onClick={() => onSelectTheme(t)}
+                  />
+                ))}
+              </div>
+            </div>
+
             <p className="border-t border-zinc-200/60 px-3 py-2 text-center text-[10px] text-zinc-400">
               Press{" "}
               <kbd className="inline rounded border border-zinc-200 bg-zinc-100 px-1 py-px font-mono text-[10px] text-zinc-500">
@@ -196,7 +258,7 @@ export default function VersionPicker({
               </kbd>
               –
               <kbd className="inline rounded border border-zinc-200 bg-zinc-100 px-1 py-px font-mono text-[10px] text-zinc-500">
-                6
+                {variants.length}
               </kbd>{" "}
               to switch
             </p>

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Nunito } from "next/font/google";
 import { Search, ChefHat, ListOrdered, Heart } from "lucide-react";
+import type { Theme } from "./theme";
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -230,36 +231,26 @@ const recipes: MockRecipe[] = [
   },
 ];
 
-const caramel = "#d97706";
+function buildPalette(theme: Theme, isDark: boolean) {
+  const t = isDark ? theme.dark : theme.light;
+  return {
+    bg: t.background,
+    text: t.foreground,
+    muted: t.muted,
+    subtle: t.muted,
+    card: t.card,
+    header: t.card,
+    border: t.border,
+    borderSoft: t.border,
+    navHover: t.border,
+    chipBg: t.background,
+    primary: t.primary,
+    secondary: t.secondary,
+    buttonText: t.buttonText,
+  };
+}
 
-const palettes = {
-  light: {
-    bg: "#fffaf3",
-    text: "#3e2723",
-    muted: "#5d4037",
-    subtle: "#8d6e63",
-    card: "#ffffff",
-    header: "#ffffff",
-    border: "#fed7aa",
-    borderSoft: "#ffedd5",
-    navHover: "#ffedd5",
-    chipBg: "#fff7ed",
-  },
-  dark: {
-    bg: "#2a1f1b",
-    text: "#fffaf3",
-    muted: "#d7ccc8",
-    subtle: "#a1887f",
-    card: "#3d2e28",
-    header: "#3d2e28",
-    border: "#5d4037",
-    borderSoft: "#4e342e",
-    navHover: "#4e342e",
-    chipBg: "#4e342e",
-  },
-};
-
-type Palette = typeof palettes.light;
+type Palette = ReturnType<typeof buildPalette>;
 
 function Logo({ palette }: { palette: Palette }) {
   return (
@@ -269,8 +260,8 @@ function Logo({ palette }: { palette: Palette }) {
       style={{ fontFamily: "var(--font-nunito), system-ui, sans-serif", color: palette.text }}
     >
       <span
-        className="flex h-9 w-9 items-center justify-center rounded-xl text-base text-white transition-colors duration-300"
-        style={{ backgroundColor: caramel }}
+        className="flex h-9 w-9 items-center justify-center rounded-xl text-base transition-colors duration-300"
+        style={{ backgroundColor: palette.primary, color: palette.buttonText }}
       >
         🍽️
       </span>
@@ -279,8 +270,14 @@ function Logo({ palette }: { palette: Palette }) {
   );
 }
 
-export default function DiscoverV4({ isDark }: { isDark?: boolean }) {
-  const palette = (isDark ?? false) ? palettes.dark : palettes.light;
+export default function DiscoverV4({
+  isDark,
+  theme,
+}: {
+  isDark?: boolean;
+  theme: Theme;
+}) {
+  const palette = buildPalette(theme, isDark ?? false);
 
   return (
     <div
@@ -340,14 +337,14 @@ export default function DiscoverV4({ isDark }: { isDark?: boolean }) {
             <Link
               href="/login"
               className="hidden rounded-full border-2 px-4 py-2 text-sm font-semibold transition-colors duration-300 hover:brightness-95 sm:inline-flex"
-              style={{ borderColor: caramel, color: palette.text }}
+              style={{ borderColor: palette.primary, color: palette.text }}
             >
               Log in
             </Link>
             <Link
               href="/signup"
-              className="rounded-full px-4 py-2 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:shadow-lg"
-              style={{ backgroundColor: caramel }}
+              className="rounded-full px-4 py-2 text-sm font-semibold shadow-md transition-all duration-300 hover:shadow-lg"
+              style={{ backgroundColor: palette.primary, color: palette.buttonText }}
             >
               Sign up
             </Link>
@@ -385,7 +382,7 @@ export default function DiscoverV4({ isDark }: { isDark?: boolean }) {
             <div className="relative flex-1">
               <Search
                 className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 transition-colors duration-300"
-                style={{ color: caramel }}
+                style={{ color: palette.primary }}
               />
               <input
                 id="v4-q"
@@ -398,8 +395,8 @@ export default function DiscoverV4({ isDark }: { isDark?: boolean }) {
             </div>
             <button
               type="submit"
-              className="h-11 rounded-full px-6 text-sm font-semibold text-white transition-all duration-300 hover:scale-105"
-              style={{ backgroundColor: caramel }}
+              className="h-11 rounded-full px-6 text-sm font-semibold transition-all duration-300 hover:scale-105"
+              style={{ backgroundColor: palette.primary, color: palette.buttonText }}
             >
               Search
             </button>
@@ -423,7 +420,7 @@ export default function DiscoverV4({ isDark }: { isDark?: boolean }) {
                   <button
                     aria-label={`Save ${recipe.title}`}
                     className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full shadow-sm transition-all duration-300 hover:scale-110"
-                    style={{ backgroundColor: palette.card, color: caramel }}
+                    style={{ backgroundColor: palette.card, color: palette.primary }}
                   >
                     <Heart className="h-4 w-4" />
                   </button>
@@ -446,14 +443,14 @@ export default function DiscoverV4({ isDark }: { isDark?: boolean }) {
                   <div className="mt-auto flex items-center gap-3 pt-4 text-xs font-semibold">
                     <span
                       className="flex items-center gap-1 rounded-full px-2.5 py-1 transition-colors duration-300"
-                      style={{ backgroundColor: palette.chipBg, color: caramel }}
+                      style={{ backgroundColor: palette.chipBg, color: palette.primary }}
                     >
                       <ChefHat className="h-3.5 w-3.5" />
                       {recipe.ingredients.length} ingredients
                     </span>
                     <span
                       className="flex items-center gap-1 rounded-full px-2.5 py-1 transition-colors duration-300"
-                      style={{ backgroundColor: palette.chipBg, color: caramel }}
+                      style={{ backgroundColor: palette.chipBg, color: palette.primary }}
                     >
                       <ListOrdered className="h-3.5 w-3.5" />
                       {recipe.steps.length} steps

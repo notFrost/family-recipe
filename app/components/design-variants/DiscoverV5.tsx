@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Space_Grotesk, Inter } from "next/font/google";
 import { Search } from "lucide-react";
+import type { Theme } from "./theme";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -236,43 +237,28 @@ const recipes: MockRecipe[] = [
   },
 ];
 
-const amber = "#D4A056";
-const blush = "#C98B8B";
+function buildPalette(theme: Theme, isDark: boolean) {
+  const t = isDark ? theme.dark : theme.light;
+  return {
+    bg: t.background,
+    text: t.foreground,
+    heading: t.foreground,
+    muted: t.muted,
+    subtle: t.muted,
+    card: t.card,
+    cardOverlay: t.card,
+    border: `${t.secondary}33`,
+    glass: isDark ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.65)",
+    glassHover: isDark ? "rgba(255,255,255,0.10)" : "rgba(255,255,255,0.85)",
+    inputBg: isDark ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.5)",
+    glowOpacity: isDark ? 0.2 : 0.12,
+    accentText: t.buttonText,
+    primary: t.primary,
+    secondary: t.secondary,
+  };
+}
 
-const palettes = {
-  light: {
-    bg: "#F7F5F0",
-    text: "#1A1A1A",
-    heading: "#111111",
-    muted: "#6B655E",
-    subtle: "#9B9590",
-    card: "#FFFFFF",
-    cardOverlay: "#FFFFFF",
-    border: "rgba(0,0,0,0.08)",
-    glass: "rgba(255,255,255,0.65)",
-    glassHover: "rgba(255,255,255,0.85)",
-    inputBg: "rgba(255,255,255,0.5)",
-    glowOpacity: 0.12,
-    accentText: "#1A1A1A",
-  },
-  dark: {
-    bg: "#0E0E10",
-    text: "#F5F3EF",
-    heading: "#F5F3EF",
-    muted: "#8A8279",
-    subtle: "#6B655E",
-    card: "#15151A",
-    cardOverlay: "#15151A",
-    border: "rgba(255,255,255,0.10)",
-    glass: "rgba(255,255,255,0.05)",
-    glassHover: "rgba(255,255,255,0.10)",
-    inputBg: "rgba(255,255,255,0.05)",
-    glowOpacity: 0.20,
-    accentText: "#0E0E10",
-  },
-};
-
-type Palette = typeof palettes.light;
+type Palette = ReturnType<typeof buildPalette>;
 
 function Logo({ palette }: { palette: Palette }) {
   return (
@@ -283,7 +269,7 @@ function Logo({ palette }: { palette: Palette }) {
     >
       <span
         className="flex h-9 w-9 items-center justify-center rounded-lg text-base"
-        style={{ background: `linear-gradient(135deg, ${amber}, ${blush})` }}
+        style={{ background: `linear-gradient(135deg, ${palette.primary}, ${palette.secondary})` }}
       >
         🍽️
       </span>
@@ -292,8 +278,15 @@ function Logo({ palette }: { palette: Palette }) {
   );
 }
 
-export default function DiscoverV5({ isDark }: { isDark?: boolean }) {
-  const palette = (isDark ?? false) ? palettes.dark : palettes.light;
+export default function DiscoverV5({
+  isDark,
+  theme,
+}: {
+  isDark?: boolean;
+  theme: Theme;
+}) {
+  const palette = buildPalette(theme, isDark ?? false);
+  const { primary, secondary } = palette;
 
   return (
     <div
@@ -321,9 +314,9 @@ export default function DiscoverV5({ isDark }: { isDark?: boolean }) {
         }
         .v5-card:hover {
           transform: translateY(-4px);
-          border-color: ${amber}73;
-          box-shadow: 0 20px 40px -12px ${amber}38,
-                      0 0 0 1px ${amber}1f;
+          border-color: ${primary}73;
+          box-shadow: 0 20px 40px -12px ${primary}38,
+                      0 0 0 1px ${primary}1f;
         }
       `}</style>
 
@@ -369,7 +362,7 @@ export default function DiscoverV5({ isDark }: { isDark?: boolean }) {
             <Link
               href="/signup"
               className="rounded-full px-4 py-2 text-sm font-semibold transition-all duration-300"
-              style={{ backgroundColor: amber, color: palette.accentText }}
+              style={{ backgroundColor: palette.primary, color: palette.accentText }}
             >
               Sign up
             </Link>
@@ -381,18 +374,18 @@ export default function DiscoverV5({ isDark }: { isDark?: boolean }) {
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div
             className="absolute -left-1/4 -top-1/4 h-[600px] w-[600px] rounded-full blur-[120px]"
-            style={{ backgroundColor: amber, opacity: palette.glowOpacity }}
+            style={{ backgroundColor: primary, opacity: palette.glowOpacity }}
           />
           <div
             className="absolute -right-1/4 top-1/3 h-[500px] w-[500px] rounded-full blur-[100px]"
-            style={{ backgroundColor: blush, opacity: palette.glowOpacity * 0.75 }}
+            style={{ backgroundColor: secondary, opacity: palette.glowOpacity * 0.75 }}
           />
         </div>
 
         <div className="relative mx-auto max-w-7xl px-6 py-16 sm:px-8 lg:px-12">
           <div className="v5-fade mb-16 flex flex-col items-start justify-between gap-8 md:flex-row md:items-end">
             <div className="max-w-2xl">
-              <p className="mb-3 text-sm font-medium uppercase tracking-widest" style={{ color: amber }}>
+              <p className="mb-3 text-sm font-medium uppercase tracking-widest" style={{ color: primary }}>
                 Community Cookbook
               </p>
               <h1
@@ -432,7 +425,7 @@ export default function DiscoverV5({ isDark }: { isDark?: boolean }) {
               <button
                 type="submit"
                 className="h-12 rounded-full px-6 text-sm font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-                style={{ backgroundColor: amber, color: palette.accentText }}
+                style={{ backgroundColor: primary, color: palette.accentText }}
               >
                 Search
               </button>
@@ -473,7 +466,7 @@ export default function DiscoverV5({ isDark }: { isDark?: boolean }) {
                     </span>
                     <span
                       className="rounded-full px-2.5 py-1 text-xs font-semibold backdrop-blur-md"
-                      style={{ backgroundColor: amber, color: palette.accentText }}
+                      style={{ backgroundColor: primary, color: palette.accentText }}
                     >
                       {recipe.steps.length} steps
                     </span>
