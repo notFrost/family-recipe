@@ -118,7 +118,7 @@ const BASE: Slot[] = (() => {
         y: y + (rand(bi * 2.3) - 0.5) * 22,
         size,
         rot: (rand(bi * 4.4) - 0.5) * 46,
-        sw: (1.25 * 24) / size, // constant ~1.25px visual stroke at any size
+        sw: (2.25 * 24) / size, // constant ~2.25px visual stroke at any size
         Icon: BIG[bi % BIG.length],
       });
       bi++;
@@ -133,7 +133,7 @@ const BASE: Slot[] = (() => {
         y: y + (rand(fi * 2.9 + 9) - 0.5) * 18,
         size,
         rot: (rand(fi * 5.1 + 9) - 0.5) * 80,
-        sw: (1.25 * 24) / size,
+        sw: (2.25 * 24) / size,
         Icon: FILLER[fi % FILLER.length],
       });
       fi++;

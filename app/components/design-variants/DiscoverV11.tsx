@@ -49,11 +49,10 @@ function buildPalette(theme: Theme, isDark: boolean) {
     pillGlass: isDark ? "rgba(255,255,255,0.16)" : "rgba(255,255,255,0.78)",
     pillText: isDark ? "#ffffff" : t.foreground,
     scrim: isDark ? "rgba(0,0,0,0.55)" : "rgba(0,0,0,0.42)",
-    // Foreground token at very low alpha — faint kitchen-wallpaper texture that
-    // never competes with text. At the higher doodle density we drop the
-    // per-icon alpha further so the field stays a whisper, not a pattern. Cards
-    // sit on the solid `card` token, so card copy stays crisp over the doodles.
-    doodle: `${t.foreground}${isDark ? "12" : "0A"}`,
+    // Foreground token at low alpha — a faint kitchen-wallpaper texture that
+    // stays well behind the content. Cards sit on the solid `card` token, so
+    // card copy stays crisp over the doodles regardless of this tint.
+    doodle: `${t.foreground}${isDark ? "1A" : "12"}`,
   };
 }
 
