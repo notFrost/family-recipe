@@ -2,7 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { familyRepository } from "@/app/lib/family-repository";
 import { recipeRepository } from "@/app/lib/recipe-repository";
-import { auth } from "@/app/lib/auth";
+import { getSession } from "@/app/lib/auth";
 import RecipeCard from "@/app/components/RecipeCard";
 import LeaveFamilyButton from "@/app/components/LeaveFamilyButton";
 import DeleteFamilyButton from "@/app/components/DeleteFamilyButton";
@@ -20,7 +20,7 @@ type Props = {
 export default async function FamilyDetailPage({ params }: Props) {
   const { id } = await params;
 
-  const session = await auth();
+  const session = await getSession();
   if (!session?.user?.id) {
     redirect(`/login?callbackUrl=/families/${id}`);
   }

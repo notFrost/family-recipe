@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { auth } from "@/app/lib/auth";
+import { getSession } from "@/app/lib/auth";
 import { familyRepository } from "@/app/lib/family-repository";
 import FamilyCard from "@/app/components/FamilyCard";
 
 export default async function FamiliesPage() {
-  const session = await auth();
+  const session = await getSession();
   if (!session?.user?.id) {
     redirect("/login?callbackUrl=/families");
   }

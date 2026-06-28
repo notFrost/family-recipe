@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { recipeRepository } from "@/app/lib/recipe-repository";
 import { familyRepository } from "@/app/lib/family-repository";
-import { auth } from "@/app/lib/auth";
+import { getSession } from "@/app/lib/auth";
 import DeleteRecipeButton from "@/app/components/DeleteRecipeButton";
 
 const VISIBILITY_BADGES: Record<
@@ -42,7 +42,7 @@ export default async function RecipeDetailPage({
     notFound();
   }
 
-  const session = await auth();
+  const session = await getSession();
   const isOwner = session?.user?.id === recipe.authorId;
 
   // View-gating: PRIVATE recipes are only visible to the author.

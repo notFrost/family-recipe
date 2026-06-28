@@ -2,7 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import RecipeForm from "@/app/components/RecipeForm";
 import { recipeRepository } from "@/app/lib/recipe-repository";
 import { updateRecipeAction } from "@/app/lib/actions";
-import { auth } from "@/app/lib/auth";
+import { getSession } from "@/app/lib/auth";
 import { familyRepository } from "@/app/lib/family-repository";
 
 export default async function EditRecipePage({
@@ -11,7 +11,7 @@ export default async function EditRecipePage({
   const { id } = await params;
 
   // Route protection: must be signed in to reach the edit form.
-  const session = await auth();
+  const session = await getSession();
   if (!session?.user?.id) {
     redirect(`/login?callbackUrl=/recipes/${id}/edit`);
   }
