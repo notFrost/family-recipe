@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation";
 import { recipeRepository } from "@/app/lib/recipe-repository";
-import { auth } from "@/app/lib/auth";
+import { getSession } from "@/app/lib/auth";
 import RecipeCard from "@/app/components/RecipeCard";
 
 export default async function Home() {
-  const session = await auth();
+  const session = await getSession();
 
   if (!session?.user?.id) {
     redirect("/discover");

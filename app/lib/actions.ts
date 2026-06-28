@@ -2,13 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { AuthError } from "next-auth";
 import { headers } from "next/headers";
-import bcrypt from "bcryptjs";
 import { recipeRepository } from "./recipe-repository";
 import { familyRepository } from "./family-repository";
-import { auth, signIn, signOut } from "./auth";
-import { getUserByEmail, createUser } from "./user-repository";
+import { auth, getSession } from "./auth";
 import { loginRateLimit, signupRateLimit, checkRateLimit } from "./rate-limit";
 import type { Recipe, RecipeVisibility } from "./types";
 
@@ -81,7 +78,7 @@ function parseRecipeFormData(
  * Centralizes the "must be signed in" gate used by every mutating action.
  */
 async function requireUserId(): Promise<string> {
-  const session = await auth();
+  const session = await getSession();
   const userId = session?.user?.id;
   if (!userId) {
     redirect("/login");
@@ -177,12 +174,11 @@ export interface AuthFormState {
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
- * Log in via the NextAuth Credentials provider.
+ * Log in via Better Auth's email/password provider.
  *
- * On success `signIn` throws a redirect (NEXT_REDIRECT) which we must let
- * propagate. On bad credentials NextAuth throws an `AuthError`
- * (`CredentialsSignin`), which we translate into a friendly message returned
- * via `useActionState`.
+ * On bad credentials `signInEmail` throws, which we translate into a friendly
+ * message returned via `useActionState`. On success the `nextCookies` plugin
+ * sets the session cookie and we `redirect` to the callback URL.
  */
 export async function loginAction(
   _prevState: AuthFormState,
@@ -209,31 +205,27 @@ export async function loginAction(
   }
 
   try {
-    await signIn("credentials", {
-      email,
-      password,
-      redirectTo: callbackUrl,
+    await auth.api.signInEmail({
+      body: { email, password },
+      headers: headersList,
     });
-  } catch (error) {
-    // A successful `signIn` throws a NEXT_REDIRECT control-flow error which is
-    // NOT an AuthError, so it falls through to the rethrow below and performs
-    // the redirect. Only genuine credential failures are AuthErrors.
-    if (error instanceof AuthError) {
-      return { error: "Invalid email or password." };
-    }
-    throw error;
+  } catch {
+    // Better Auth throws on invalid credentials. (A successful call returns
+    // normally and the nextCookies plugin sets the session cookie.)
+    return { error: "Invalid email or password." };
   }
 
-  // Unreachable on success (signIn redirects), but satisfies the type.
-  return {};
+  // Success: the session cookie is set — send the user to their destination.
+  redirect(callbackUrl);
 }
 
 /**
- * Register a new user, then sign them in automatically.
+ * Register a new user via Better Auth, which also signs them in.
  *
- * Validates input, rejects duplicate emails with a friendly message, hashes
- * the password with bcrypt, creates the user, and finally calls `signIn` so
- * the new account is logged in and redirected to the home page.
+ * Validates input, then calls `signUpEmail` (autoSignIn is on by default, so
+ * the new account is logged in and its session cookie set via nextCookies).
+ * Duplicate emails surface a friendly message. Password hashing is bcrypt,
+ * configured on the Better Auth instance (see app/lib/password.ts).
  */
 export async function signupAction(
   _prevState: AuthFormState,
@@ -264,46 +256,32 @@ export async function signupAction(
     return { error: "Password must be at least 8 characters long." };
   }
 
-  const existing = await getUserByEmail(email);
-  if (existing) {
-    return { error: "An account with that email already exists." };
-  }
-
-  const passwordHash = await bcrypt.hash(password, 12);
+  const displayName = name.length > 0 ? name : email.split("@")[0];
 
   try {
-    await createUser({
-      email,
-      passwordHash,
-      name: name.length > 0 ? name : null,
-    });
-  } catch {
-    return { error: "Something went wrong creating your account." };
-  }
-
-  // Auto sign-in the freshly created user, then redirect home.
-  try {
-    await signIn("credentials", {
-      email,
-      password,
-      redirectTo: "/",
+    await auth.api.signUpEmail({
+      body: { name: displayName, email, password },
+      headers: headersList,
     });
   } catch (error) {
-    // Success rethrows the NEXT_REDIRECT error (handled by the rethrow below).
-    // Account was created but auto sign-in failed: point them at /login so
-    // they can sign in manually.
-    if (error instanceof AuthError) {
-      redirect("/login");
-    }
-    throw error;
+    // Most commonly the email is already registered. Surface a friendly
+    // message instead of the raw Better Auth error.
+    const message =
+      error instanceof Error &&
+      /exist|already|taken|unique/i.test(error.message)
+        ? "An account with that email already exists."
+        : "Something went wrong creating your account.";
+    return { error: message };
   }
 
-  return {};
+  // signUpEmail auto-signs-in and sets the session cookie — go home.
+  redirect("/");
 }
 
 /** Sign the current user out and return them to the home page. */
 export async function signOutAction(): Promise<void> {
-  await signOut({ redirectTo: "/" });
+  await auth.api.signOut({ headers: await headers() });
+  redirect("/");
 }
 
 /* -------------------------------------------------------------------------- */

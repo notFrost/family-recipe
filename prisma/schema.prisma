@@ -58,22 +58,84 @@ model Recipe {
 
 // User model for authentication.
 //
-// Auth strategy: NextAuth (Auth.js) v5 with the Credentials provider and a
-// JWT session strategy. Because sessions are stateless JWTs (not stored in the
-// DB) and we are NOT using OAuth providers or email verification, the Auth.js
-// Prisma adapter is NOT used — so the Account / Session / VerificationToken
-// tables it would require are intentionally omitted to keep the schema minimal.
-// This single `User` table holds everything Credentials auth needs.
+// Auth strategy: Better Auth (replaced Auth.js v5) with the email/password
+// provider. Sessions are now DATABASE-backed (see `Session`) rather than
+// stateless JWTs — this enables revocation/multi-device logout, with a signed
+// cookie cache to avoid a DB round-trip on most requests. Better Auth requires
+// the companion `Session`, `Account`, and `Verification` tables below.
+//
+// Better Auth accesses these via Prisma model accessors (prisma.user/session/
+// account/verification), so the table names stay PascalCase (no @@map) and the
+// existing Recipe/Family foreign keys to `User` are unaffected.
 model User {
   id           String   @id @default(cuid())
   email        String   @unique
   name         String?
-  passwordHash String
+  // Legacy Auth.js bcrypt hash. Better Auth stores the credential password in
+  // Account.password instead; this column is kept (now optional) only as the
+  // source for the one-off backfill script and as a rollback safety net. It
+  // can be dropped once the migration is confirmed in production.
+  passwordHash String?
+  // Better Auth fields.
+  emailVerified Boolean @default(false)
+  image         String?
   createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt @default(now())
 
   recipes       Recipe[]
   ownedFamilies Family[]       @relation("FamilyOwner")
   families      FamilyMember[] @relation("FamilyMembership")
+  sessions      Session[]
+  accounts      Account[]
+}
+
+// Better Auth: active sessions. A signed cookie cache (see app/lib/auth.ts)
+// serves most reads without touching this table.
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// Better Auth: per-provider account. For email/password the row has
+// providerId "credential" and the bcrypt hash in `password`.
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt @default(now())
+
+  @@index([userId])
+}
+
+// Better Auth: short-lived verification tokens (email verify, password reset).
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt @default(now())
+
+  @@index([identifier])
 }
 
 model Family {

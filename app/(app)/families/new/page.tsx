@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { auth } from "@/app/lib/auth";
+import { getSession } from "@/app/lib/auth";
 import { createFamilyAction } from "@/app/lib/actions";
 
 const inputClasses =
@@ -9,7 +9,7 @@ const inputClasses =
 const labelClasses = "text-sm font-medium text-zinc-900";
 
 export default async function NewFamilyPage() {
-  const session = await auth();
+  const session = await getSession();
   if (!session?.user?.id) {
     redirect("/login?callbackUrl=/families/new");
   }

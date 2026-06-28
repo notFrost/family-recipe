@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { auth } from "../lib/auth";
+import { getSession } from "../lib/auth";
 import SignOutButton from "./SignOutButton";
 
 export default async function Navbar() {
-  const session = await auth();
+  const session = await getSession();
   const user = session?.user;
 
   return (

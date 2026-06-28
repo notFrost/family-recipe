@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import RecipeForm from "@/app/components/RecipeForm";
 import { createRecipeAction } from "@/app/lib/actions";
-import { auth } from "@/app/lib/auth";
+import { getSession } from "@/app/lib/auth";
 import { familyRepository } from "@/app/lib/family-repository";
 
 export default async function NewRecipePage({
@@ -10,7 +10,7 @@ export default async function NewRecipePage({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   // Route protection: must be signed in to create a recipe.
-  const session = await auth();
+  const session = await getSession();
   if (!session?.user?.id) {
     redirect("/login?callbackUrl=/recipes/new");
   }

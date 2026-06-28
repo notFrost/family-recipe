@@ -1,12 +1,12 @@
 import { redirect } from "next/navigation";
 import Image from "next/image";
-import { auth } from "@/app/lib/auth";
+import { getSession } from "@/app/lib/auth";
 import LoginForm from "@/app/components/LoginForm";
 
 export default async function LoginPage({
   searchParams,
 }: PageProps<"/login">) {
-  const session = await auth();
+  const session = await getSession();
   if (session?.user?.id) {
     redirect("/");
   }

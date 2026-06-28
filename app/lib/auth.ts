@@ -1,75 +1,47 @@
-import NextAuth from "next-auth";
-import Credentials from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
-import { getUserByEmail } from "./user-repository";
+import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import { nextCookies } from "better-auth/next-js";
+import { headers } from "next/headers";
+import { prisma } from "./prisma";
+import { hashPassword, verifyPassword } from "./password";
 
 /**
- * NextAuth (Auth.js) v5 configuration.
+ * Better Auth configuration (replaces the previous Auth.js v5 setup).
  *
- * Session strategy: JWT (stateless). Sessions are signed with `AUTH_SECRET`
- * and carried in the session cookie — nothing is persisted to the database,
- * so the Prisma adapter and its Account / Session / VerificationToken tables
- * are intentionally not used (see prisma/schema.prisma for the rationale).
+ * - Email + password only (no OAuth yet). Passwords use bcrypt via the custom
+ *   hash/verify hooks in `./password`, so existing Auth.js-era hashes keep
+ *   working with no rehash.
+ * - Sessions are database-backed (the `Session` table) with a short-lived
+ *   signed cookie cache, so most requests resolve the session from the cookie
+ *   without a DB round-trip — close to the old stateless-JWT feel, but now
+ *   revocable. This is the deliberate reversal of the old "no session table"
+ *   decision (see prisma/schema.prisma).
+ * - `nextCookies()` MUST be the last plugin: it lets server actions set the
+ *   session cookie when calling `auth.api.signInEmail` / `signUpEmail`.
  *
- * Provider: Credentials (email + password). On sign-in we look the user up by
- * email and verify the submitted password against the stored bcrypt hash. The
- * `id` and `email` are threaded through the JWT (`jwt` callback) onto the
- * session (`session` callback) so that `session.user.id` is available to
- * callers — this is what later sub-milestones rely on for author scoping.
+ * Secret resolution falls back to the old `AUTH_SECRET` so the same value works
+ * locally during the migration; production sets `BETTER_AUTH_SECRET`.
  */
-export const { handlers, auth, signIn, signOut } = NextAuth({
-  session: { strategy: "jwt" },
-  providers: [
-    Credentials({
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        const email =
-          typeof credentials?.email === "string" ? credentials.email : null;
-        const password =
-          typeof credentials?.password === "string"
-            ? credentials.password
-            : null;
-
-        if (!email || !password) {
-          return null;
-        }
-
-        const user = await getUserByEmail(email);
-        if (!user) {
-          return null;
-        }
-
-        const passwordMatches = await bcrypt.compare(
-          password,
-          user.passwordHash,
-        );
-        if (!passwordMatches) {
-          return null;
-        }
-
-        // Returned object becomes the `user` arg on the first `jwt` callback.
-        // Never expose the password hash.
-        return { id: user.id, email: user.email, name: user.name };
-      },
-    }),
-  ],
-  callbacks: {
-    async jwt({ token, user }) {
-      // On initial sign-in, persist the user id onto the token.
-      if (user) {
-        token.id = user.id;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      // Surface the user id on the session for downstream author scoping.
-      if (token.id && session.user) {
-        session.user.id = token.id as string;
-      }
-      return session;
-    },
+export const auth = betterAuth({
+  database: prismaAdapter(prisma, { provider: "sqlite" }),
+  secret: process.env.BETTER_AUTH_SECRET ?? process.env.AUTH_SECRET,
+  baseURL: process.env.BETTER_AUTH_URL,
+  emailAndPassword: {
+    enabled: true,
+    minPasswordLength: 8,
+    password: { hash: hashPassword, verify: verifyPassword },
   },
+  session: {
+    cookieCache: { enabled: true, maxAge: 5 * 60 },
+  },
+  plugins: [nextCookies()],
 });
+
+/**
+ * Back-compat session helper. Mirrors the old NextAuth `auth()` return shape
+ * ({ user, session } | null) so server components keep doing
+ * `const session = await getSession(); session?.user?.id`.
+ */
+export async function getSession() {
+  return auth.api.getSession({ headers: await headers() });
+}
