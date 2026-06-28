@@ -60,5 +60,8 @@ next-env.d.ts
 # opencode tooling
 .opencode/
 
+# claude code — share agents/skills/workflows, keep personal settings local
+.claude/settings.local.json
+
 .vercel
 .env*
