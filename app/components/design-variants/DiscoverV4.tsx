@@ -243,7 +243,7 @@ function buildPalette(theme: Theme, isDark: boolean) {
     border: t.border,
     borderSoft: t.border,
     navHover: t.border,
-    chipBg: t.background,
+    chipBg: `${t.primary}14`,
     primary: t.primary,
     secondary: t.secondary,
     buttonText: t.buttonText,

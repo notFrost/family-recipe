@@ -203,12 +203,6 @@ export default function DiscoverV6({
                 className="v6-rise v6-card group relative flex flex-col overflow-hidden rounded-2xl shadow-md"
                 style={{ backgroundColor: palette.card, border: `1px solid ${palette.border}`, animationDelay: `${index * 55}ms` }}
               >
-                {/* dog-eared corner */}
-                <div
-                  className="absolute right-0 top-0 z-10 h-7 w-7"
-                  style={{ background: `linear-gradient(135deg, transparent 50%, ${palette.border} 50%)` }}
-                  aria-hidden="true"
-                />
                 <div className="relative aspect-[4/3] w-full overflow-hidden">
                   <Image
                     src={recipe.imageUrl}

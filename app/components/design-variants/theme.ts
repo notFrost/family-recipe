@@ -1,14 +1,4 @@
-export type ThemeId =
-  | "amber"
-  | "emerald"
-  | "rose"
-  | "sapphire"
-  | "violet"
-  | "slate"
-  | "teal"
-  | "marigold"
-  | "plum"
-  | "mocha";
+export type ThemeId = "amber" | "emerald" | "slate" | "marigold" | "mocha";
 
 export interface ThemeModeTokens {
   /** Primary brand color used for buttons, active states, and logo accents. */
@@ -86,78 +76,6 @@ export const THEMES: Theme[] = [
     },
   },
   {
-    id: "rose",
-    label: "Rose",
-    light: {
-      primary: "#e11d48",
-      secondary: "#fb7185",
-      background: "#fff1f2",
-      foreground: "#881337",
-      muted: "#9f1239",
-      card: "#ffffff",
-      border: "#fecdd3",
-      buttonText: "#ffffff",
-    },
-    dark: {
-      primary: "#f43f5e",
-      secondary: "#fda4af",
-      background: "#4c0519",
-      foreground: "#fff1f2",
-      muted: "#fda4af",
-      card: "#881337",
-      border: "#9f1239",
-      buttonText: "#ffffff",
-    },
-  },
-  {
-    id: "sapphire",
-    label: "Sapphire",
-    light: {
-      primary: "#2563eb",
-      secondary: "#60a5fa",
-      background: "#eff6ff",
-      foreground: "#1e3a8a",
-      muted: "#1d4ed8",
-      card: "#ffffff",
-      border: "#bfdbfe",
-      buttonText: "#ffffff",
-    },
-    dark: {
-      primary: "#3b82f6",
-      secondary: "#93c5fd",
-      background: "#0f172a",
-      foreground: "#eff6ff",
-      muted: "#93c5fd",
-      card: "#1e3a8a",
-      border: "#1e40af",
-      buttonText: "#ffffff",
-    },
-  },
-  {
-    id: "violet",
-    label: "Violet",
-    light: {
-      primary: "#7c3aed",
-      secondary: "#c084fc",
-      background: "#faf5ff",
-      foreground: "#4c1d95",
-      muted: "#6d28d9",
-      card: "#ffffff",
-      border: "#e9d5ff",
-      buttonText: "#ffffff",
-    },
-    dark: {
-      primary: "#8b5cf6",
-      secondary: "#d8b4fe",
-      background: "#2e1065",
-      foreground: "#faf5ff",
-      muted: "#d8b4fe",
-      card: "#4c1d95",
-      border: "#5b21b6",
-      buttonText: "#ffffff",
-    },
-  },
-  {
     id: "slate",
     label: "Slate",
     light: {
@@ -182,30 +100,6 @@ export const THEMES: Theme[] = [
     },
   },
   {
-    id: "teal",
-    label: "Teal",
-    light: {
-      primary: "#0d9488",
-      secondary: "#2dd4bf",
-      background: "#f0fdfa",
-      foreground: "#134e4a",
-      muted: "#0f766e",
-      card: "#ffffff",
-      border: "#99f6e4",
-      buttonText: "#ffffff",
-    },
-    dark: {
-      primary: "#2dd4bf",
-      secondary: "#5eead4",
-      background: "#042f2e",
-      foreground: "#f0fdfa",
-      muted: "#5eead4",
-      card: "#134e4a",
-      border: "#115e59",
-      buttonText: "#042f2e",
-    },
-  },
-  {
     id: "marigold",
     label: "Marigold",
     light: {
@@ -227,30 +121,6 @@ export const THEMES: Theme[] = [
       card: "#422006",
       border: "#854d0e",
       buttonText: "#292011",
-    },
-  },
-  {
-    id: "plum",
-    label: "Plum",
-    light: {
-      primary: "#a21caf",
-      secondary: "#e879f9",
-      background: "#fdf4ff",
-      foreground: "#701a75",
-      muted: "#86198f",
-      card: "#ffffff",
-      border: "#f5d0fe",
-      buttonText: "#ffffff",
-    },
-    dark: {
-      primary: "#e879f9",
-      secondary: "#f0abfc",
-      background: "#4a044e",
-      foreground: "#fdf4ff",
-      muted: "#f0abfc",
-      card: "#701a75",
-      border: "#86198f",
-      buttonText: "#4a044e",
     },
   },
   {
