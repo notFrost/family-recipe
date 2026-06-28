@@ -9,6 +9,7 @@ import {
   ListOrdered,
   Heart,
   Clock,
+  ArrowRight,
 } from "lucide-react";
 import type { Theme } from "./theme";
 import { recipes } from "./mock-recipes";
@@ -38,11 +39,12 @@ function buildPalette(theme: Theme, isDark: boolean) {
     card: t.card,
     header: t.card,
     border: t.border,
-    navHover: t.border,
     chipBg: `${t.primary}14`,
     primary: t.primary,
     secondary: t.secondary,
     buttonText: t.buttonText,
+    // Warm orange badge/CTA gradient (primary -> secondary).
+    accentGradient: `linear-gradient(135deg, ${t.primary}, ${t.secondary})`,
     // Glassy pills laid over the photo, plus the gradient scrim beneath them.
     // In dark mode the scrim is darker so light type stays legible.
     pillGlass: isDark ? "rgba(255,255,255,0.16)" : "rgba(255,255,255,0.78)",
@@ -65,19 +67,78 @@ function Logo({ palette }: { palette: Palette }) {
       style={{ fontFamily: "var(--font-nunito), system-ui, sans-serif", color: palette.text }}
     >
       <span
-        className="flex h-9 w-9 items-center justify-center rounded-xl text-base transition-colors duration-300"
-        style={{ backgroundColor: palette.primary, color: palette.buttonText }}
+        className="flex h-9 w-9 items-center justify-center rounded-xl text-base shadow-sm transition-all duration-300"
+        style={{ background: palette.accentGradient, color: palette.buttonText }}
       >
-        🍽️
+        🍳
       </span>
       Family Recipe
     </Link>
   );
 }
 
-// One compact glassy stat pill for the on-photo row. Sized down from V11's
-// MediaPill (smaller text + tighter padding, no flex-grow/truncate) so three
-// can share a single non-wrapping line on a narrow card.
+// Header nav item: an "active" page reads as a soft primary-tinted pill;
+// inactive items are muted and warm to that same tint on hover.
+function NavLink({
+  href,
+  active,
+  palette,
+  children,
+}: {
+  href: string;
+  active?: boolean;
+  palette: Palette;
+  children: React.ReactNode;
+}) {
+  return (
+    <Link
+      href={href}
+      aria-current={active ? "page" : undefined}
+      className="rounded-full px-3.5 py-1.5 text-sm font-semibold transition-colors duration-200"
+      style={{
+        color: active ? palette.primary : palette.muted,
+        backgroundColor: active ? palette.chipBg : "transparent",
+      }}
+      onMouseEnter={(e) => {
+        if (!active) e.currentTarget.style.backgroundColor = palette.chipBg;
+      }}
+      onMouseLeave={(e) => {
+        if (!active) e.currentTarget.style.backgroundColor = "transparent";
+      }}
+    >
+      {children}
+    </Link>
+  );
+}
+
+// Footer link: muted, warming to the primary accent on hover.
+function FooterLink({
+  href,
+  palette,
+  external,
+  children,
+}: {
+  href: string;
+  palette: Palette;
+  external?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <a
+      href={href}
+      {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+      className="text-sm transition-colors duration-200"
+      style={{ color: palette.muted }}
+      onMouseEnter={(e) => (e.currentTarget.style.color = palette.primary)}
+      onMouseLeave={(e) => (e.currentTarget.style.color = palette.muted)}
+    >
+      {children}
+    </a>
+  );
+}
+
+// One compact glassy stat pill for the on-photo row. Sized down so three share
+// a single non-wrapping line on a narrow card (icon + number + short unit).
 function StatPill({
   palette,
   icon,
@@ -117,7 +178,7 @@ export default function DiscoverV12({
       }}
     >
       <style jsx global>{`
-        @keyframes v11-reveal {
+        @keyframes v12-reveal {
           from {
             opacity: 0;
             transform: translateY(16px) scale(0.98);
@@ -127,8 +188,8 @@ export default function DiscoverV12({
             transform: translateY(0) scale(1);
           }
         }
-        .v11-fade {
-          animation: v11-reveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+        .v12-fade {
+          animation: v12-reveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
         }
       `}</style>
 
@@ -136,48 +197,42 @@ export default function DiscoverV12({
       <DoodleField color={palette.doodle} />
 
       <header
-        className="sticky top-0 z-50 shadow-sm backdrop-blur transition-colors duration-300"
-        style={{ backgroundColor: `${palette.header}CC` }}
+        className="sticky top-0 z-50 backdrop-blur-md transition-colors duration-300"
+        style={{
+          backgroundColor: `${palette.header}E6`,
+          borderBottom: `1px solid ${palette.border}`,
+        }}
       >
-        <div className="mx-auto flex max-w-6xl items-center justify-between rounded-b-2xl px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-8">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-6">
             <Logo palette={palette} />
-            <nav className="hidden items-center gap-6 md:flex">
-              <Link
-                href="/discover"
-                className="rounded-full px-3 py-1.5 text-sm font-semibold transition-colors duration-300"
-                style={{ color: palette.text }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = palette.navHover)}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
-              >
+            <nav className="hidden items-center gap-1 md:flex">
+              <NavLink href="/discover" active palette={palette}>
                 Discover
-              </Link>
-              <Link
-                href="/families"
-                className="rounded-full px-3 py-1.5 text-sm font-semibold transition-colors duration-300"
-                style={{ color: palette.text }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = palette.navHover)}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
-              >
+              </NavLink>
+              <NavLink href="/families" palette={palette}>
                 Families
-              </Link>
+              </NavLink>
             </nav>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
             <Link
               href="/login"
-              className="hidden rounded-full border-2 px-4 py-2 text-sm font-semibold transition-colors duration-300 hover:brightness-95 sm:inline-flex"
-              style={{ borderColor: palette.primary, color: palette.text }}
+              className="hidden rounded-full px-4 py-2 text-sm font-semibold transition-colors duration-200 sm:inline-flex"
+              style={{ color: palette.muted }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = palette.chipBg)}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
             >
               Log in
             </Link>
             <Link
               href="/signup"
-              className="rounded-full px-4 py-2 text-sm font-semibold shadow-md transition-all duration-300 hover:shadow-lg"
-              style={{ backgroundColor: palette.primary, color: palette.buttonText }}
+              className="group inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-bold shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+              style={{ background: palette.accentGradient, color: palette.buttonText }}
             >
               Sign up
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
             </Link>
           </div>
         </div>
@@ -185,7 +240,7 @@ export default function DiscoverV12({
 
       <main className="relative z-10 flex-1">
         <div className="mx-auto max-w-6xl px-4 pb-14 pt-10 sm:px-6 lg:px-8">
-          <div className="v11-fade mb-7 text-center">
+          <div className="v12-fade mb-7 text-center">
             <p
               className="text-sm font-bold uppercase tracking-[0.2em] transition-colors duration-300"
               style={{ color: palette.primary }}
@@ -211,10 +266,10 @@ export default function DiscoverV12({
           <form
             action="/discover"
             method="get"
-            className="v11-fade mx-auto flex w-full max-w-lg items-center gap-2 rounded-full border p-1.5 shadow-sm transition-colors duration-300"
+            className="v12-fade mx-auto flex w-full max-w-lg items-center gap-2 rounded-full border p-1.5 shadow-sm transition-colors duration-300"
             style={{ borderColor: palette.border, backgroundColor: palette.card }}
           >
-            <label htmlFor="v11-q" className="sr-only">
+            <label htmlFor="v12-q" className="sr-only">
               Search recipes
             </label>
             <div className="relative flex-1">
@@ -223,7 +278,7 @@ export default function DiscoverV12({
                 style={{ color: palette.primary }}
               />
               <input
-                id="v11-q"
+                id="v12-q"
                 name="q"
                 type="search"
                 placeholder="Search recipes…"
@@ -240,7 +295,7 @@ export default function DiscoverV12({
             </button>
           </form>
 
-          <div className="v11-fade mt-5 flex flex-wrap items-center justify-center gap-2">
+          <div className="v12-fade mt-5 flex flex-wrap items-center justify-center gap-2">
             {categories.map((category, index) => {
               const active = index === 0;
               return (
@@ -262,7 +317,7 @@ export default function DiscoverV12({
           </div>
 
           <p
-            className="v11-fade mb-9 mt-6 text-center text-sm font-semibold transition-colors duration-300"
+            className="v12-fade mb-9 mt-6 text-center text-sm font-semibold transition-colors duration-300"
             style={{ color: palette.muted }}
           >
             {recipes.length} recipes from home cooks
@@ -272,7 +327,7 @@ export default function DiscoverV12({
             {recipes.map((recipe, index) => (
               <article
                 key={recipe.id}
-                className="v11-fade group flex flex-col overflow-hidden rounded-2xl shadow-md transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl"
+                className="v12-fade group flex flex-col overflow-hidden rounded-2xl shadow-md transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl"
                 style={{ backgroundColor: palette.card, animationDelay: `${80 + index * 60}ms` }}
               >
                 <div className="relative aspect-[4/3] w-full overflow-hidden rounded-t-2xl">
@@ -298,11 +353,7 @@ export default function DiscoverV12({
                       background: `linear-gradient(to top, ${palette.scrim} 0%, transparent 100%)`,
                     }}
                   />
-                  {/* Single non-wrapping row of three compact glassy stat pills.
-                      flex-nowrap pins them to one line; each pill is shrink-0 +
-                      whitespace-nowrap with tiny text/padding and minimal content
-                      (icon + number + short unit), so the row stays comfortably
-                      inside a ~260px card without wrapping or overflowing. */}
+                  {/* Single non-wrapping row of three compact glassy stat pills. */}
                   <div className="absolute inset-x-3 bottom-3 flex flex-nowrap items-center gap-1.5">
                     <StatPill palette={palette} icon={<ChefHat className="h-3 w-3" />}>
                       {recipe.ingredients.length}
@@ -337,47 +388,61 @@ export default function DiscoverV12({
       </main>
 
       <footer
-        className="relative z-10 py-12 transition-colors duration-300"
-        style={{ backgroundColor: palette.card, color: palette.text }}
+        className="relative z-10 transition-colors duration-300"
+        style={{ backgroundColor: palette.card, borderTop: `1px solid ${palette.border}` }}
       >
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col items-start justify-between gap-8 md:flex-row">
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:px-8">
+          <div className="grid gap-10 md:grid-cols-[1.5fr_1fr_1fr]">
             <div>
               <Logo palette={palette} />
               <p
-                className="mt-3 max-w-xs text-sm leading-relaxed transition-colors duration-300"
+                className="mt-4 max-w-xs text-sm leading-relaxed transition-colors duration-300"
                 style={{ color: palette.muted }}
               >
-                Store your family recipes, discover new ones, and keep your
-                family&apos;s cooking together.
+                Keep your family&apos;s recipes together, discover new ones, and
+                pass them down — even after everyone moves out.
               </p>
             </div>
-            <nav
-              className="flex flex-wrap gap-6 text-sm font-semibold transition-colors duration-300"
-              style={{ color: palette.muted }}
-            >
-              <Link href="/about" className="transition-colors duration-300 hover:text-[inherit]" style={{ color: palette.muted }}>
-                About
-              </Link>
-              <Link href="/discover" className="transition-colors duration-300 hover:text-[inherit]" style={{ color: palette.muted }}>
-                Discover
-              </Link>
-              <a
-                href="https://github.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition-colors duration-300 hover:text-[inherit]"
-                style={{ color: palette.muted }}
+
+            <div>
+              <p
+                className="mb-3 text-[11px] font-bold uppercase tracking-[0.18em] transition-colors duration-300"
+                style={{ color: palette.primary }}
               >
-                GitHub
-              </a>
-            </nav>
+                Cook
+              </p>
+              <ul className="flex flex-col gap-2.5">
+                <li><FooterLink href="/discover" palette={palette}>Discover recipes</FooterLink></li>
+                <li><FooterLink href="/families" palette={palette}>Families</FooterLink></li>
+                <li><FooterLink href="/recipes/new" palette={palette}>Add a recipe</FooterLink></li>
+              </ul>
+            </div>
+
+            <div>
+              <p
+                className="mb-3 text-[11px] font-bold uppercase tracking-[0.18em] transition-colors duration-300"
+                style={{ color: palette.primary }}
+              >
+                More
+              </p>
+              <ul className="flex flex-col gap-2.5">
+                <li><FooterLink href="/about" palette={palette}>About</FooterLink></li>
+                <li><FooterLink href="/signup" palette={palette}>Create account</FooterLink></li>
+                <li><FooterLink href="https://github.com" palette={palette} external>GitHub</FooterLink></li>
+              </ul>
+            </div>
           </div>
+
           <div
-            className="mt-10 border-t pt-6 text-xs transition-colors duration-300"
+            className="mt-12 flex flex-col gap-3 border-t pt-6 text-xs transition-colors duration-300 sm:flex-row sm:items-center sm:justify-between"
             style={{ borderColor: palette.border, color: palette.subtle }}
           >
-            © {new Date().getFullYear()} Family Recipe. All rights reserved.
+            <p>© {new Date().getFullYear()} Family Recipe</p>
+            <p className="flex items-center gap-1.5">
+              Made with
+              <Heart className="h-3.5 w-3.5" fill={palette.primary} style={{ color: palette.primary }} />
+              in the family kitchen
+            </p>
           </div>
         </div>
       </footer>

@@ -1,42 +1,20 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import DiscoverV4 from "@/app/components/design-variants/DiscoverV4";
-import DiscoverV5 from "@/app/components/design-variants/DiscoverV5";
-import DiscoverV6 from "@/app/components/design-variants/DiscoverV6";
-import DiscoverV9 from "@/app/components/design-variants/DiscoverV9";
-import DiscoverV10 from "@/app/components/design-variants/DiscoverV10";
-import DiscoverV11 from "@/app/components/design-variants/DiscoverV11";
+import { useState } from "react";
 import DiscoverV12 from "@/app/components/design-variants/DiscoverV12";
 import VersionPicker from "@/app/components/design-variants/VersionPicker";
 import { DEFAULT_THEME, THEMES, type Theme } from "@/app/components/design-variants/theme";
 
+// Design exploration has converged on a single direction: "Warm & Homey" — V2
+// with single-line stat pills + the doodle wallpaper, on the Amber theme.
 const VARIANTS = [
-  { id: 4, label: "Warm & Homey", Component: DiscoverV4 },
-  { id: 5, label: "Modern Glassmorphism", Component: DiscoverV5 },
-  { id: 6, label: "Hearth", Component: DiscoverV6 },
-  { id: 9, label: "Spread", Component: DiscoverV9 },
-  { id: 10, label: "Warm & Homey V2", Component: DiscoverV10 },
-  { id: 11, label: "Warm & Homey V2 · 2×2 pills", Component: DiscoverV11 },
-  { id: 12, label: "Warm & Homey V2 · 1-line pills", Component: DiscoverV12 },
+  { id: 12, label: "Warm & Homey", Component: DiscoverV12 },
 ] as const;
 
 export default function DiscoverPreviewPage() {
   const [selected, setSelected] = useState<number>(VARIANTS[0].id);
   const [isDark, setIsDark] = useState(false);
   const [theme, setTheme] = useState<Theme>(DEFAULT_THEME);
-
-  const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    const key = Number(e.key);
-    if (key >= 1 && key <= VARIANTS.length) {
-      setSelected(VARIANTS[key - 1].id);
-    }
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [handleKeyDown]);
 
   return (
     <>
