@@ -11,6 +11,7 @@ export interface Recipe {
   authorName?: string | null; // denormalized author display name (null if user has no name)
   visibility: RecipeVisibility;
   familyId?: string | null; // set when visibility === "FAMILY"
+  minutes?: number | null; // total time to make, in minutes (optional)
   createdAt: string; // ISO date string
 }
 

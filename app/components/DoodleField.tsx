@@ -60,8 +60,8 @@ const BASE: Slot[] = (() => {
     for (let x = PITCH / 2; x < TILE; x += PITCH) {
       const size = 32 + rand(bi * 3.1) * 18;
       out.push({
-        x: x + (rand(bi * 1.7) - 0.5) * 22,
-        y: y + (rand(bi * 2.3) - 0.5) * 22,
+        x: x + (rand(bi * 1.7) - 0.5) * 16,
+        y: y + (rand(bi * 2.3) - 0.5) * 16,
         size,
         rot: (rand(bi * 4.4) - 0.5) * 46,
         sw: (2.25 * 24) / size, // bolder stroke on the big doodles
@@ -75,8 +75,8 @@ const BASE: Slot[] = (() => {
     for (let x = 0; x < TILE; x += PITCH) {
       const size = 10 + rand(fi * 3.7 + 9) * 9;
       out.push({
-        x: x + (rand(fi * 1.3 + 9) - 0.5) * 18,
-        y: y + (rand(fi * 2.9 + 9) - 0.5) * 18,
+        x: x + (rand(fi * 1.3 + 9) - 0.5) * 12,
+        y: y + (rand(fi * 2.9 + 9) - 0.5) * 12,
         size,
         rot: (rand(fi * 5.1 + 9) - 0.5) * 80,
         sw: (1.0 * 24) / size, // thinner so the small fillers don't read too dark

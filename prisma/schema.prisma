@@ -49,6 +49,8 @@ model Recipe {
   // PRIVATE before deleting, so SetNull is a safety net).
   familyId    String?
   family      Family?  @relation(fields: [familyId], references: [id], onDelete: SetNull)
+  // Total time to make the recipe, in minutes (optional).
+  minutes     Int?
   createdAt   DateTime @default(now())
 
   @@index([authorId])

@@ -128,6 +128,7 @@ async function main() {
         visibility: recipe.visibility,
         familyId: recipe.familyId ?? null,
         createdAt: new Date(recipe.createdAt),
+        minutes: recipe.minutes ?? null,
       },
     });
   }

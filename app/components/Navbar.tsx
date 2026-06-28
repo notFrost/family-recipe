@@ -16,7 +16,7 @@ export default async function Navbar() {
             href="/"
             className="flex items-center gap-2.5 text-xl font-bold tracking-tight text-foreground"
           >
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-secondary text-base text-primary-foreground shadow-sm">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-base text-primary-foreground shadow-sm">
               🍳
             </span>
             Family Recipe
@@ -52,7 +52,7 @@ export default async function Navbar() {
               </span>
               <Link
                 href="/recipes/new"
-                className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-br from-primary to-secondary px-4 py-2 text-sm font-bold text-primary-foreground shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+                className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-bold text-primary-foreground shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
               >
                 <Plus className="h-4 w-4" />
                 <span className="hidden sm:inline">Add recipe</span>
@@ -69,7 +69,7 @@ export default async function Navbar() {
               </Link>
               <Link
                 href="/signup"
-                className="group inline-flex items-center gap-1.5 rounded-full bg-gradient-to-br from-primary to-secondary px-4 py-2 text-sm font-bold text-primary-foreground shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+                className="group inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-bold text-primary-foreground shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
               >
                 Sign up
                 <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />

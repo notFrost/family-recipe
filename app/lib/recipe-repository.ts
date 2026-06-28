@@ -18,6 +18,7 @@ interface RecipeRowWithAuthor {
   authorId: string;
   visibility: string;
   familyId: string | null;
+  minutes: number | null;
   createdAt: Date;
   author: { name: string | null };
 }
@@ -72,6 +73,7 @@ function toRecipe(row: RecipeRowWithAuthor): Recipe {
     authorName: row.author.name ?? null,
     visibility: row.visibility as RecipeVisibility,
     familyId: row.familyId ?? null,
+    minutes: row.minutes ?? null,
     createdAt: row.createdAt.toISOString(),
   };
 }
@@ -149,6 +151,7 @@ class PrismaRecipeRepository implements RecipeRepository {
         authorId: input.authorId,
         visibility: input.visibility ?? "PRIVATE",
         familyId: input.familyId ?? null,
+        minutes: input.minutes ?? null,
       },
       include: authorInclude,
     });
@@ -190,6 +193,7 @@ class PrismaRecipeRepository implements RecipeRepository {
     if (input.authorId !== undefined) data.authorId = input.authorId;
     if (input.visibility !== undefined) data.visibility = input.visibility;
     if ("familyId" in input) data.familyId = input.familyId ?? null;
+    if ("minutes" in input) data.minutes = input.minutes ?? null;
 
     const row = await prisma.recipe.update({
       where: { id },

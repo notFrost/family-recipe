@@ -41,6 +41,7 @@ export const mockRecipes: Recipe[] = [
     authorName: "Demo Cook",
     visibility: "PUBLIC",
     familyId: null,
+    minutes: 30,
     createdAt: "2024-01-12T09:30:00.000Z",
   },
   {
@@ -69,6 +70,7 @@ export const mockRecipes: Recipe[] = [
     authorName: "Demo Cook",
     visibility: "FAMILY",
     familyId: "family-1",
+    minutes: 25,
     createdAt: "2024-02-03T14:15:00.000Z",
   },
   {
@@ -100,6 +102,7 @@ export const mockRecipes: Recipe[] = [
     authorName: "Demo Cook",
     visibility: "PUBLIC",
     familyId: null,
+    minutes: 50,
     createdAt: "2024-02-20T18:45:00.000Z",
   },
   {
@@ -127,6 +130,7 @@ export const mockRecipes: Recipe[] = [
     authorName: "Demo Cook",
     visibility: "PRIVATE",
     familyId: null,
+    minutes: 20,
     createdAt: "2024-03-08T12:00:00.000Z",
   },
   {
@@ -157,6 +161,7 @@ export const mockRecipes: Recipe[] = [
     authorName: "Demo Cook",
     visibility: "PUBLIC",
     familyId: null,
+    minutes: 35,
     createdAt: "2024-03-22T17:30:00.000Z",
   },
   {
@@ -184,6 +189,7 @@ export const mockRecipes: Recipe[] = [
     authorName: "Demo Cook",
     visibility: "FAMILY",
     familyId: "family-1",
+    minutes: 15,
     createdAt: "2024-04-05T11:10:00.000Z",
   },
   {
@@ -212,6 +218,7 @@ export const mockRecipes: Recipe[] = [
     authorName: "Demo Cook",
     visibility: "PUBLIC",
     familyId: null,
+    minutes: 40,
     createdAt: "2024-04-19T19:25:00.000Z",
   },
   {
@@ -241,6 +248,7 @@ export const mockRecipes: Recipe[] = [
     authorName: "Demo Cook",
     visibility: "PRIVATE",
     familyId: null,
+    minutes: 20,
     createdAt: "2024-05-02T08:05:00.000Z",
   },
 ];

@@ -34,7 +34,7 @@ export default function Footer() {
               href="/"
               className="flex items-center gap-2.5 text-xl font-bold tracking-tight text-foreground"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-secondary text-base text-primary-foreground shadow-sm">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-base text-primary-foreground shadow-sm">
                 🍳
               </span>
               Family Recipe

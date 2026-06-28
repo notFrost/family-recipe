@@ -24,16 +24,16 @@ export default async function FamiliesPage() {
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl">
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
             Families
           </h1>
-          <p className="text-base text-zinc-600">
+          <p className="text-base text-muted-foreground">
             Your shared recipe collections.
           </p>
         </div>
         <Link
           href="/families/new"
-          className="inline-flex items-center gap-1.5 self-start rounded-full bg-zinc-900 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2"
+          className="inline-flex items-center gap-1.5 self-start rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           <span aria-hidden className="text-base leading-none">
             +
@@ -43,9 +43,9 @@ export default async function FamiliesPage() {
       </div>
 
       {familiesWithCounts.length === 0 ? (
-        <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-zinc-300 bg-white py-20 text-center">
-          <p className="text-lg font-medium text-zinc-900">No families yet</p>
-          <p className="text-sm text-zinc-600">
+        <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-card py-20 text-center">
+          <p className="text-lg font-medium text-foreground">No families yet</p>
+          <p className="text-sm text-muted-foreground">
             Create a family to share recipes with your loved ones.
           </p>
         </div>

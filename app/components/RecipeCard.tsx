@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ChefHat, ListOrdered, Heart } from "lucide-react";
+import { ChefHat, ListOrdered, Heart, Clock } from "lucide-react";
 import type { Recipe } from "../lib/types";
 
 interface RecipeCardProps {
@@ -55,6 +55,11 @@ export default function RecipeCard({
           <StatPill icon={<ListOrdered className="h-3 w-3" />}>
             {recipe.steps.length}
           </StatPill>
+          {recipe.minutes != null ? (
+            <StatPill icon={<Clock className="h-3 w-3" />}>
+              {recipe.minutes}m
+            </StatPill>
+          ) : null}
         </div>
       </div>
 

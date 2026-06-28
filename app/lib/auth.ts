@@ -31,6 +31,29 @@ export const auth = betterAuth({
     minPasswordLength: 8,
     password: { hash: hashPassword, verify: verifyPassword },
   },
+  // Social login (Google + Facebook). Each provider is only registered when its
+  // OAuth credentials are present, so the app boots fine without them. To enable
+  // the buttons, set per-environment: GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET and
+  // FACEBOOK_CLIENT_ID / FACEBOOK_CLIENT_SECRET, and add the redirect URI
+  // <BETTER_AUTH_URL>/api/auth/callback/{google|facebook} in each provider's console.
+  socialProviders: {
+    ...(process.env.GOOGLE_CLIENT_ID
+      ? {
+          google: {
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+          },
+        }
+      : {}),
+    ...(process.env.FACEBOOK_CLIENT_ID
+      ? {
+          facebook: {
+            clientId: process.env.FACEBOOK_CLIENT_ID,
+            clientSecret: process.env.FACEBOOK_CLIENT_SECRET ?? "",
+          },
+        }
+      : {}),
+  },
   session: {
     cookieCache: { enabled: true, maxAge: 5 * 60 },
   },

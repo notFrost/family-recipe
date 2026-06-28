@@ -113,14 +113,14 @@ export default function DesignSystemPage() {
 
       <Section title="Buttons">
         <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-card p-8 shadow-md">
-          <button className="group inline-flex items-center gap-1.5 rounded-full bg-gradient-to-br from-primary to-secondary px-4 py-2 text-sm font-bold text-primary-foreground shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
+          <button className="group inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-bold text-primary-foreground shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
             Sign up
             <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
           </button>
           <button className="inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground transition-transform duration-300 hover:scale-105">
             Search
           </button>
-          <button className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-br from-primary to-secondary px-4 py-2 text-sm font-bold text-primary-foreground shadow-md">
+          <button className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-bold text-primary-foreground shadow-md">
             <Plus className="h-4 w-4" /> Add recipe
           </button>
           <button className="inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">

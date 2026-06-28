@@ -61,6 +61,11 @@ function parseRecipeFormData(
   const familyId =
     (formData.get("familyId") as string | null)?.trim() || null;
 
+  const minutesRaw = (formData.get("minutes") as string | null)?.trim();
+  const minutesNum = minutesRaw ? Number.parseInt(minutesRaw, 10) : NaN;
+  const minutes =
+    Number.isFinite(minutesNum) && minutesNum >= 0 ? minutesNum : null;
+
   return {
     title,
     imageUrl,
@@ -70,6 +75,7 @@ function parseRecipeFormData(
     authorId,
     visibility,
     familyId,
+    minutes,
   };
 }
 

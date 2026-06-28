@@ -24,9 +24,15 @@ interface RecipeFormProps {
 }
 
 const inputClasses =
-  "w-full rounded-xl border border-zinc-300 bg-white px-4 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:border-amber-500";
+  "w-full rounded-xl border border-input bg-card px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-ring";
 
-const labelClasses = "text-sm font-medium text-zinc-900";
+const labelClasses = "text-sm font-medium text-foreground";
+
+const minorButtonClasses =
+  "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border bg-card text-lg text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+
+const addButtonClasses =
+  "self-start rounded-full border border-border bg-card px-4 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
 function looksLikeUrl(value: string): boolean {
   try {
@@ -150,7 +156,7 @@ export default function RecipeForm({
       {errors.length > 0 ? (
         <div
           role="alert"
-          className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+          className="rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
         >
           <ul className="list-inside list-disc space-y-1">
             {errors.map((error) => (
@@ -192,7 +198,7 @@ export default function RecipeForm({
           className={inputClasses}
         />
         {showPreview ? (
-          <div className="relative mt-2 aspect-[16/9] w-full max-w-md overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100">
+          <div className="relative mt-2 aspect-[16/9] w-full max-w-md overflow-hidden rounded-xl border border-border bg-muted">
             <Image
               src={imageUrl}
               alt="Image preview"
@@ -205,7 +211,7 @@ export default function RecipeForm({
           </div>
         ) : null}
         {looksLikeUrl(imageUrl) && imagePreviewFailed ? (
-          <p className="text-xs text-zinc-500">
+          <p className="text-xs text-muted-foreground">
             Couldn&apos;t load a preview for that URL.
           </p>
         ) : null}
@@ -226,6 +232,24 @@ export default function RecipeForm({
       </div>
 
       <div className="flex flex-col gap-2">
+        <label htmlFor="minutes" className={labelClasses}>
+          Total time (minutes)
+        </label>
+        <input
+          id="minutes"
+          name="minutes"
+          type="number"
+          min={0}
+          defaultValue={initialRecipe?.minutes ?? ""}
+          placeholder="e.g. 45"
+          className={`${inputClasses} max-w-[10rem]`}
+        />
+        <p className="text-xs text-muted-foreground">
+          Optional — shown as a quick badge on the recipe card.
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-2">
         <label htmlFor="visibility" className={labelClasses}>
           Visibility
         </label>
@@ -243,7 +267,7 @@ export default function RecipeForm({
             Family
           </option>
         </select>
-        <p className="text-xs text-zinc-500">
+        <p className="text-xs text-muted-foreground">
           Private &mdash; only you. Public &mdash; shown on Discover. Unlisted
           &mdash; viewable by link, not listed. Family &mdash; visible to
           members of a family.
@@ -295,7 +319,7 @@ export default function RecipeForm({
                 onClick={() => removeListItem(setIngredients, index)}
                 disabled={ingredients.length === 1}
                 aria-label={`Remove ingredient ${index + 1}`}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-zinc-300 bg-white text-lg text-zinc-500 transition-colors hover:bg-zinc-50 hover:text-zinc-900 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+                className={minorButtonClasses}
               >
                 &times;
               </button>
@@ -305,7 +329,7 @@ export default function RecipeForm({
         <button
           type="button"
           onClick={() => addListItem(setIngredients)}
-          className="self-start rounded-full border border-zinc-300 bg-white px-4 py-1.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2"
+          className={addButtonClasses}
         >
           + Add ingredient
         </button>
@@ -316,7 +340,7 @@ export default function RecipeForm({
         <div className="flex flex-col gap-2">
           {steps.map((step, index) => (
             <div key={index} className="flex items-start gap-2">
-              <span className="mt-2.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-amber-500 text-sm font-semibold text-white">
+              <span className="mt-2.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
                 {index + 1}
               </span>
               <textarea
@@ -334,7 +358,7 @@ export default function RecipeForm({
                 onClick={() => removeListItem(setSteps, index)}
                 disabled={steps.length === 1}
                 aria-label={`Remove step ${index + 1}`}
-                className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-zinc-300 bg-white text-lg text-zinc-500 transition-colors hover:bg-zinc-50 hover:text-zinc-900 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+                className={`${minorButtonClasses} mt-1`}
               >
                 &times;
               </button>
@@ -344,22 +368,22 @@ export default function RecipeForm({
         <button
           type="button"
           onClick={() => addListItem(setSteps)}
-          className="self-start rounded-full border border-zinc-300 bg-white px-4 py-1.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2"
+          className={addButtonClasses}
         >
           + Add step
         </button>
       </fieldset>
 
-      <div className="flex items-center gap-3 border-t border-zinc-200 pt-6">
+      <div className="flex items-center gap-3 border-t border-border pt-6">
         <button
           type="submit"
-          className="inline-flex items-center rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2"
+          className="inline-flex items-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           {submitLabel}
         </button>
         <Link
           href={cancelHref}
-          className="inline-flex items-center rounded-full border border-zinc-300 bg-white px-5 py-2.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2"
+          className="inline-flex items-center rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           Cancel
         </Link>

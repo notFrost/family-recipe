@@ -28,7 +28,7 @@ export default function RemoveMemberButton({
           type="button"
           onClick={handleRemove}
           disabled={isPending}
-          className="text-xs font-medium text-red-600 underline-offset-2 hover:text-red-800 hover:underline disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 rounded"
+          className="text-xs font-medium text-destructive underline-offset-2 hover:text-destructive/80 hover:underline disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded"
         >
           {isPending ? "Removing…" : "Confirm"}
         </button>
@@ -36,7 +36,7 @@ export default function RemoveMemberButton({
           type="button"
           onClick={() => setConfirming(false)}
           disabled={isPending}
-          className="text-xs font-medium text-zinc-400 underline-offset-2 hover:text-zinc-600 hover:underline disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 rounded"
+          className="text-xs font-medium text-muted-foreground underline-offset-2 hover:text-foreground hover:underline disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded"
         >
           Cancel
         </button>
@@ -48,7 +48,7 @@ export default function RemoveMemberButton({
     <button
       type="button"
       onClick={() => setConfirming(true)}
-      className="text-xs font-medium text-zinc-400 underline-offset-2 hover:text-red-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 rounded"
+      className="text-xs font-medium text-muted-foreground underline-offset-2 hover:text-destructive hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded"
     >
       Remove
     </button>

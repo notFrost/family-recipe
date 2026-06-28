@@ -36,23 +36,23 @@ export default async function JoinFamilyPage({ params }: Props) {
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-8">
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl">
+        <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
           Join {family.name}?
         </h1>
-        <p className="text-base text-zinc-600">
+        <p className="text-base text-muted-foreground">
           You&apos;ve been invited to join this family. Once you join,
           you&apos;ll be able to view and contribute family recipes.
         </p>
       </div>
 
-      <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-5 shadow-sm">
+      <div className="rounded-2xl border border-border bg-muted p-5 shadow-sm">
         <div className="flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500 text-lg font-bold text-white">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-lg font-bold text-primary-foreground">
             {family.name.charAt(0).toUpperCase()}
           </span>
           <div className="flex flex-col">
-            <span className="font-semibold text-zinc-900">{family.name}</span>
-            <span className="text-xs text-zinc-500">Family</span>
+            <span className="font-semibold text-foreground">{family.name}</span>
+            <span className="text-xs text-muted-foreground">Family</span>
           </div>
         </div>
       </div>
@@ -60,13 +60,13 @@ export default async function JoinFamilyPage({ params }: Props) {
       <form action={joinAction} className="flex items-center gap-3">
         <button
           type="submit"
-          className="inline-flex items-center rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2"
+          className="inline-flex items-center rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           Join family
         </button>
         <Link
           href="/families"
-          className="inline-flex items-center rounded-full border border-zinc-300 bg-white px-5 py-2.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2"
+          className="inline-flex items-center rounded-full border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           Cancel
         </Link>
