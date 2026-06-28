@@ -461,7 +461,7 @@ export default function DiscoverV5({ isDark }: { isDark?: boolean }) {
                   <div
                     className="absolute inset-0"
                     style={{
-                      background: `linear-gradient(to top, ${palette.cardOverlay}, ${palette.cardOverlay}30, transparent)`,
+                      background: `linear-gradient(to top, ${palette.cardOverlay} 0%, ${palette.cardOverlay}80 20%, transparent 40%)`,
                     }}
                   />
                   <div className="absolute bottom-3 left-3 flex items-center gap-2">
