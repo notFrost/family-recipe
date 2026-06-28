@@ -32,11 +32,13 @@ import { useId } from "react";
 // Big, recognizable food/kitchen doodles on the lattice; small fillers in the gaps.
 const BIG: LucideIcon[] = [
   ChefHat, Soup, Croissant, Pizza, CakeSlice, UtensilsCrossed,
-  Fish, Coffee, Wine, IceCreamCone, Salad, Donut,
+  Fish, Coffee, Wine, IceCreamCone, Salad, Donut, Wheat, Grape,
 ];
+// Fillers stay simple/open shapes — the busy ones (wheat, grape) moved to BIG
+// so they're only ever drawn large, where they don't turn into dark blobs.
 const FILLER: LucideIcon[] = [
-  Apple, Cherry, Cookie, Egg, Carrot, Wheat,
-  Citrus, Grape, Star, Moon, Circle, Sparkle,
+  Apple, Cherry, Cookie, Egg, Carrot,
+  Citrus, Star, Moon, Circle, Sparkle,
 ];
 
 // Deterministic value-noise hash (pure → server/client identical).
@@ -62,7 +64,7 @@ const BASE: Slot[] = (() => {
         y: y + (rand(bi * 2.3) - 0.5) * 22,
         size,
         rot: (rand(bi * 4.4) - 0.5) * 46,
-        sw: (1.25 * 24) / size, // constant ~1.25px visual stroke
+        sw: (2.25 * 24) / size, // bolder stroke on the big doodles
         Icon: BIG[bi % BIG.length],
       });
       bi++;
@@ -77,7 +79,7 @@ const BASE: Slot[] = (() => {
         y: y + (rand(fi * 2.9 + 9) - 0.5) * 18,
         size,
         rot: (rand(fi * 5.1 + 9) - 0.5) * 80,
-        sw: (1.25 * 24) / size,
+        sw: (1.0 * 24) / size, // thinner so the small fillers don't read too dark
         Icon: FILLER[fi % FILLER.length],
       });
       fi++;
