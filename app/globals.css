@@ -52,24 +52,25 @@ body {
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  /* Warm "Amber" light theme. */
+  --background: #fffaf3;
+  --foreground: #3e2723;
+  --card: #ffffff;
+  --card-foreground: #3e2723;
+  --popover: #ffffff;
+  --popover-foreground: #3e2723;
+  --primary: #d97706;
+  --primary-foreground: #ffffff;
+  --secondary: #fdecd8;
+  --secondary-foreground: #7c4a1e;
+  --muted: #f6ece0;
+  --muted-foreground: #8a6f5c;
+  --accent: #fdecd8;
+  --accent-foreground: #b45309;
+  --destructive: #dc2626;
+  --border: #f1e2d0;
+  --input: #ead9c4;
+  --ring: #d97706;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -87,24 +88,25 @@ body {
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  /* Mocha-brown canvas with Amber-orange accent (the dark "Amber"). */
+  --background: #241a12;
+  --foreground: #faf6f1;
+  --card: #3b2417;
+  --card-foreground: #faf6f1;
+  --popover: #3b2417;
+  --popover-foreground: #faf6f1;
+  --primary: #f59e0b;
+  --primary-foreground: #241a12;
+  --secondary: #4a3526;
+  --secondary-foreground: #faf6f1;
+  --muted: #4a3526;
+  --muted-foreground: #d8c3a5;
+  --accent: #4a3526;
+  --accent-foreground: #faf6f1;
+  --destructive: #f87171;
+  --border: #5c4433;
+  --input: #5c4433;
+  --ring: #f59e0b;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);

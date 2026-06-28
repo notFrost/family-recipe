@@ -11,7 +11,7 @@ export default function SignOutButton() {
       type="button"
       disabled={isPending}
       onClick={() => startTransition(() => signOutAction())}
-      className="inline-flex items-center rounded-full border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 hover:text-zinc-900 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2"
+      className="inline-flex items-center rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
     >
       {isPending ? "Signing out…" : "Sign out"}
     </button>
