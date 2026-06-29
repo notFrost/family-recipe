@@ -215,7 +215,7 @@ export function RecipeActionBar({
     layout === "stack"
       ? "flex flex-col gap-2"
       : layout === "dock"
-        ? "flex items-center gap-1.5 rounded-full border border-border bg-card/95 p-1.5 shadow-lg backdrop-blur-md"
+        ? "flex max-w-full flex-wrap items-center justify-center gap-1.5 rounded-3xl border border-border bg-card/95 p-1.5 shadow-lg backdrop-blur-md"
         : "flex flex-wrap items-center gap-2";
 
   return (
@@ -252,7 +252,7 @@ export function RecipeActionBar({
               type="button"
               onClick={a.onClick}
               aria-pressed={a.kind === "secondary" ? a.active : undefined}
-              className={`${buttonClasses(a.kind, !!a.active)} ${isStack || layout === "dock" ? "w-full" : ""} ${layout === "dock" && a.kind === "primary" ? "flex-1" : ""}`}
+              className={`${buttonClasses(a.kind, !!a.active)} ${isStack ? "w-full" : ""}`}
             >
               {a.icon}
               <span>{a.label}</span>
