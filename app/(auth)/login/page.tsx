@@ -2,8 +2,33 @@ import { redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { getSession } from "@/app/lib/auth";
+import { internalPath } from "@/app/lib/safe-redirect";
 import LoginForm from "@/app/components/LoginForm";
 import ThemeToggle from "@/app/components/ThemeToggle";
+
+/**
+ * Map a Better Auth OAuth callback `?error=` code to a friendly message.
+ *
+ * The case that matters here: a user signs in with Google/Facebook but that
+ * email already belongs to an account created a different way (email/password,
+ * or the other provider) and Better Auth won't implicitly link it — the email
+ * isn't verified on the existing account, which is the safe default that stops
+ * an unverified account from being silently taken over. We tell them to sign in
+ * the original way rather than dropping them on a blank/404 error page.
+ */
+function oauthErrorMessage(code: string): string {
+  switch (code) {
+    case "account_not_linked":
+      return "That email is already registered. Please sign in with the method you used originally (email and password, or the other provider).";
+    case "email_doesn't_match":
+    case "account_already_linked_to_different_user":
+      return "That account is already linked to a different user.";
+    case "email_not_found":
+      return "We couldn’t get an email from that provider. Try a different sign-in method.";
+    default:
+      return "We couldn’t sign you in with that provider. Please try again.";
+  }
+}
 
 export default async function LoginPage({
   searchParams,
@@ -13,8 +38,13 @@ export default async function LoginPage({
     redirect("/");
   }
 
-  const { callbackUrl } = await searchParams;
-  const callback = typeof callbackUrl === "string" ? callbackUrl : "/";
+  const { callbackUrl, error } = await searchParams;
+  // Constrain the redirect target to a same-origin path (open-redirect guard).
+  const callback = internalPath(
+    typeof callbackUrl === "string" ? callbackUrl : undefined,
+  );
+  const errorCode = typeof error === "string" ? error : undefined;
+  const errorMessage = errorCode ? oauthErrorMessage(errorCode) : undefined;
 
   return (
     <div className="flex min-h-screen w-full">
@@ -74,7 +104,7 @@ export default async function LoginPage({
           </div>
 
           <div className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
-            <LoginForm callbackUrl={callback} />
+            <LoginForm callbackUrl={callback} initialError={errorMessage} />
           </div>
         </div>
       </div>

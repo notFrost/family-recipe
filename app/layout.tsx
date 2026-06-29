@@ -24,7 +24,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${nunito.variable} h-full antialiased`}>
+    // suppressHydrationWarning: the inline themeScript adds the `dark` class to
+    // <html> before React hydrates, so the server markup (no class) and the
+    // hydrated DOM intentionally differ on this element. Scoped to <html> only.
+    <html
+      lang="en"
+      className={`${nunito.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

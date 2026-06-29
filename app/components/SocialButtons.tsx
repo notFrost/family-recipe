@@ -56,6 +56,11 @@ export default function SocialButtons({
       const res = await authClient.signIn.social({
         provider,
         callbackURL: callbackUrl,
+        // On a callback failure (e.g. the email already belongs to an account
+        // created a different way and Better Auth won't implicitly link it),
+        // land back on /login with a readable `?error=` instead of the
+        // built-in /error page, which this app doesn't have.
+        errorCallbackURL: "/login",
       });
       if (res?.error) setLoading(null);
     } catch {

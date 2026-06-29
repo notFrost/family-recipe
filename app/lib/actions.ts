@@ -6,6 +6,7 @@ import { headers } from "next/headers";
 import { recipeRepository } from "./recipe-repository";
 import { familyRepository } from "./family-repository";
 import { auth, getSession } from "./auth";
+import { internalPath } from "./safe-redirect";
 import { loginRateLimit, signupRateLimit, checkRateLimit } from "./rate-limit";
 import type { Recipe, RecipeVisibility } from "./types";
 
@@ -203,8 +204,11 @@ export async function loginAction(
 
   const email = (formData.get("email") as string | null)?.trim() ?? "";
   const password = (formData.get("password") as string | null) ?? "";
-  const callbackUrl =
-    (formData.get("callbackUrl") as string | null)?.trim() || "/";
+  // The form field is attacker-controllable; constrain it to a same-origin
+  // path so a tampered value can't turn login into an open redirect.
+  const callbackUrl = internalPath(
+    (formData.get("callbackUrl") as string | null)?.trim(),
+  );
 
   if (!email || !password) {
     return { error: "Email and password are required." };

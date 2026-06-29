@@ -52,21 +52,35 @@ const PITCH = 72;
 
 type Slot = { x: number; y: number; size: number; rot: number; sw: number; Icon: LucideIcon };
 
+// Toroidal (wrap-aware) distance between two points within one tile — so a
+// collision check also catches doodles that sit on opposite edges but land on
+// top of each other once the pattern tiles.
+const torusDist = (ax: number, ay: number, bx: number, by: number) => {
+  let dx = Math.abs(ax - bx);
+  dx = Math.min(dx, TILE - dx);
+  let dy = Math.abs(ay - by);
+  dy = Math.min(dy, TILE - dy);
+  return Math.hypot(dx, dy);
+};
+
 // One tile: a big lattice (cell centers) + a filler lattice (the gaps between).
 const BASE: Slot[] = (() => {
   const out: Slot[] = [];
+  const bigSlots: Slot[] = [];
   let bi = 0;
   for (let y = PITCH / 2; y < TILE; y += PITCH) {
     for (let x = PITCH / 2; x < TILE; x += PITCH) {
       const size = 32 + rand(bi * 3.1) * 18;
-      out.push({
+      const slot: Slot = {
         x: x + (rand(bi * 1.7) - 0.5) * 16,
         y: y + (rand(bi * 2.3) - 0.5) * 16,
         size,
         rot: (rand(bi * 4.4) - 0.5) * 46,
         sw: (2.25 * 24) / size, // bolder stroke on the big doodles
         Icon: BIG[bi % BIG.length],
-      });
+      };
+      bigSlots.push(slot);
+      out.push(slot);
       bi++;
     }
   }
@@ -74,15 +88,24 @@ const BASE: Slot[] = (() => {
   for (let y = 0; y < TILE; y += PITCH) {
     for (let x = 0; x < TILE; x += PITCH) {
       const size = 10 + rand(fi * 3.7 + 9) * 9;
-      out.push({
-        x: x + (rand(fi * 1.3 + 9) - 0.5) * 12,
-        y: y + (rand(fi * 2.9 + 9) - 0.5) * 12,
-        size,
-        rot: (rand(fi * 5.1 + 9) - 0.5) * 80,
-        sw: (1.0 * 24) / size, // thinner so the small fillers don't read too dark
-        Icon: FILLER[fi % FILLER.length],
-      });
+      const fx = x + (rand(fi * 1.3 + 9) - 0.5) * 12;
+      const fy = y + (rand(fi * 2.9 + 9) - 0.5) * 12;
       fi++;
+      // De-collision: skip a filler whose center lands inside a big doodle's
+      // glyph radius (wrap-aware) — otherwise the tiny filler reads as a smudge
+      // overlapping the big icon. With the current lattice this drops exactly
+      // one corner filler; every other slot is unchanged.
+      if (bigSlots.some((b) => torusDist(fx, fy, b.x, b.y) < b.size / 2)) {
+        continue;
+      }
+      out.push({
+        x: fx,
+        y: fy,
+        size,
+        rot: (rand((fi - 1) * 5.1 + 9) - 0.5) * 80,
+        sw: (1.0 * 24) / size, // thinner so the small fillers don't read too dark
+        Icon: FILLER[(fi - 1) % FILLER.length],
+      });
     }
   }
   return out;

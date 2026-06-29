@@ -14,22 +14,33 @@ const labelClasses = "text-sm font-medium text-foreground";
 interface LoginFormProps {
   /** Where to redirect after a successful sign-in. */
   callbackUrl?: string;
+  /**
+   * Error to show on first render — used to surface an OAuth callback failure
+   * passed back via `?error=` (e.g. the email is already registered another
+   * way). A subsequent email/password submit overrides it with its own result.
+   */
+  initialError?: string;
 }
 
-export default function LoginForm({ callbackUrl = "/" }: LoginFormProps) {
+export default function LoginForm({
+  callbackUrl = "/",
+  initialError,
+}: LoginFormProps) {
   const [state, action, pending] = useActionState<AuthFormState, FormData>(
     loginAction,
     {},
   );
 
+  const error = state.error ?? initialError;
+
   return (
     <div className="flex flex-col gap-6">
-      {state.error ? (
+      {error ? (
         <div
           role="alert"
           className="rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
         >
-          {state.error}
+          {error}
         </div>
       ) : null}
 
