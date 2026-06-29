@@ -63,5 +63,5 @@ next-env.d.ts
 # claude code — share agents/skills/workflows, keep personal settings local
 .claude/settings.local.json
 
-.vercel
-.env*
+# Local DB backups (contain user data + password hashes — never commit)
+/backups/
