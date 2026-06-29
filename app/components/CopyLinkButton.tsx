@@ -23,7 +23,7 @@ export default function CopyLinkButton({ link }: CopyLinkButtonProps) {
     <button
       type="button"
       onClick={handleCopy}
-      className="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-500 underline-offset-2 hover:text-zinc-700 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 rounded"
+      className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground underline-offset-2 hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded"
     >
       {copied ? "Copied!" : "Copy invite link"}
     </button>

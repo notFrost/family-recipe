@@ -24,7 +24,7 @@ export default function DeleteFamilyButton({ familyId }: DeleteFamilyButtonProps
           type="button"
           onClick={handleDelete}
           disabled={isPending}
-          className="inline-flex items-center rounded-full bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-red-700 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+          className="inline-flex items-center rounded-full bg-destructive px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-destructive/90 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           {isPending ? "Deleting…" : "Confirm delete"}
         </button>
@@ -32,7 +32,7 @@ export default function DeleteFamilyButton({ familyId }: DeleteFamilyButtonProps
           type="button"
           onClick={() => setConfirming(false)}
           disabled={isPending}
-          className="inline-flex items-center rounded-full border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2"
+          className="inline-flex items-center rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           Cancel
         </button>
@@ -44,7 +44,7 @@ export default function DeleteFamilyButton({ familyId }: DeleteFamilyButtonProps
     <button
       type="button"
       onClick={() => setConfirming(true)}
-      className="inline-flex items-center rounded-full border border-red-200 bg-white px-4 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+      className="inline-flex items-center rounded-full border border-destructive/40 bg-card px-4 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
       Delete family
     </button>

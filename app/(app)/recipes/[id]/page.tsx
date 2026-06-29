@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { recipeRepository } from "@/app/lib/recipe-repository";
 import { familyRepository } from "@/app/lib/family-repository";
-import { auth } from "@/app/lib/auth";
+import { getSession } from "@/app/lib/auth";
 import DeleteRecipeButton from "@/app/components/DeleteRecipeButton";
 
 const VISIBILITY_BADGES: Record<
@@ -13,22 +13,22 @@ const VISIBILITY_BADGES: Record<
   PRIVATE: {
     label: "Private",
     className:
-      "bg-zinc-100 text-zinc-700 border-zinc-300",
+      "bg-muted text-muted-foreground border-border",
   },
   UNLISTED: {
     label: "Unlisted",
     className:
-      "bg-amber-50 text-amber-800 border-amber-300",
+      "bg-primary/10 text-primary border-primary/30",
   },
   PUBLIC: {
     label: "Public",
     className:
-      "bg-green-50 text-green-800 border-green-300",
+      "bg-green-50 text-green-800 border-green-300 dark:bg-green-500/20 dark:text-green-300 dark:border-green-500/30",
   },
   FAMILY: {
     label: "Family",
     className:
-      "bg-indigo-100 text-indigo-700 border-indigo-300",
+      "bg-indigo-100 text-indigo-700 border-indigo-300 dark:bg-indigo-500/20 dark:text-indigo-300 dark:border-indigo-500/30",
   },
 };
 
@@ -42,7 +42,7 @@ export default async function RecipeDetailPage({
     notFound();
   }
 
-  const session = await auth();
+  const session = await getSession();
   const isOwner = session?.user?.id === recipe.authorId;
 
   // View-gating: PRIVATE recipes are only visible to the author.
@@ -81,13 +81,13 @@ export default async function RecipeDetailPage({
     <article className="flex flex-col gap-8">
       <Link
         href={backHref}
-        className="inline-flex w-fit items-center gap-1.5 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 rounded"
+        className="inline-flex w-fit items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded"
       >
         <span aria-hidden>&larr;</span>
         {backLabel}
       </Link>
 
-      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100 shadow-sm">
+      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl border border-border bg-muted shadow-sm">
         <Image
           src={recipe.imageUrl}
           alt={recipe.title}
@@ -102,7 +102,7 @@ export default async function RecipeDetailPage({
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex flex-col gap-2">
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl">
+              <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
                 {recipe.title}
               </h1>
               <span
@@ -113,7 +113,7 @@ export default async function RecipeDetailPage({
               {recipe.visibility === "FAMILY" && recipe.familyId && familyName ? (
                 <Link
                   href={`/families/${recipe.familyId}`}
-                  className="text-xs font-medium text-zinc-500 underline-offset-2 hover:text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded"
+                  className="text-xs font-medium text-muted-foreground underline-offset-2 hover:text-indigo-600 dark:hover:text-indigo-400 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
                 >
                   in {familyName}
                 </Link>
@@ -124,7 +124,7 @@ export default async function RecipeDetailPage({
             <div className="flex shrink-0 items-center gap-2">
               <Link
                 href={`/recipes/${recipe.id}/edit`}
-                className="inline-flex items-center rounded-full border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 hover:text-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2"
+                className="inline-flex items-center rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 Edit
               </Link>
@@ -134,30 +134,30 @@ export default async function RecipeDetailPage({
         </div>
 
         {recipe.description ? (
-          <p className="max-w-2xl text-base leading-relaxed text-zinc-600">
+          <p className="max-w-2xl text-base leading-relaxed text-muted-foreground">
             {recipe.description}
           </p>
         ) : null}
 
         {recipe.authorName ? (
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-muted-foreground">
             by{" "}
             <Link
               href={`/u/${recipe.authorId}`}
-              className="font-medium text-zinc-700 underline-offset-2 hover:text-zinc-900 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded"
+              className="font-medium text-foreground underline-offset-2 hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
             >
               {recipe.authorName}
             </Link>
           </p>
         ) : null}
 
-        <div className="flex items-center gap-3 text-xs font-medium text-zinc-500">
+        <div className="flex items-center gap-3 text-xs font-medium text-muted-foreground">
           <span className="inline-flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
             {recipe.ingredients.length}{" "}
             {recipe.ingredients.length === 1 ? "ingredient" : "ingredients"}
           </span>
-          <span aria-hidden className="text-zinc-300">
+          <span aria-hidden className="text-muted-foreground">
             &bull;
           </span>
           <span>
@@ -168,16 +168,16 @@ export default async function RecipeDetailPage({
 
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]">
         <section className="flex flex-col gap-4">
-          <h2 className="text-xl font-semibold tracking-tight text-zinc-900">
+          <h2 className="text-xl font-semibold tracking-tight text-foreground">
             Ingredients
           </h2>
-          <ul className="flex flex-col gap-2 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
+          <ul className="flex flex-col gap-2 rounded-2xl border border-border bg-card p-5 shadow-sm">
             {recipe.ingredients.map((ingredient, index) => (
               <li
                 key={index}
-                className="flex items-start gap-3 text-sm leading-relaxed text-zinc-700"
+                className="flex items-start gap-3 text-sm leading-relaxed text-foreground"
               >
-                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500" />
+                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
                 {ingredient}
               </li>
             ))}
@@ -185,19 +185,19 @@ export default async function RecipeDetailPage({
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="text-xl font-semibold tracking-tight text-zinc-900">
+          <h2 className="text-xl font-semibold tracking-tight text-foreground">
             Steps
           </h2>
           <ol className="flex flex-col gap-4">
             {recipe.steps.map((step, index) => (
               <li
                 key={index}
-                className="flex items-start gap-4 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm"
+                className="flex items-start gap-4 rounded-2xl border border-border bg-card p-5 shadow-sm"
               >
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-500 text-sm font-semibold text-white">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
                   {index + 1}
                 </span>
-                <p className="pt-1 text-sm leading-relaxed text-zinc-700">
+                <p className="pt-1 text-sm leading-relaxed text-foreground">
                   {step}
                 </p>
               </li>

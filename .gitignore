@@ -34,7 +34,6 @@ yarn-error.log*
 *.log
 server-out.txt
 server-err.txt
-
 # env files (can opt-in for committing if needed)
 .env*
 
@@ -60,3 +59,9 @@ next-env.d.ts
 
 # opencode tooling
 .opencode/
+
+# claude code — share agents/skills/workflows, keep personal settings local
+.claude/settings.local.json
+
+# Local DB backups (contain user data + password hashes — never commit)
+/backups/

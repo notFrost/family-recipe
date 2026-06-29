@@ -50,12 +50,34 @@ async function main() {
       email: DEMO_USER.email,
       name: DEMO_USER.name,
       passwordHash,
+      emailVerified: true,
     },
     create: {
       id: DEMO_USER.id,
       email: DEMO_USER.email,
       name: DEMO_USER.name,
       passwordHash,
+      emailVerified: true,
+    },
+  });
+
+  // Better Auth credential account for the demo user: login verifies the
+  // password against Account.password (providerId "credential"), not the
+  // legacy User.passwordHash column.
+  await prisma.account.upsert({
+    where: { id: "account-1" },
+    update: {
+      accountId: DEMO_USER.id,
+      providerId: "credential",
+      userId: DEMO_USER.id,
+      password: passwordHash,
+    },
+    create: {
+      id: "account-1",
+      accountId: DEMO_USER.id,
+      providerId: "credential",
+      userId: DEMO_USER.id,
+      password: passwordHash,
     },
   });
 
@@ -106,6 +128,7 @@ async function main() {
         visibility: recipe.visibility,
         familyId: recipe.familyId ?? null,
         createdAt: new Date(recipe.createdAt),
+        minutes: recipe.minutes ?? null,
       },
     });
   }
