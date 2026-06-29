@@ -38,7 +38,7 @@ const client = createClient({ url, authToken });
 const MIGRATIONS_DIR = join(process.cwd(), "prisma", "migrations");
 
 async function main() {
-  console.log(`Target: ${url.replace(/\?.*$/, "")}`);
+  console.log(`Target: ${url!.replace(/\?.*$/, "")}`);
 
   await client.execute(
     `CREATE TABLE IF NOT EXISTS "_turso_migrations" (
