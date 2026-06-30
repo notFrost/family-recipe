@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, ChefHat, ArrowUpRight } from "lucide-react";
-import ThemeToggle from "./ThemeToggle";
 import { STYLE_META, PAGES } from "./design-variants/styles-meta";
 
 /**
@@ -67,17 +66,14 @@ export default function PreviewSidebar() {
               Style preview
             </span>
           </div>
-          <div className="flex items-center gap-1">
-            <ThemeToggle />
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              aria-label="Close style menu"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-accent hover:text-foreground lg:hidden"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            aria-label="Close style menu"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-accent hover:text-foreground lg:hidden"
+          >
+            <X className="h-4 w-4" />
+          </button>
         </div>
 
         <div className="flex-1 overflow-y-auto px-3 py-4">
