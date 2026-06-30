@@ -19,6 +19,9 @@ interface RecipeRowWithAuthor {
   visibility: string;
   familyId: string | null;
   minutes: number | null;
+  story: string | null;
+  sourceName: string | null;
+  parentRecipeId: string | null;
   createdAt: Date;
   author: { name: string | null };
 }
@@ -38,6 +41,10 @@ export interface RecipeRepository {
   getRecipesByAuthorPublic(authorId: string): Promise<Recipe[]>;
   getPublicRecipes(opts?: { query?: string }): Promise<Recipe[]>;
   getRecipesByFamily(familyId: string): Promise<Recipe[]>;
+  /** Count recipes a user has AUTHORED (used for the free-tier cap). */
+  countByAuthor(authorId: string): Promise<number>;
+  /** Fetch recipes by id, preserving the order of the given ids. */
+  getRecipesByIds(ids: string[]): Promise<Recipe[]>;
   createRecipe(
     input: Omit<Recipe, "id" | "createdAt" | "authorName">,
   ): Promise<Recipe>;
@@ -74,6 +81,9 @@ function toRecipe(row: RecipeRowWithAuthor): Recipe {
     visibility: row.visibility as RecipeVisibility,
     familyId: row.familyId ?? null,
     minutes: row.minutes ?? null,
+    story: row.story ?? null,
+    sourceName: row.sourceName ?? null,
+    parentRecipeId: row.parentRecipeId ?? null,
     createdAt: row.createdAt.toISOString(),
   };
 }
@@ -133,6 +143,21 @@ class PrismaRecipeRepository implements RecipeRepository {
     return rows.map(toRecipe);
   }
 
+  async countByAuthor(authorId: string): Promise<number> {
+    return prisma.recipe.count({ where: { authorId } });
+  }
+
+  async getRecipesByIds(ids: string[]): Promise<Recipe[]> {
+    if (ids.length === 0) return [];
+    const rows = await prisma.recipe.findMany({
+      where: { id: { in: ids } },
+      include: authorInclude,
+    });
+    const byId = new Map(rows.map((r) => [r.id, toRecipe(r)]));
+    // Preserve caller order (e.g. most-recently-favorited first).
+    return ids.map((id) => byId.get(id)).filter((r): r is Recipe => !!r);
+  }
+
   async createRecipe(
     input: Omit<Recipe, "id" | "createdAt" | "authorName">,
   ): Promise<Recipe> {
@@ -152,6 +177,9 @@ class PrismaRecipeRepository implements RecipeRepository {
         visibility: input.visibility ?? "PRIVATE",
         familyId: input.familyId ?? null,
         minutes: input.minutes ?? null,
+        story: input.story ?? null,
+        sourceName: input.sourceName ?? null,
+        parentRecipeId: input.parentRecipeId ?? null,
       },
       include: authorInclude,
     });
@@ -194,6 +222,10 @@ class PrismaRecipeRepository implements RecipeRepository {
     if (input.visibility !== undefined) data.visibility = input.visibility;
     if ("familyId" in input) data.familyId = input.familyId ?? null;
     if ("minutes" in input) data.minutes = input.minutes ?? null;
+    if ("story" in input) data.story = input.story ?? null;
+    if ("sourceName" in input) data.sourceName = input.sourceName ?? null;
+    if ("parentRecipeId" in input)
+      data.parentRecipeId = input.parentRecipeId ?? null;
 
     const row = await prisma.recipe.update({
       where: { id },

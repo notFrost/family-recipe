@@ -5,8 +5,17 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { recipeRepository } from "./recipe-repository";
 import { familyRepository } from "./family-repository";
+import { favoriteRepository } from "./favorite-repository";
+import { shareRepository } from "./share-repository";
+import { inviteRepository } from "./invite-repository";
 import { auth, getSession } from "./auth";
 import { internalPath } from "./safe-redirect";
+import {
+  getUserPlan,
+  authoredRecipeLimit,
+  familyMemberLimit,
+} from "./entitlements";
+import { prisma } from "./prisma";
 import { loginRateLimit, signupRateLimit, checkRateLimit } from "./rate-limit";
 import type { Recipe, RecipeVisibility } from "./types";
 
@@ -67,6 +76,10 @@ function parseRecipeFormData(
   const minutes =
     Number.isFinite(minutesNum) && minutesNum >= 0 ? minutesNum : null;
 
+  const story = (formData.get("story") as string | null)?.trim() || null;
+  const sourceName =
+    (formData.get("sourceName") as string | null)?.trim() || null;
+
   return {
     title,
     imageUrl,
@@ -77,6 +90,8 @@ function parseRecipeFormData(
     visibility,
     familyId,
     minutes,
+    story,
+    sourceName,
   };
 }
 
@@ -96,6 +111,15 @@ async function requireUserId(): Promise<string> {
 export async function createRecipeAction(formData: FormData): Promise<void> {
   // SECURITY: require a session; authorId is the session user, never the form.
   const userId = await requireUserId();
+
+  // GATE: free tier caps how many recipes you can AUTHOR (recipes shared with
+  // you or in your families never count). The /recipes/new page already shows
+  // an upgrade screen at the cap; this is the server-side backstop.
+  const plan = await getUserPlan(userId);
+  const authored = await recipeRepository.countByAuthor(userId);
+  if (authored >= authoredRecipeLimit(plan)) {
+    redirect("/upgrade?reason=recipe-limit");
+  }
 
   const input = parseRecipeFormData(formData, userId);
 
@@ -324,6 +348,18 @@ export async function joinFamilyAction(familyId: string): Promise<void> {
     redirect("/families");
   }
 
+  // GATE: the family-member cap is set by the OWNER's plan, so one premium
+  // organizer lifts it for everyone. Existing members can always re-enter
+  // (idempotent); only NEW members are blocked when the family is full.
+  const alreadyMember = await familyRepository.isMember(familyId, userId);
+  if (!alreadyMember) {
+    const ownerPlan = await getUserPlan(family.ownerId);
+    const memberCount = await familyRepository.getMemberCount(familyId);
+    if (memberCount >= familyMemberLimit(ownerPlan)) {
+      redirect(`/families/${familyId}/join?full=1`);
+    }
+  }
+
   // Idempotent — joining when already a member is a no-op.
   await familyRepository.addMember(familyId, userId);
 
@@ -420,4 +456,191 @@ export async function deleteFamilyAction(familyId: string): Promise<void> {
   revalidatePath("/families");
   revalidatePath("/");
   redirect("/families");
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Sharing, favorites, saving, invites, entitlements                         */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Whether `userId` is allowed to view `recipe` (used before copy/save). Mirrors
+ * the gating on the recipe detail page: PUBLIC/UNLISTED are open, FAMILY needs
+ * membership, PRIVATE is author-only.
+ */
+async function canViewRecipe(
+  recipe: Recipe,
+  userId: string | undefined,
+): Promise<boolean> {
+  if (recipe.visibility === "PUBLIC" || recipe.visibility === "UNLISTED") {
+    return true;
+  }
+  if (recipe.authorId === userId) return true;
+  if (recipe.visibility === "FAMILY" && recipe.familyId && userId) {
+    return familyRepository.isMember(recipe.familyId, userId);
+  }
+  return false;
+}
+
+/** Toggle a favorite for the current user. Returns the new state. */
+export async function toggleFavoriteAction(
+  recipeId: string,
+): Promise<{ favorited: boolean }> {
+  const userId = await requireUserId();
+  const favorited = await favoriteRepository.toggle(userId, recipeId);
+  revalidatePath(`/recipes/${recipeId}`);
+  revalidatePath("/favorites");
+  return { favorited };
+}
+
+/** Owner-only: mint a public share link for a recipe (the "friends" circle). */
+export async function createShareLinkAction(recipeId: string): Promise<void> {
+  const userId = await requireUserId();
+  const recipe = await recipeRepository.getRecipeById(recipeId);
+  if (!recipe || recipe.authorId !== userId) {
+    redirect(`/recipes/${recipeId}`);
+  }
+  await shareRepository.create(recipeId, userId);
+  revalidatePath(`/recipes/${recipeId}`);
+}
+
+/** Owner-only: revoke a previously-created share link. */
+export async function revokeShareLinkAction(
+  linkId: string,
+  recipeId: string,
+): Promise<void> {
+  const userId = await requireUserId();
+  const recipe = await recipeRepository.getRecipeById(recipeId);
+  if (!recipe || recipe.authorId !== userId) {
+    redirect(`/recipes/${recipeId}`);
+  }
+  await shareRepository.revoke(linkId, recipeId);
+  revalidatePath(`/recipes/${recipeId}`);
+}
+
+/**
+ * Save a copy of someone else's recipe into your own box (a "fork"). The copy
+ * starts PRIVATE, records the original via `parentRecipeId`, and attributes the
+ * original cook in `sourceName`. Subject to the authored-recipe cap.
+ */
+export async function saveRecipeCopyAction(recipeId: string): Promise<void> {
+  const userId = await requireUserId();
+  const original = await recipeRepository.getRecipeById(recipeId);
+  if (!original || !(await canViewRecipe(original, userId))) {
+    redirect("/discover");
+  }
+
+  const plan = await getUserPlan(userId);
+  const authored = await recipeRepository.countByAuthor(userId);
+  if (authored >= authoredRecipeLimit(plan)) {
+    redirect("/upgrade?reason=recipe-limit");
+  }
+
+  const created = await recipeRepository.createRecipe({
+    title: original.title,
+    imageUrl: original.imageUrl,
+    description: original.description,
+    ingredients: original.ingredients,
+    steps: original.steps,
+    authorId: userId,
+    visibility: "PRIVATE",
+    familyId: null,
+    minutes: original.minutes ?? null,
+    story: original.story ?? null,
+    sourceName: original.sourceName ?? original.authorName ?? null,
+    parentRecipeId: original.id,
+  });
+
+  revalidatePath("/");
+  redirect(`/recipes/${created.id}`);
+}
+
+/**
+ * Copy a recipe into one of your families (shared with everyone in it). You
+ * must be a member of the target family.
+ */
+export async function addRecipeToFamilyAction(
+  recipeId: string,
+  familyId: string,
+): Promise<void> {
+  const userId = await requireUserId();
+  const original = await recipeRepository.getRecipeById(recipeId);
+  if (!original || !(await canViewRecipe(original, userId))) {
+    redirect("/discover");
+  }
+
+  const isMember = await familyRepository.isMember(familyId, userId);
+  if (!isMember) {
+    redirect(`/recipes/${recipeId}`);
+  }
+
+  const plan = await getUserPlan(userId);
+  const authored = await recipeRepository.countByAuthor(userId);
+  if (authored >= authoredRecipeLimit(plan)) {
+    redirect("/upgrade?reason=recipe-limit");
+  }
+
+  const created = await recipeRepository.createRecipe({
+    title: original.title,
+    imageUrl: original.imageUrl,
+    description: original.description,
+    ingredients: original.ingredients,
+    steps: original.steps,
+    authorId: userId,
+    visibility: "FAMILY",
+    familyId,
+    minutes: original.minutes ?? null,
+    story: original.story ?? null,
+    sourceName: original.sourceName ?? original.authorName ?? null,
+    parentRecipeId: original.id,
+  });
+
+  revalidatePath(`/families/${familyId}`);
+  redirect(`/recipes/${created.id}`);
+}
+
+/** Owner-only: create a shareable invite link for a family. */
+export async function createFamilyInviteAction(
+  familyId: string,
+): Promise<void> {
+  const userId = await requireUserId();
+  const family = await familyRepository.getFamilyById(familyId);
+  if (!family || family.ownerId !== userId) {
+    redirect(`/families/${familyId}`);
+  }
+  await inviteRepository.create(familyId, userId);
+  revalidatePath(`/families/${familyId}`);
+}
+
+/** Owner-only: revoke a family invite link. */
+export async function revokeFamilyInviteAction(
+  inviteId: string,
+  familyId: string,
+): Promise<void> {
+  const userId = await requireUserId();
+  const family = await familyRepository.getFamilyById(familyId);
+  if (!family || family.ownerId !== userId) {
+    redirect(`/families/${familyId}`);
+  }
+  await inviteRepository.revoke(inviteId, familyId);
+  revalidatePath(`/families/${familyId}`);
+}
+
+/**
+ * Beta "upgrade": with no payment processor yet, this simply flips the current
+ * user to PREMIUM so the unlocked experience is testable end-to-end. Stands in
+ * for a future checkout. `downgradePlanAction` exists so both states are easy
+ * to exercise.
+ */
+export async function upgradePlanAction(): Promise<void> {
+  const userId = await requireUserId();
+  await prisma.user.update({ where: { id: userId }, data: { plan: "PREMIUM" } });
+  revalidatePath("/", "layout");
+  redirect("/?upgraded=1");
+}
+
+export async function downgradePlanAction(): Promise<void> {
+  const userId = await requireUserId();
+  await prisma.user.update({ where: { id: userId }, data: { plan: "FREE" } });
+  revalidatePath("/", "layout");
+  redirect("/");
 }

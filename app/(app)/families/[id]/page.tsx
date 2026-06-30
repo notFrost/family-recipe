@@ -8,7 +8,9 @@ import LeaveFamilyButton from "@/app/components/LeaveFamilyButton";
 import DeleteFamilyButton from "@/app/components/DeleteFamilyButton";
 import RemoveMemberButton from "@/app/components/RemoveMemberButton";
 import TransferOwnershipButton from "@/app/components/TransferOwnershipButton";
-import CopyLinkButton from "@/app/components/CopyLinkButton";
+import FamilyInviteSection from "@/app/components/FamilyInviteSection";
+import { inviteRepository } from "@/app/lib/invite-repository";
+import { getUserPlan, familyMemberLimit } from "@/app/lib/entitlements";
 
 // The new family pages haven't been registered by next dev yet, so we define
 // a local PageProps-like contract inline. This mirrors the generated type.
@@ -38,12 +40,15 @@ export default async function FamilyDetailPage({ params }: Props) {
 
   const isOwner = role === "OWNER";
 
-  const [members, recipes] = await Promise.all([
+  const [members, recipes, invites, ownerPlan] = await Promise.all([
     familyRepository.getFamilyMembers(id),
     recipeRepository.getRecipesByFamily(id),
+    isOwner ? inviteRepository.listByFamily(id) : Promise.resolve([]),
+    getUserPlan(family.ownerId),
   ]);
 
-  const invitePath = `/families/${id}/join`;
+  const memberLimit = familyMemberLimit(ownerPlan);
+  const atMemberCap = members.length >= memberLimit;
 
   const memberIds = new Set(members.map((m) => m.userId));
 
@@ -79,24 +84,13 @@ export default async function FamilyDetailPage({ params }: Props) {
         </div>
       </div>
 
-      {/* Owner-only: Invite section */}
+      {/* Owner-only: Invite section (tokenized, revocable links). */}
       {isOwner ? (
-        <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
-          <div className="flex flex-col gap-2">
-            <h2 className="text-sm font-semibold text-foreground">
-              Invite members
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              Share this link with your family so they can join:
-            </p>
-            <div className="flex items-center gap-2">
-              <code className="rounded-lg border border-border bg-muted px-3 py-1.5 text-sm text-foreground">
-                {invitePath}
-              </code>
-              <CopyLinkButton link={invitePath} />
-            </div>
-          </div>
-        </div>
+        <FamilyInviteSection
+          familyId={family.id}
+          invites={invites.map((i) => ({ id: i.id, token: i.token }))}
+          atCap={atMemberCap}
+        />
       ) : null}
 
       {/* Members section */}
@@ -106,7 +100,7 @@ export default async function FamilyDetailPage({ params }: Props) {
             Members
           </h2>
           <span className="text-sm text-muted-foreground">
-            {members.length} {members.length === 1 ? "member" : "members"}
+            {members.length} / {memberLimit} members
           </span>
         </div>
         <ul className="flex flex-col gap-2 rounded-2xl border border-border bg-card p-5 shadow-sm">

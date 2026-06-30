@@ -3,8 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { recipeRepository } from "@/app/lib/recipe-repository";
 import { familyRepository } from "@/app/lib/family-repository";
+import { favoriteRepository } from "@/app/lib/favorite-repository";
+import { shareRepository } from "@/app/lib/share-repository";
 import { getSession } from "@/app/lib/auth";
-import DeleteRecipeButton from "@/app/components/DeleteRecipeButton";
+import RecipePageActions from "@/app/components/RecipePageActions";
 
 const VISIBILITY_BADGES: Record<
   string,
@@ -77,6 +79,19 @@ export default async function RecipeDetailPage({
   const backLabel = isOwner ? "Back to my recipes" : "Back to discover";
   const badge = VISIBILITY_BADGES[recipe.visibility] ?? VISIBILITY_BADGES.PRIVATE;
 
+  // Data for the Actions section.
+  const viewerId = session?.user?.id;
+  const isLoggedIn = !!viewerId;
+  const [isFavorited, viewerFamilies, shareLinks] = await Promise.all([
+    viewerId ? favoriteRepository.isFavorited(viewerId, recipe.id) : Promise.resolve(false),
+    viewerId ? familyRepository.getFamiliesForUser(viewerId) : Promise.resolve([]),
+    isOwner ? shareRepository.listByRecipe(recipe.id) : Promise.resolve([]),
+  ]);
+  const viewerFamiliesForPicker = viewerFamilies.map((f) => ({
+    id: f.id,
+    name: f.name,
+  }));
+
   return (
     <article className="flex flex-col gap-8">
       <Link
@@ -120,17 +135,6 @@ export default async function RecipeDetailPage({
               ) : null}
             </div>
           </div>
-          {isOwner ? (
-            <div className="flex shrink-0 items-center gap-2">
-              <Link
-                href={`/recipes/${recipe.id}/edit`}
-                className="inline-flex items-center rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-              >
-                Edit
-              </Link>
-              <DeleteRecipeButton id={recipe.id} />
-            </div>
-          ) : null}
         </div>
 
         {recipe.description ? (
@@ -148,6 +152,15 @@ export default async function RecipeDetailPage({
             >
               {recipe.authorName}
             </Link>
+            {recipe.sourceName ? (
+              <>
+                {" "}
+                · originally from{" "}
+                <span className="font-medium text-foreground">
+                  {recipe.sourceName}
+                </span>
+              </>
+            ) : null}
           </p>
         ) : null}
 
@@ -165,6 +178,27 @@ export default async function RecipeDetailPage({
           </span>
         </div>
       </header>
+
+      <RecipePageActions
+        recipeId={recipe.id}
+        isOwner={isOwner}
+        isLoggedIn={isLoggedIn}
+        initialFavorited={isFavorited}
+        families={viewerFamiliesForPicker}
+        shareLinks={shareLinks.map((l) => ({ id: l.id, token: l.token }))}
+        editHref={`/recipes/${recipe.id}/edit`}
+      />
+
+      {recipe.story ? (
+        <section className="rounded-2xl border border-primary/30 bg-primary/5 p-5">
+          <h2 className="mb-1.5 text-xs font-bold uppercase tracking-wider text-primary">
+            The story
+          </h2>
+          <p className="whitespace-pre-line text-base leading-relaxed text-foreground">
+            {recipe.story}
+          </p>
+        </section>
+      ) : null}
 
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]">
         <section className="flex flex-col gap-4">

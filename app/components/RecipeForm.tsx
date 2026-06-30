@@ -250,6 +250,39 @@ export default function RecipeForm({
       </div>
 
       <div className="flex flex-col gap-2">
+        <label htmlFor="sourceName" className={labelClasses}>
+          Originally from{" "}
+          <span className="font-normal text-muted-foreground">(optional)</span>
+        </label>
+        <input
+          id="sourceName"
+          name="sourceName"
+          type="text"
+          defaultValue={initialRecipe?.sourceName ?? ""}
+          placeholder="e.g. Grandma Rosa"
+          className={inputClasses}
+        />
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <label htmlFor="story" className={labelClasses}>
+          The story{" "}
+          <span className="font-normal text-muted-foreground">(optional)</span>
+        </label>
+        <textarea
+          id="story"
+          name="story"
+          rows={3}
+          defaultValue={initialRecipe?.story ?? ""}
+          placeholder="The memory behind this dish — who made it, when, why it matters."
+          className={`${inputClasses} resize-y`}
+        />
+        <p className="text-xs text-muted-foreground">
+          What turns a recipe into an heirloom. Shown on the recipe page.
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-2">
         <label htmlFor="visibility" className={labelClasses}>
           Visibility
         </label>

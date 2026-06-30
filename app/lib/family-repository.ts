@@ -35,6 +35,7 @@ export interface FamilyRepository {
   createFamily(input: { name: string; ownerId: string }): Promise<Family>;
   getFamilyMembers(familyId: string): Promise<FamilyMember[]>;
   getMemberRole(familyId: string, userId: string): Promise<FamilyRole | null>;
+  getMemberCount(familyId: string): Promise<number>;
   isMember(familyId: string, userId: string): Promise<boolean>;
   addMember(familyId: string, userId: string): Promise<FamilyMember>;
   removeMember(familyId: string, userId: string): Promise<boolean>;
@@ -125,6 +126,10 @@ class PrismaFamilyRepository implements FamilyRepository {
       where: { familyId_userId: { familyId, userId } },
     });
     return row ? (row.role as FamilyRole) : null;
+  }
+
+  async getMemberCount(familyId: string): Promise<number> {
+    return prisma.familyMember.count({ where: { familyId } });
   }
 
   async isMember(familyId: string, userId: string): Promise<boolean> {

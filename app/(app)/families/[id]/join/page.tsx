@@ -9,7 +9,7 @@ type Props = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-export default async function JoinFamilyPage({ params }: Props) {
+export default async function JoinFamilyPage({ params, searchParams }: Props) {
   const { id } = await params;
 
   const session = await getSession();
@@ -30,6 +30,9 @@ export default async function JoinFamilyPage({ params }: Props) {
   if (existingRole) {
     redirect(`/families/${id}`);
   }
+
+  // The family-member cap (set by the owner's plan) was hit at join time.
+  const isFull = (await searchParams).full === "1";
 
   const joinAction = joinFamilyAction.bind(null, id);
 
@@ -57,20 +60,39 @@ export default async function JoinFamilyPage({ params }: Props) {
         </div>
       </div>
 
-      <form action={joinAction} className="flex items-center gap-3">
-        <button
-          type="submit"
-          className="inline-flex items-center rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-        >
-          Join family
-        </button>
-        <Link
-          href="/families"
-          className="inline-flex items-center rounded-full border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-        >
-          Cancel
-        </Link>
-      </form>
+      {isFull ? (
+        <div className="flex flex-col gap-3">
+          <p
+            role="alert"
+            className="rounded-xl border border-border bg-secondary px-4 py-3 text-sm font-medium text-secondary-foreground"
+          >
+            This family is full — it&apos;s reached the member limit on its
+            current plan. Ask the family organizer to make room (the owner can
+            upgrade to raise the limit), then try again.
+          </p>
+          <Link
+            href="/families"
+            className="inline-flex w-fit items-center rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-accent"
+          >
+            Back to families
+          </Link>
+        </div>
+      ) : (
+        <form action={joinAction} className="flex items-center gap-3">
+          <button
+            type="submit"
+            className="inline-flex items-center rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          >
+            Join family
+          </button>
+          <Link
+            href="/families"
+            className="inline-flex items-center rounded-full border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          >
+            Cancel
+          </Link>
+        </form>
+      )}
     </div>
   );
 }

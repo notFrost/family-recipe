@@ -30,12 +30,20 @@ export default async function Navbar() {
               Discover
             </Link>
             {user ? (
-              <Link
-                href="/families"
-                className="rounded-full px-3.5 py-1.5 text-sm font-semibold text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-              >
-                Families
-              </Link>
+              <>
+                <Link
+                  href="/families"
+                  className="rounded-full px-3.5 py-1.5 text-sm font-semibold text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                >
+                  Families
+                </Link>
+                <Link
+                  href="/favorites"
+                  className="rounded-full px-3.5 py-1.5 text-sm font-semibold text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                >
+                  Favorites
+                </Link>
+              </>
             ) : null}
           </nav>
         </div>

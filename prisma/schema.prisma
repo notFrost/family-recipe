@@ -51,7 +51,19 @@ model Recipe {
   family      Family?  @relation(fields: [familyId], references: [id], onDelete: SetNull)
   // Total time to make the recipe, in minutes (optional).
   minutes     Int?
+  // "Soul" fields: the story/memory behind the recipe and who it came from
+  // (e.g. "Grandma Rosa"). Free-text, optional — this is what makes a recipe
+  // an heirloom rather than just instructions.
+  story       String?
+  sourceName  String?
+  // Lineage: when a recipe is saved/forked from another, this points at the
+  // original recipe id (kept loose — no FK — so the copy survives if the
+  // original is deleted). Powers "Saved from …" attribution.
+  parentRecipeId String?
   createdAt   DateTime @default(now())
+
+  favorites   Favorite[]
+  shareLinks  ShareLink[]
 
   @@index([authorId])
   @@index([visibility])
@@ -81,6 +93,10 @@ model User {
   // Better Auth fields.
   emailVerified Boolean @default(false)
   image         String?
+  // Entitlement tier: "FREE" | "PREMIUM". Drives feature gates (authored-recipe
+  // cap, family-member cap). No payment processor yet — the beta "Upgrade"
+  // action just flips this flag, standing in for a future checkout.
+  plan         String   @default("FREE")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt @default(now())
 
@@ -89,6 +105,7 @@ model User {
   families      FamilyMember[] @relation("FamilyMembership")
   sessions      Session[]
   accounts      Account[]
+  favorites     Favorite[]
 }
 
 // Better Auth: active sessions. A signed cookie cache (see app/lib/auth.ts)
@@ -148,6 +165,7 @@ model Family {
   createdAt DateTime @default(now())
   members   FamilyMember[]
   recipes   Recipe[]
+  invites   FamilyInvite[]
 
   @@index([ownerId])
 }
@@ -164,4 +182,48 @@ model FamilyMember {
 
   @@unique([familyId, userId])
   @@index([userId])
+}
+
+// A user's favorited recipe. Favoriting is free and never counts against any
+// cap — only recipes you AUTHOR count toward the free tier limit.
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipeId  String
+  recipe    Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, recipeId])
+  @@index([userId])
+  @@index([recipeId])
+}
+
+// A tokenized share link for the "friends" circle: anyone with the link can
+// view the recipe via /r/<token>, regardless of its visibility. Revoking = deleting
+// the row. createdById is denormalized (no FK) for a lightweight audit trail.
+model ShareLink {
+  id          String   @id @default(cuid())
+  token       String   @unique
+  recipeId    String
+  recipe      Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  createdById String
+  createdAt   DateTime @default(now())
+
+  @@index([recipeId])
+}
+
+// A tokenized invite to join a family via /families/<id>/join?token=<token>.
+// Single-use is enforced at accept time (idempotent membership upsert), and the
+// link can be revoked by deleting the row.
+model FamilyInvite {
+  id          String   @id @default(cuid())
+  token       String   @unique
+  familyId    String
+  family      Family   @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  role        String   @default("MEMBER")
+  createdById String
+  createdAt   DateTime @default(now())
+
+  @@index([familyId])
 }

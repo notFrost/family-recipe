@@ -12,7 +12,29 @@ export interface Recipe {
   visibility: RecipeVisibility;
   familyId?: string | null; // set when visibility === "FAMILY"
   minutes?: number | null; // total time to make, in minutes (optional)
+  // "Soul" fields — the memory behind the dish and who it came from.
+  story?: string | null;
+  sourceName?: string | null;
+  // Lineage: the recipe id this was saved/forked from (null if original).
+  parentRecipeId?: string | null;
   createdAt: string; // ISO date string
+}
+
+/** A tokenized public share link for a recipe (the "friends" sharing circle). */
+export interface ShareLink {
+  id: string;
+  token: string;
+  recipeId: string;
+  createdAt: string; // ISO
+}
+
+/** A tokenized invite to join a family. */
+export interface FamilyInvite {
+  id: string;
+  token: string;
+  familyId: string;
+  role: FamilyRole;
+  createdAt: string; // ISO
 }
 
 export interface Family {
