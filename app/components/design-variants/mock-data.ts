@@ -196,6 +196,8 @@ export interface VariantFamily {
   name: string;
   /** Short blurb shown on some layouts. */
   blurb: string;
+  /** A family banner/cover photo, for layouts that lead with an image. */
+  coverImageUrl: string;
   members: VariantFamilyMember[];
   /** Member cap from the owner's plan (free = 5) — drives the "x / y" display. */
   memberLimit: number;
@@ -223,6 +225,7 @@ export const mockFamily: VariantFamily = {
   id: "family-okafor",
   name: "The Okafor Kitchen",
   blurb: "Three generations, one pot of stew that never quite tastes the same twice.",
+  coverImageUrl: img("photo-1556910103-1c02745aae4d"),
   members: [
     member("m-amara", "Amara Okafor", "photo-1438761681033-6461ffad8d80", "OWNER"),
     member("m-tobi", "Tobi Okafor", "photo-1500648767791-00dcc994a43e", "MEMBER"),
@@ -239,6 +242,37 @@ export const mockFamily: VariantFamily = {
   ],
   inviteToken: "fK3pQ8vWnT2xLmR9",
   isOwner: true,
+};
+
+/**
+ * The signed-in user, for the Settings page (their own account — distinct from
+ * the public Profile, which is how others see them).
+ */
+export interface VariantViewer {
+  name: string;
+  email: string;
+  avatarUrl: string;
+  bio: string;
+  location: string;
+  plan: "FREE" | "PREMIUM";
+  recipeCount: number;
+  authoredRecipeLimit: number;
+  families: { id: string; name: string; role: "OWNER" | "MEMBER" }[];
+}
+
+export const mockViewer: VariantViewer = {
+  name: "Amara Okafor",
+  email: "amara@okafor.family",
+  avatarUrl: mockProfile.avatarUrl,
+  bio: mockProfile.bio,
+  location: mockProfile.location,
+  plan: "FREE",
+  recipeCount: 24,
+  authoredRecipeLimit: 30,
+  families: [
+    { id: "family-okafor", name: "The Okafor Kitchen", role: "OWNER" },
+    { id: "family-supper", name: "Sunday Supper Club", role: "MEMBER" },
+  ],
 };
 
 /** Quick-stat helpers some variants want pre-computed. */

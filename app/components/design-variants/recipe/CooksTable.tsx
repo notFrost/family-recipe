@@ -1,12 +1,5 @@
 import Image from "next/image";
-import {
-  ArrowLeft,
-  Clock,
-  Flame,
-  Users,
-  Heart,
-  Quote,
-} from "lucide-react";
+import { ArrowLeft, Clock, Flame, Users, Quote } from "lucide-react";
 import { RecipeActionBar } from "../actions";
 import type { VariantRecipe, ViewerRole } from "../mock-data";
 
@@ -38,48 +31,41 @@ export default function CooksTable({
         Back to discover
       </button>
 
-      {/* Cook spotlight — the person is the hero. */}
-      <header className="flex flex-col items-center gap-5 rounded-3xl border border-border bg-card p-6 text-center shadow-sm sm:flex-row sm:gap-6 sm:p-8 sm:text-left">
-        <Image
-          src={recipe.authorAvatarUrl}
-          alt={recipe.authorName}
-          width={112}
-          height={112}
-          className="h-24 w-24 shrink-0 rounded-full object-cover ring-4 ring-primary/20 sm:h-28 sm:w-28"
-        />
-        <div className="flex flex-col gap-1.5">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
-            Shared by
-          </p>
-          <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-            {recipe.authorName}
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            {recipe.familyName ? `in ${recipe.familyName}` : "Independent kitchen"}
-            {recipe.sourceName ? (
-              <>
-                {" · "}
-                a recipe from{" "}
-                <span className="font-semibold text-foreground">
-                  {recipe.sourceName}
-                </span>
-              </>
-            ) : null}
-          </p>
-          <p className="mt-1 inline-flex items-center justify-center gap-1.5 text-sm font-semibold text-muted-foreground sm:justify-start">
-            <Heart className="h-4 w-4 fill-primary text-primary" />
-            Loved {recipe.favoriteCount} times
-          </p>
-        </div>
-      </header>
-
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
         <span className="text-sm font-bold uppercase tracking-[0.18em] text-primary">
           {recipe.cuisine} · {recipe.difficulty}
         </span>
         <h1 className="text-4xl font-extrabold leading-[1.05] tracking-tight text-foreground sm:text-5xl">
           {recipe.title}
         </h1>
+
+        {/* Prominent byline — the cook stays front and center even without the
+            full spotlight card. */}
+        <div className="mt-1 flex items-center gap-3">
+          <Image
+            src={recipe.authorAvatarUrl}
+            alt={recipe.authorName}
+            width={52}
+            height={52}
+            className="h-12 w-12 shrink-0 rounded-full object-cover ring-2 ring-primary/25"
+          />
+          <div className="flex flex-col leading-tight">
+            <span className="text-lg font-extrabold tracking-tight text-foreground">
+              {recipe.authorName}
+            </span>
+            <span className="text-sm text-muted-foreground">
+              {recipe.familyName ? `in ${recipe.familyName}` : "Independent kitchen"}
+              {recipe.sourceName ? (
+                <>
+                  {" · "}from{" "}
+                  <span className="font-semibold text-foreground">
+                    {recipe.sourceName}
+                  </span>
+                </>
+              ) : null}
+            </span>
+          </div>
+        </div>
       </div>
 
       <div className="relative aspect-[16/9] w-full overflow-hidden rounded-3xl border border-border bg-muted shadow-md">

@@ -46,7 +46,12 @@ export default function StickyCookRail({
           room it needs for generously-set steps. */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,360px)_minmax(0,1fr)] lg:gap-10">
         {/* ── LEFT: the sticky cook's rail ───────────────────────────── */}
-        <aside className="lg:sticky lg:top-24 lg:self-start">
+        {/* Capped to the viewport and internally scrollable so the whole rail
+            (incl. the action stack at its foot) is always reachable — a tall
+            rail otherwise only revealed its bottom at the very end of the page
+            scroll, which read as a jump. top-20 clears the sticky Navbar. */}
+        <aside className="lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:self-start lg:overflow-y-auto lg:overflow-x-hidden lg:pr-1">
+
           <div className="flex flex-col gap-5 rounded-3xl border border-border bg-card p-5 shadow-md">
             {/* Compact thumbnail with a glassy classification chip. */}
             <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-border">
