@@ -122,6 +122,11 @@ export default function SplitPortrait({
             <span className="text-sm font-semibold text-foreground">
               {recipe.authorName}
             </span>
+            {recipe.sourceName ? (
+              <span className="text-sm text-muted-foreground">
+                · from {recipe.sourceName}
+              </span>
+            ) : null}
           </div>
 
           <p className="text-base leading-relaxed text-muted-foreground">
@@ -201,14 +206,16 @@ export default function SplitPortrait({
             ))}
           </ul>
 
-          <div className="mt-6 rounded-2xl border border-primary/30 bg-primary/5 p-4">
-            <h3 className="mb-1.5 text-xs font-bold uppercase tracking-wider text-primary">
-              Cook&apos;s note
-            </h3>
-            <p className="text-sm leading-relaxed text-foreground">
-              {recipe.cooksNote}
-            </p>
-          </div>
+          {recipe.story ? (
+            <div className="mt-6 rounded-2xl border border-primary/30 bg-primary/5 p-4">
+              <h3 className="mb-1.5 text-xs font-bold uppercase tracking-wider text-primary">
+                The story
+              </h3>
+              <p className="whitespace-pre-line text-sm leading-relaxed text-foreground">
+                {recipe.story}
+              </p>
+            </div>
+          ) : null}
         </section>
 
         {/* Steps — numbered, generously set. */}

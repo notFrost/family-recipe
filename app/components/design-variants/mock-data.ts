@@ -54,8 +54,14 @@ export interface VariantRecipe {
   favoriteCount: number;
   savedCount: number;
 
-  /** A short personal note from the cook — used by some variants. */
+  /** A short personal note / tip from the cook — used by some variants. */
   cooksNote: string;
+  /**
+   * The "soul" fields (now real features): the memory behind the dish and who
+   * it came from. `sourceName` powers "originally from …" attribution.
+   */
+  story: string | null;
+  sourceName: string | null;
   createdAt: string; // ISO
 }
 
@@ -123,6 +129,9 @@ export const mockRecipe: VariantRecipe = {
   savedCount: 96,
   cooksNote:
     "Don't skip the char on the chicken — a screaming-hot pan does more for this dish than any single spice.",
+  story:
+    "Grandma Nkechi made this whenever someone came home from a long trip — the smell of it at the door was how you knew you'd been missed. She never measured a thing; this is the closest I've gotten to her hand.",
+  sourceName: "Grandma Nkechi",
   createdAt: "2026-02-20T18:45:00.000Z",
 };
 
@@ -173,6 +182,63 @@ export const mockProfile: VariantProfile = {
   familyCount: 2,
   favoritesReceived: 1280,
   recipes: profileRecipes,
+};
+
+export interface VariantFamilyMember {
+  id: string;
+  name: string;
+  avatarUrl: string;
+  role: "OWNER" | "MEMBER";
+}
+
+export interface VariantFamily {
+  id: string;
+  name: string;
+  /** Short blurb shown on some layouts. */
+  blurb: string;
+  members: VariantFamilyMember[];
+  /** Member cap from the owner's plan (free = 5) — drives the "x / y" display. */
+  memberLimit: number;
+  recipes: VariantRecipe[];
+  /** The tokenized invite link (the real family-invite feature). */
+  inviteToken: string;
+  /** Whether the viewer owns the family (shows invite + manage controls). */
+  isOwner: boolean;
+}
+
+const member = (
+  id: string,
+  name: string,
+  avatarId: string,
+  role: "OWNER" | "MEMBER",
+): VariantFamilyMember => ({
+  id,
+  name,
+  avatarUrl: `https://images.unsplash.com/${avatarId}?w=200&q=80&auto=format&fit=crop`,
+  role,
+});
+
+/** The family used by every family-page variant. */
+export const mockFamily: VariantFamily = {
+  id: "family-okafor",
+  name: "The Okafor Kitchen",
+  blurb: "Three generations, one pot of stew that never quite tastes the same twice.",
+  members: [
+    member("m-amara", "Amara Okafor", "photo-1438761681033-6461ffad8d80", "OWNER"),
+    member("m-tobi", "Tobi Okafor", "photo-1500648767791-00dcc994a43e", "MEMBER"),
+    member("m-zola", "Zola Okafor", "photo-1494790108377-be9c29b29330", "MEMBER"),
+    member("m-deji", "Deji Okafor", "photo-1507003211169-0a1dd7228f2d", "MEMBER"),
+  ],
+  memberLimit: 5,
+  recipes: [
+    mockRecipe,
+    gridRecipe("rf-jollof", "Sunday Jollof Rice", "photo-1604329760661-e71dc83f8f26", "West African", 75, 9, 6, "FAMILY"),
+    gridRecipe("rf-stew", "Grandma's Pepper Stew", "photo-1455619452474-d2be8b1e70cd", "West African", 90, 8, 5, "FAMILY"),
+    gridRecipe("rf-puffpuff", "Puff-Puff", "photo-1551024601-bec78aea704b", "West African", 40, 6, 4, "FAMILY"),
+    gridRecipe("rf-pancakes", "Saturday Pancakes", "photo-1528207776546-365bb710ee93", "American", 20, 7, 5, "FAMILY"),
+  ],
+  inviteToken: "fK3pQ8vWnT2xLmR9",
+  isOwner: true,
 };
 
 /** Quick-stat helpers some variants want pre-computed. */

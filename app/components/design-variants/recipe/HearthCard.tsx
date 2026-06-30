@@ -92,6 +92,11 @@ export default function HearthCard({
           <span className="text-sm font-semibold text-foreground">
             {recipe.authorName}
           </span>
+          {recipe.sourceName ? (
+            <span className="text-sm text-muted-foreground">
+              · from {recipe.sourceName}
+            </span>
+          ) : null}
           {recipe.familyName ? (
             <>
               <span aria-hidden className="text-border">
@@ -131,6 +136,18 @@ export default function HearthCard({
         <span className="text-base">✦</span>
         <span className="h-px flex-1 bg-border" />
       </div>
+
+      {/* The story — the heirloom memory, front and center in the keepsake. */}
+      {recipe.story ? (
+        <section className="w-full rounded-2xl border border-primary/30 bg-primary/5 p-6 text-center">
+          <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-primary">
+            The story
+          </h3>
+          <p className="mx-auto max-w-prose text-pretty whitespace-pre-line text-sm leading-relaxed text-foreground">
+            {recipe.story}
+          </p>
+        </section>
+      ) : null}
 
       {/* Ingredients: one warm card, two-column checklist. */}
       <section className="w-full rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-7">

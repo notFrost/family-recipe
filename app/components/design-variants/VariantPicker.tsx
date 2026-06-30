@@ -27,7 +27,7 @@ export function VariantPicker({
   role,
   onRoleChange,
 }: {
-  kind: "recipe" | "user";
+  kind: "recipe" | "user" | "family";
   variants: VariantMeta[];
   activeIndex: number;
   onSelect: (index: number) => void;
@@ -57,6 +57,12 @@ export function VariantPicker({
                 className={`rounded-full px-3 py-1 text-xs font-bold transition-colors ${kind === "user" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
               >
                 User page
+              </Link>
+              <Link
+                href="/preview/family"
+                className={`rounded-full px-3 py-1 text-xs font-bold transition-colors ${kind === "family" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                Family page
               </Link>
             </div>
           </div>

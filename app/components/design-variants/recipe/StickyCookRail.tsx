@@ -78,6 +78,9 @@ export default function StickyCookRail({
                 <span className="text-sm font-semibold text-muted-foreground">
                   by{" "}
                   <span className="text-foreground">{recipe.authorName}</span>
+                  {recipe.sourceName ? (
+                    <span className="font-normal"> · from {recipe.sourceName}</span>
+                  ) : null}
                 </span>
               </div>
             </div>

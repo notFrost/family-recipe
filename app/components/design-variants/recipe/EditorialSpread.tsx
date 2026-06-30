@@ -84,6 +84,7 @@ export default function EditorialSpread({
             />
             <span className="text-sm font-semibold text-white/90">
               by {recipe.authorName}
+              {recipe.sourceName ? ` · from ${recipe.sourceName}` : ""}
             </span>
           </div>
         </div>
@@ -108,6 +109,17 @@ export default function EditorialSpread({
       <p className="max-w-3xl text-lg leading-relaxed text-muted-foreground">
         {recipe.description}
       </p>
+
+      {recipe.story ? (
+        <section className="rounded-2xl border border-primary/30 bg-primary/5 p-5">
+          <h2 className="mb-1.5 text-xs font-bold uppercase tracking-wider text-primary">
+            The story
+          </h2>
+          <p className="max-w-3xl whitespace-pre-line text-base leading-relaxed text-foreground">
+            {recipe.story}
+          </p>
+        </section>
+      ) : null}
 
       {/* Asymmetric spread: narrow ingredients, wide steps. */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.7fr)]">

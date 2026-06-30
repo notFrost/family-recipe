@@ -88,7 +88,9 @@ export default function ImmersiveOverlap({
               {recipe.authorName}
             </span>
             <span className="text-xs text-muted-foreground">
-              {recipe.familyName ?? "Independent kitchen"}
+              {recipe.sourceName
+                ? `originally from ${recipe.sourceName}`
+                : recipe.familyName ?? "Independent kitchen"}
             </span>
           </div>
         </div>
@@ -164,14 +166,16 @@ export default function ImmersiveOverlap({
             ))}
           </ul>
 
-          <div className="rounded-2xl border border-primary/30 bg-primary/5 p-5">
-            <h3 className="mb-1.5 text-xs font-bold uppercase tracking-wider text-primary">
-              Cook&apos;s note
-            </h3>
-            <p className="text-sm leading-relaxed text-foreground">
-              {recipe.cooksNote}
-            </p>
-          </div>
+          {recipe.story ? (
+            <div className="rounded-2xl border border-primary/30 bg-primary/5 p-5">
+              <h3 className="mb-1.5 text-xs font-bold uppercase tracking-wider text-primary">
+                The story
+              </h3>
+              <p className="whitespace-pre-line text-sm leading-relaxed text-foreground">
+                {recipe.story}
+              </p>
+            </div>
+          ) : null}
         </section>
 
         <section className="flex flex-col gap-4">
