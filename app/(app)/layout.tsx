@@ -1,18 +1,12 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import DoodleField from "../components/DoodleField";
-import PreviewFab from "../components/PreviewFab";
 
 export default function AppLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // Show the design-preview shortcut everywhere EXCEPT the production
-  // deployment (so real users never see it). VERCEL_ENV is "production" only on
-  // the prod deployment; "preview" on branch builds; undefined locally.
-  const showPreviewFab = process.env.VERCEL_ENV !== "production";
-
   return (
     <>
       {/* Faint food-doodle wallpaper, fixed behind every page. */}
@@ -22,7 +16,6 @@ export default function AppLayout({
         {children}
       </main>
       <Footer />
-      {showPreviewFab ? <PreviewFab /> : null}
     </>
   );
 }

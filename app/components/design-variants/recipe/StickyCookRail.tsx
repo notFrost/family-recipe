@@ -50,7 +50,7 @@ export default function StickyCookRail({
             (incl. the action stack at its foot) is always reachable — a tall
             rail otherwise only revealed its bottom at the very end of the page
             scroll, which read as a jump. top-20 clears the sticky Navbar. */}
-        <aside className="lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:self-start lg:overflow-y-auto lg:overflow-x-hidden lg:pr-1">
+        <aside className="no-scrollbar lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:self-start lg:overflow-y-auto lg:overflow-x-hidden">
 
           <div className="flex flex-col gap-5 rounded-3xl border border-border bg-card p-5 shadow-md">
             {/* Compact thumbnail with a glassy classification chip. */}

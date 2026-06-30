@@ -133,3 +133,15 @@ body {
     @apply font-sans;
   }
 }
+
+@layer utilities {
+  /* Scrollable without a visible scrollbar (used by the sticky cook-rail so its
+     footer stays reachable without showing a bar). */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}

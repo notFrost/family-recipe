@@ -4,7 +4,17 @@ import CooksTable from "./recipe/CooksTable";
 import StickyCookRail from "./recipe/StickyCookRail";
 import CoverBanner from "./user/CoverBanner";
 import ProfileRail from "./user/ProfileRail";
-import Placeholder from "./Placeholder";
+import HomesteadFamily from "./styles/homestead/Family";
+import HomesteadForm from "./styles/homestead/Form";
+import HomesteadSettings from "./styles/homestead/Settings";
+import AtelierFamily from "./styles/atelier/Family";
+import AtelierForm from "./styles/atelier/Form";
+import AtelierSettings from "./styles/atelier/Settings";
+import KeepsakeRecipe from "./styles/keepsake/Recipe";
+import KeepsakeProfile from "./styles/keepsake/Profile";
+import KeepsakeFamily from "./styles/keepsake/Family";
+import KeepsakeForm from "./styles/keepsake/Form";
+import KeepsakeSettings from "./styles/keepsake/Settings";
 
 /**
  * Style registry: maps a style + page to the component that renders it.
@@ -15,31 +25,27 @@ import Placeholder from "./Placeholder";
  */
 type PageComponent = () => React.ReactNode;
 
-const ph =
-  (page: string, style: string): PageComponent =>
-  () => <Placeholder page={page} style={style} />;
-
 const STYLE_PAGES: Record<string, Partial<Record<PageKey, PageComponent>>> = {
   homestead: {
     recipe: () => <CooksTable recipe={mockRecipe} role="owner" />,
     profile: () => <CoverBanner profile={mockProfile} />,
-    family: ph("Family", "Homestead"),
-    form: ph("New recipe", "Homestead"),
-    settings: ph("Settings", "Homestead"),
+    family: () => <HomesteadFamily />,
+    form: () => <HomesteadForm />,
+    settings: () => <HomesteadSettings />,
   },
   atelier: {
     recipe: () => <StickyCookRail recipe={mockRecipe} role="owner" />,
     profile: () => <ProfileRail profile={mockProfile} />,
-    family: ph("Family", "Atelier"),
-    form: ph("New recipe", "Atelier"),
-    settings: ph("Settings", "Atelier"),
+    family: () => <AtelierFamily />,
+    form: () => <AtelierForm />,
+    settings: () => <AtelierSettings />,
   },
   keepsake: {
-    recipe: ph("Recipe", "Keepsake"),
-    profile: ph("Profile", "Keepsake"),
-    family: ph("Family", "Keepsake"),
-    form: ph("New recipe", "Keepsake"),
-    settings: ph("Settings", "Keepsake"),
+    recipe: () => <KeepsakeRecipe />,
+    profile: () => <KeepsakeProfile />,
+    family: () => <KeepsakeFamily />,
+    form: () => <KeepsakeForm />,
+    settings: () => <KeepsakeSettings />,
   },
 };
 

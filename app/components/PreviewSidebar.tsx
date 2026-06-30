@@ -8,31 +8,43 @@ import ThemeToggle from "./ThemeToggle";
 import { STYLE_META, PAGES } from "./design-variants/styles-meta";
 
 /**
- * Preview-harness sidebar. Lists each STYLE and the pages within it, so a style
- * can be picked globally and walked page-by-page. Persistent on desktop; a
- * drawer (collapsed by default) on mobile, opened by a floating button.
+ * Preview-harness controls. A global STYLE picker (the app commits to one visual
+ * language) plus a single shared PAGES list that retargets the chosen style —
+ * switching either axis keeps the other, so you can hold a page and flip styles
+ * or hold a style and walk pages.
  *
- * This is the only "tool" chrome — everything to its right is the real app
- * (Navbar + page + Footer), so the page can be judged in context.
+ * Persistent on desktop; on mobile it's a drawer opened from an in-flow bar that
+ * sits ABOVE the app navbar (so the menu trigger never covers the logo).
  */
 export default function PreviewSidebar() {
   const pathname = usePathname();
   const parts = pathname.split("/"); // ["", "preview", styleId, pageKey]
-  const activeStyle = parts[2] ?? "";
-  const activePage = parts[3] ?? "";
+  const activeStyle = parts[2] ?? STYLE_META[0].id;
+  const activePage = parts[3] ?? "recipe";
   const [open, setOpen] = useState(false);
+
+  const styleName =
+    STYLE_META.find((s) => s.id === activeStyle)?.name ?? "Preview";
+  const pageLabel = PAGES.find((p) => p.key === activePage)?.label ?? "";
 
   return (
     <>
-      {/* Mobile open button. */}
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        aria-label="Open preview menu"
-        className="fixed left-4 top-4 z-[60] inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card/95 text-foreground shadow-lg backdrop-blur-md lg:hidden"
-      >
-        <Menu className="h-5 w-5" />
-      </button>
+      {/* Mobile bar — in normal flow, above the app navbar, so it can't cover
+          the logo. The drawer it opens is fixed. */}
+      <div className="flex h-12 items-center gap-2 border-b border-border bg-card px-3 lg:hidden">
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label="Open style menu"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full text-foreground hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+        <span className="text-sm font-bold text-foreground">
+          {styleName}
+          <span className="text-muted-foreground"> · {pageLabel}</span>
+        </span>
+      </div>
 
       {/* Mobile backdrop. */}
       {open ? (
@@ -60,7 +72,7 @@ export default function PreviewSidebar() {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              aria-label="Close preview menu"
+              aria-label="Close style menu"
               className="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-accent hover:text-foreground lg:hidden"
             >
               <X className="h-4 w-4" />
@@ -68,47 +80,62 @@ export default function PreviewSidebar() {
           </div>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-3 py-4">
-          {STYLE_META.map((style) => {
-            const isActiveStyle = style.id === activeStyle;
-            return (
-              <div key={style.id} className="mb-5">
-                <div className="px-2">
-                  <p
-                    className={`text-sm font-extrabold tracking-tight ${isActiveStyle ? "text-primary" : "text-foreground"}`}
+        <div className="flex-1 overflow-y-auto px-3 py-4">
+          {/* Style picker. */}
+          <p className="px-1 pb-2 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+            Style
+          </p>
+          <ul className="flex flex-col gap-1.5">
+            {STYLE_META.map((style) => {
+              const active = style.id === activeStyle;
+              return (
+                <li key={style.id}>
+                  <Link
+                    href={`/preview/${style.id}/${activePage}`}
+                    onClick={() => setOpen(false)}
+                    aria-current={active ? "true" : undefined}
+                    className={`block rounded-xl border px-3 py-2 transition-colors ${active ? "border-primary/40 bg-primary/10" : "border-border bg-card hover:bg-accent"}`}
                   >
-                    {style.name}
-                  </p>
-                  <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">
-                    {style.tagline}
-                  </p>
-                </div>
-                <ul className="mt-2 flex flex-col gap-0.5">
-                  {PAGES.map((page) => {
-                    const active =
-                      isActiveStyle && page.key === activePage;
-                    return (
-                      <li key={page.key}>
-                        <Link
-                          href={`/preview/${style.id}/${page.key}`}
-                          onClick={() => setOpen(false)}
-                          className={`flex items-center rounded-lg px-2 py-1.5 text-sm font-semibold transition-colors ${active ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent hover:text-foreground"}`}
-                        >
-                          {page.label}
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            );
-          })}
-        </nav>
+                    <span
+                      className={`text-sm font-bold ${active ? "text-primary" : "text-foreground"}`}
+                    >
+                      {style.name}
+                    </span>
+                    <span className="mt-0.5 block text-[11px] leading-snug text-muted-foreground">
+                      {style.tagline}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+
+          {/* Single pages list, retargeting the active style. */}
+          <p className="px-1 pb-2 pt-5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+            Pages
+          </p>
+          <ul className="flex flex-col gap-0.5">
+            {PAGES.map((page) => {
+              const active = page.key === activePage;
+              return (
+                <li key={page.key}>
+                  <Link
+                    href={`/preview/${activeStyle}/${page.key}`}
+                    onClick={() => setOpen(false)}
+                    className={`flex items-center rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors ${active ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent hover:text-foreground"}`}
+                  >
+                    {page.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
 
         <div className="border-t border-border px-3 py-3">
           <Link
             href="/"
-            className="flex items-center justify-between rounded-lg px-2 py-1.5 text-sm font-semibold text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            className="flex items-center justify-between rounded-lg px-3 py-1.5 text-sm font-semibold text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
           >
             Back to the app
             <ArrowUpRight className="h-4 w-4" />
