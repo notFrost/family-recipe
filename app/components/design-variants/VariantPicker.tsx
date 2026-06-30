@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Eye, ChefHat } from "lucide-react";
 import ThemeToggle from "../ThemeToggle";
@@ -36,15 +37,29 @@ export function VariantPicker({
 }) {
   const active = variants[activeIndex];
 
+  // Collapse the (space-hungry, esp. on mobile) variant description once the
+  // user scrolls into the page; it returns when they scroll back to the top.
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
     <div className="sticky top-0 z-50 border-b border-border bg-card/90 backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 px-4 py-3 sm:px-6 lg:px-8">
         {/* Row 1: title, page switch, viewer + theme controls. */}
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
+            <Link
+              href="/"
+              title="Back to the app"
+              className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
               <ChefHat className="h-4 w-4" />
-            </span>
+            </Link>
             <div className="flex items-center gap-1 rounded-full bg-muted p-1">
               <Link
                 href="/preview/recipe"
@@ -103,12 +118,18 @@ export function VariantPicker({
               </button>
             ))}
           </div>
-          {active ? (
-            <p className="text-xs leading-relaxed text-muted-foreground">
-              <span className="font-bold text-foreground">{active.name}.</span>{" "}
-              {active.tagline}
-            </p>
-          ) : null}
+          <div
+            className={`overflow-hidden transition-all duration-200 ${scrolled ? "max-h-0 opacity-0" : "max-h-24 opacity-100"}`}
+          >
+            {active ? (
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                <span className="font-bold text-foreground">
+                  {active.name}.
+                </span>{" "}
+                {active.tagline}
+              </p>
+            ) : null}
+          </div>
         </div>
       </div>
     </div>

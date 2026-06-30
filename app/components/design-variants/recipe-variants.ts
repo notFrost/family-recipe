@@ -5,6 +5,7 @@ import SplitPortrait from "./recipe/SplitPortrait";
 import StickyCookRail from "./recipe/StickyCookRail";
 import HearthCard from "./recipe/HearthCard";
 import ImmersiveOverlap from "./recipe/ImmersiveOverlap";
+import CooksTable from "./recipe/CooksTable";
 
 export interface RecipeVariantEntry {
   meta: VariantMeta;
@@ -20,6 +21,15 @@ export interface RecipeVariantEntry {
  * shape, size). Add an entry here and it appears in the picker automatically.
  */
 export const RECIPE_VARIANTS: RecipeVariantEntry[] = [
+  {
+    meta: {
+      id: "cooks-table",
+      name: "Cook's Table",
+      tagline:
+        "Leads with the person, not the plate (from feedback): a cook spotlight — large avatar + prominent name + lineage — opens the page, and the recipe's story gets its own featured 'note from the cook'. Builds familiarity and a personal bond.",
+    },
+    Component: CooksTable,
+  },
   {
     meta: {
       id: "editorial",

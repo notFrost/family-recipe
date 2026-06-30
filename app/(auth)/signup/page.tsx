@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getSession } from "@/app/lib/auth";
 import SignupForm from "@/app/components/SignupForm";
 import ThemeToggle from "@/app/components/ThemeToggle";
+import DoodleField from "@/app/components/DoodleField";
 
 export default async function SignupPage() {
   const session = await getSession();
@@ -16,7 +17,7 @@ export default async function SignupPage() {
       {/* Decorative image panel (hidden on mobile). */}
       <div className="relative hidden shrink-0 lg:block lg:w-[55%]">
         <Image
-          src="https://images.unsplash.com/photo-1610832958506-aa56368176cf"
+          src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=1200&q=80&auto=format&fit=crop"
           alt=""
           fill
           sizes="55vw"
@@ -24,16 +25,16 @@ export default async function SignupPage() {
           priority
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-stone-950/80 via-stone-900/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#241a12]/85 via-[#3b2417]/45 to-transparent" />
         <div className="absolute inset-0 flex flex-col justify-end p-12 pb-16">
-          <div className="mb-4 flex items-center gap-3">
-            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-lg shadow-lg">
+          <Link href="/" className="mb-4 flex w-fit items-center gap-3">
+            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-lg text-primary-foreground shadow-lg">
               🍳
             </span>
             <span className="text-2xl font-bold tracking-tight text-white">
               Family Recipe
             </span>
-          </div>
+          </Link>
           <p className="max-w-xs text-lg font-light leading-relaxed text-white/85">
             Keep your family&apos;s recipes together, discover new ones, and pass
             them down — even after everyone moves out.
@@ -42,11 +43,12 @@ export default async function SignupPage() {
       </div>
 
       {/* Form panel. */}
-      <div className="relative flex flex-1 flex-col items-center justify-center bg-background px-6 py-12 sm:px-10">
-        <div className="absolute right-5 top-5">
+      <div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden bg-background px-6 py-12 sm:px-10">
+        <DoodleField className="absolute" />
+        <div className="absolute right-5 top-5 z-10">
           <ThemeToggle />
         </div>
-        <div className="w-full max-w-[420px]">
+        <div className="relative z-10 w-full max-w-[420px]">
           <Link href="/" className="mb-8 flex items-center gap-2.5 lg:hidden">
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-base shadow-sm">
               🍳
