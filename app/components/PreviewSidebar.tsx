@@ -81,34 +81,34 @@ export default function PreviewSidebar() {
         </div>
 
         <div className="flex-1 overflow-y-auto px-3 py-4">
-          {/* Style picker. */}
+          {/* Style picker — horizontal segmented control to save vertical
+              space, with the selected style's description in a fixed-height box
+              below so switching styles never shifts the layout. */}
           <p className="px-1 pb-2 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
             Style
           </p>
-          <ul className="flex flex-col gap-1.5">
+          <div className="grid grid-cols-3 gap-1.5">
             {STYLE_META.map((style) => {
               const active = style.id === activeStyle;
               return (
-                <li key={style.id}>
-                  <Link
-                    href={`/preview/${style.id}/${activePage}`}
-                    onClick={() => setOpen(false)}
-                    aria-current={active ? "true" : undefined}
-                    className={`block rounded-xl border px-3 py-2 transition-colors ${active ? "border-primary/40 bg-primary/10" : "border-border bg-card hover:bg-accent"}`}
-                  >
-                    <span
-                      className={`text-sm font-bold ${active ? "text-primary" : "text-foreground"}`}
-                    >
-                      {style.name}
-                    </span>
-                    <span className="mt-0.5 block text-[11px] leading-snug text-muted-foreground">
-                      {style.tagline}
-                    </span>
-                  </Link>
-                </li>
+                <Link
+                  key={style.id}
+                  href={`/preview/${style.id}/${activePage}`}
+                  onClick={() => setOpen(false)}
+                  aria-current={active ? "true" : undefined}
+                  className={`rounded-xl border px-2 py-2 text-center text-xs font-bold transition-colors ${active ? "border-primary bg-primary/10 text-primary" : "border-border bg-card text-muted-foreground hover:bg-accent hover:text-foreground"}`}
+                >
+                  {style.name}
+                </Link>
               );
             })}
-          </ul>
+          </div>
+          <div className="mt-2 flex h-16 items-start overflow-hidden rounded-xl bg-muted/60 px-3 py-2">
+            <p className="text-[11px] leading-snug text-muted-foreground">
+              {STYLE_META.find((s) => s.id === activeStyle)?.tagline ??
+                STYLE_META[0].tagline}
+            </p>
+          </div>
 
           {/* Single pages list, retargeting the active style. */}
           <p className="px-1 pb-2 pt-5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">

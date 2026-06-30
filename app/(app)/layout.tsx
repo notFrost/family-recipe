@@ -1,12 +1,18 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import DoodleField from "../components/DoodleField";
+import PreviewCta from "../components/PreviewCta";
 
 export default function AppLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // The "Review designs" CTA shows on app pages off-production only (never in
+  // prod, and — since it lives here, not in the shared preview layout — never
+  // inside /preview itself).
+  const showPreviewCta = process.env.VERCEL_ENV !== "production";
+
   return (
     <>
       {/* Faint food-doodle wallpaper, fixed behind every page. */}
@@ -16,6 +22,7 @@ export default function AppLayout({
         {children}
       </main>
       <Footer />
+      {showPreviewCta ? <PreviewCta /> : null}
     </>
   );
 }

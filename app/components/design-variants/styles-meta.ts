@@ -28,18 +28,18 @@ export const STYLE_META: StyleMeta[] = [
     id: "homestead",
     name: "Homestead",
     tagline:
-      "Front-loaded & image-led — big hero photos and a single warm column you read top to bottom.",
+      "Front-loaded & image-led — big photos, a single warm column you read top to bottom.",
   },
   {
     id: "atelier",
     name: "Atelier",
     tagline:
-      "Structured & split — a sticky info rail beside the content; editorial and information-dense.",
+      "Structured split — a sticky info rail beside dense, editorial content.",
   },
   {
     id: "keepsake",
     name: "Keepsake",
     tagline:
-      "Centered & framed — a scrapbook-warm treatment that feels like a treasured recipe card.",
+      "Centered & framed — a scrapbook-warm, treasured recipe-card feel.",
   },
 ];
