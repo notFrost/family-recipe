@@ -134,6 +134,46 @@ function PotSteamMark({ className }: MarkProps) {
   );
 }
 
+/** A covered dish on the family table — dinner is kept, and served. */
+function TableMark({ className }: MarkProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden
+    >
+      <path d="M3 13.5h18" />
+      <path d="M5.5 13.5V20" />
+      <path d="M18.5 13.5V20" />
+      <path d="M7.5 13.5a4.5 4.5 0 0 1 9 0" />
+      <path d="M12 9v-1.8" />
+    </svg>
+  );
+}
+
+/** The heart — for recipes nobody ever wrote down. Until now. */
+function HeartMark({ className }: MarkProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden
+    >
+      <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.51 4.04 3 5.5l7 7Z" />
+    </svg>
+  );
+}
+
 /** Big spoon, little spoon — someone taught you how to stir. */
 function SpoonsMark({ className }: MarkProps) {
   return (
@@ -164,6 +204,8 @@ const MARKS = [
   { id: "stack", label: "Card stack", note: "a recipe on its third owner", Mark: CardStackMark },
   { id: "pot", label: "Pot & steam", note: "three wisps, three generations", Mark: PotSteamMark },
   { id: "spoons", label: "Spoons", note: "big spoon, little spoon", Mark: SpoonsMark },
+  { id: "table", label: "Family table", note: "a covered dish, kept and served", Mark: TableMark },
+  { id: "heart", label: "Heart", note: "never written down — known by heart", Mark: HeartMark },
 ] as const;
 
 type MarkId = (typeof MARKS)[number]["id"];
@@ -184,6 +226,7 @@ interface Candidate {
   watchOut: string;
 }
 
+/** Batch 1 — the opening flight (2026-07-01). */
 const CANDIDATES: Candidate[] = [
   {
     id: "family-recipe",
@@ -253,6 +296,96 @@ const CANDIDATES: Candidate[] = [
     ],
     watchOut: "Long; thrift-store adjacency; hyphens fight app-store search.",
   },
+];
+
+/**
+ * Batch 2 — the heirloom register without the Heirloom lawsuit. Every card
+ * carries a live web-search vet (2026-07); the graveyard of names that FAILED
+ * vetting is listed at the bottom of the page. Search-level only — a real
+ * USPTO + app-store sweep comes before any actual rename.
+ */
+const CANDIDATES_2: Candidate[] = [
+  {
+    id: "keepsake-kitchen",
+    name: "Keepsake Kitchen",
+    markId: "locket",
+    wordmarkClass: "font-extrabold tracking-tight",
+    tagline: "Where the good stuff gets kept.",
+    quote: "“Careful with that card — it's a keepsake.”",
+    works: [
+      "The closest synonym to heirloom that nobody owns as an app.",
+      "The double K makes it sticky; “keepsake” says kept-forever.",
+    ],
+    watchOut:
+      "The Keepsake Kitchen Diary (a physical family-recipe journal) is an established neighbor — and printed cookbooks are on OUR roadmap.",
+  },
+  {
+    id: "good-stock",
+    name: "Good Stock",
+    markId: "pot",
+    wordmarkClass: "font-extrabold tracking-tight",
+    tagline: "Recipes from good stock.",
+    quote: "“This family comes from good stock. Mostly chicken.”",
+    works: [
+      "Double meaning: the stockpot + “from good stock” — lineage in two words.",
+      "No recipe-app collisions surfaced (searched 2026-07).",
+    ],
+    watchOut: "The pun leads and the category doesn't — the tagline has to do the explaining.",
+  },
+  {
+    id: "tablekeeper",
+    name: "Tablekeeper",
+    markId: "table",
+    wordmarkClass: "font-extrabold lowercase tracking-tight",
+    tagline: "Someone has to keep the table.",
+    quote: "“Who has the recipes?” — “Ask the tablekeeper.”",
+    works: [
+      "Cleanest search of the batch — coined, ownable, domain-friendly (2026-07).",
+      "Names the user's role: the one who keeps the family's food memory.",
+    ],
+    watchOut: "Sits near restaurant “table management” software in search results.",
+  },
+  {
+    id: "provenance",
+    name: "Provenance",
+    markId: "stack",
+    wordmarkClass: "font-semibold tracking-tight",
+    wordmarkStyle: { fontFamily: "Georgia, 'Times New Roman', serif" },
+    tagline: "Every dish, traced to its source.",
+    quote: "“Grandma's ragù — with papers.”",
+    works: [
+      "THE word for an object's lineage — save-a-copy literally records provenance.",
+      "Premium, expensive-sounding: the money register.",
+    ],
+    watchOut:
+      "Provenance.org (product-transparency platform, incl. food brands) owns the word in food-tech; register is cooler than warm.",
+  },
+  {
+    id: "by-heart",
+    name: "By Heart",
+    markId: "heart",
+    wordmarkClass: "font-extrabold italic tracking-tight",
+    tagline: "She never measured a thing.",
+    quote: "“Where's it written down?” — “Nowhere. I know it by heart.”",
+    works: [
+      "Exactly the soul: recipes known by heart, finally written down.",
+      "Two short words; warm and premium at once.",
+    ],
+    watchOut:
+      "A 2025 NYT-bestselling cookbook is titled By Heart (same emotional lane) — a book title isn't an app trademark, but search + confusion risk is real.",
+  },
+];
+
+/** Names that FAILED vetting (searched 2026-07) — the graveyard, kept honest. */
+const GRAVEYARD: { name: string; reason: string }[] = [
+  { name: "Kitchen Heirloom / Heirloom", reason: "direct competitor named Heirloom in our exact lane" },
+  { name: "Seasoned", reason: "live App Store recipe organizer (Technikon Labs)" },
+  { name: "Kindred Kitchen", reason: "two live family meal-planning apps (.app and .io)" },
+  { name: "Cast Iron", reason: "castironrecipes.com sells a $9.99/mo recipe app" },
+  { name: "Wooden Spoon", reason: "The Wooden Spoon App is live on the App Store" },
+  { name: "Ladle", reason: "three live recipe apps share the name" },
+  { name: "Sunday Table", reason: "“sunday” is a restaurant-payments unicorn — owns the word in food apps" },
+  { name: "Recipe Tin", reason: "RecipeTin Eats — one of the biggest food blogs, with an app" },
 ];
 
 const HANDWRITTEN: React.CSSProperties = {
@@ -348,12 +481,88 @@ function TryOnStrip({
 
 /* ------------------------------- Page ----------------------------------- */
 
+/** One candidate as a recipe card from the tin. */
+function CandidateCard({
+  candidate: c,
+  active,
+  onPick,
+}: {
+  candidate: Candidate;
+  active: boolean;
+  onPick: () => void;
+}) {
+  const { Mark } = markById(c.markId);
+  return (
+    <button
+      type="button"
+      onClick={onPick}
+      aria-pressed={active}
+      className={`group flex flex-col gap-4 rounded-3xl border bg-card p-5 text-left shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:p-6 ${
+        active ? "border-primary/50 ring-1 ring-primary/30" : "border-border"
+      }`}
+    >
+      {/* Lockup. */}
+      <span className="flex items-center gap-3">
+        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
+          <Mark className="h-7 w-7" />
+        </span>
+        <span
+          className={`text-2xl text-foreground ${c.wordmarkClass}`}
+          style={c.wordmarkStyle}
+        >
+          {c.name}
+        </span>
+      </span>
+
+      {/* Handwritten tagline on a ruled card line. */}
+      <span className="flex flex-col gap-1 border-b border-dashed border-border pb-3">
+        <span
+          className="text-lg leading-snug text-foreground"
+          style={HANDWRITTEN}
+        >
+          {c.tagline}
+        </span>
+      </span>
+
+      {/* The overheard line. */}
+      <span className="text-sm italic leading-relaxed text-muted-foreground">
+        {c.quote}
+      </span>
+
+      {/* Honest notes. */}
+      <span className="flex flex-col gap-1.5 text-sm leading-relaxed">
+        {c.works.map((w) => (
+          <span key={w} className="flex gap-2 text-foreground">
+            <span className="font-bold text-primary" aria-hidden>
+              +
+            </span>
+            {w}
+          </span>
+        ))}
+        <span className="flex gap-2 text-muted-foreground">
+          <span className="font-bold" aria-hidden>
+            –
+          </span>
+          {c.watchOut}
+        </span>
+      </span>
+    </button>
+  );
+}
+
 export default function BrandingPage() {
   const [pickId, setPickId] = useState(CANDIDATES[0].id);
   const [markOverride, setMarkOverride] = useState<MarkId | null>(null);
 
-  const pick = CANDIDATES.find((c) => c.id === pickId) ?? CANDIDATES[0];
+  const pick =
+    [...CANDIDATES, ...CANDIDATES_2].find((c) => c.id === pickId) ??
+    CANDIDATES[0];
   const wornMark = markOverride ?? pick.markId;
+
+  const wear = (id: string) => {
+    setPickId(id);
+    setMarkOverride(null);
+  };
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-8">
@@ -366,85 +575,53 @@ export default function BrandingPage() {
           <br className="hidden sm:block" /> this kitchen?
         </h1>
         <p className="max-w-2xl text-base leading-relaxed text-muted-foreground">
-          Four names, six marks, all on the shipped Amber system. Tap a card to
-          wear it in the strip below; tap any mark in the tray to mix and
-          match. Flip the navbar moon for dark. Nothing here renames anything —
-          it&apos;s a fitting room.
+          Two batches of names, a tray of marks, all on the shipped Amber
+          system. Tap a card to wear it in the strip below; tap any mark in
+          the tray to mix and match. Flip the navbar moon for dark. Nothing
+          here renames anything — it&apos;s a fitting room.
         </p>
       </div>
 
       <TryOnStrip candidate={pick} markId={wornMark} />
 
-      {/* The flight — each candidate as a recipe card from the tin. */}
+      {/* Batch 1 — the opening flight. */}
       <section className="flex flex-col gap-4">
         <h2 className="text-xl font-bold tracking-tight text-foreground">
           The candidates
         </h2>
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-          {CANDIDATES.map((c) => {
-            const { Mark } = markById(c.markId);
-            const active = c.id === pickId;
-            return (
-              <button
-                key={c.id}
-                type="button"
-                onClick={() => {
-                  setPickId(c.id);
-                  setMarkOverride(null);
-                }}
-                aria-pressed={active}
-                className={`group flex flex-col gap-4 rounded-3xl border bg-card p-5 text-left shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:p-6 ${
-                  active ? "border-primary/50 ring-1 ring-primary/30" : "border-border"
-                }`}
-              >
-                {/* Lockup. */}
-                <span className="flex items-center gap-3">
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
-                    <Mark className="h-7 w-7" />
-                  </span>
-                  <span
-                    className={`text-2xl text-foreground ${c.wordmarkClass}`}
-                    style={c.wordmarkStyle}
-                  >
-                    {c.name}
-                  </span>
-                </span>
+          {CANDIDATES.map((c) => (
+            <CandidateCard
+              key={c.id}
+              candidate={c}
+              active={c.id === pickId}
+              onPick={() => wear(c.id)}
+            />
+          ))}
+        </div>
+      </section>
 
-                {/* Handwritten tagline on a ruled card line. */}
-                <span className="flex flex-col gap-1 border-b border-dashed border-border pb-3">
-                  <span
-                    className="text-lg leading-snug text-foreground"
-                    style={HANDWRITTEN}
-                  >
-                    {c.tagline}
-                  </span>
-                </span>
-
-                {/* The overheard line. */}
-                <span className="text-sm italic leading-relaxed text-muted-foreground">
-                  {c.quote}
-                </span>
-
-                {/* Honest notes. */}
-                <span className="flex flex-col gap-1.5 text-sm leading-relaxed">
-                  {c.works.map((w) => (
-                    <span key={w} className="flex gap-2 text-foreground">
-                      <span className="font-bold text-primary" aria-hidden>
-                        +
-                      </span>
-                      {w}
-                    </span>
-                  ))}
-                  <span className="flex gap-2 text-muted-foreground">
-                    <span className="font-bold" aria-hidden>
-                      –
-                    </span>
-                    {c.watchOut}
-                  </span>
-                </span>
-              </button>
-            );
-          })}
+      {/* Batch 2 — the heirloom register, lawsuit-checked. */}
+      <section className="flex flex-col gap-4">
+        <div className="flex flex-col gap-1">
+          <h2 className="text-xl font-bold tracking-tight text-foreground">
+            Batch two — the heirloom shelf
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            The register you liked, minus the Heirloom collision. Every card
+            below survived a live web search (2026-07); the ones that
+            didn&apos;t are in the graveyard at the bottom.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          {CANDIDATES_2.map((c) => (
+            <CandidateCard
+              key={c.id}
+              candidate={c}
+              active={c.id === pickId}
+              onPick={() => wear(c.id)}
+            />
+          ))}
         </div>
       </section>
 
@@ -487,11 +664,39 @@ export default function BrandingPage() {
         </div>
       </section>
 
+      {/* The graveyard — names that failed vetting, kept so they stay dead. */}
+      <section className="flex flex-col gap-4">
+        <div className="flex flex-col gap-1">
+          <h2 className="text-xl font-bold tracking-tight text-foreground">
+            The graveyard
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Checked and buried (searched 2026-07) — so nobody digs them up
+            twice.
+          </p>
+        </div>
+        <ul className="flex flex-col gap-2 rounded-2xl border border-border bg-card p-5 shadow-sm">
+          {GRAVEYARD.map((g) => (
+            <li
+              key={g.name}
+              className="flex flex-col gap-0.5 border-b border-border/50 pb-2 text-sm last:border-0 last:pb-0 sm:flex-row sm:items-baseline sm:gap-2"
+            >
+              <span className="font-bold text-foreground line-through decoration-destructive/60">
+                {g.name}
+              </span>
+              <span className="text-muted-foreground">{g.reason}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
       <p className="text-sm leading-relaxed text-muted-foreground">
         A rename has real costs — domain, deploy URLs, store listings, the
         habit in people&apos;s thumbs. If a new name wins, it should win by enough
         to pay for all that. “Family Recipe” with a better mark is a
-        legitimate outcome of this page.
+        legitimate outcome of this page. And before anything is committed:
+        the vetting here is search-level only — a proper USPTO + app-store +
+        domain sweep is the real gate.
       </p>
     </div>
   );
