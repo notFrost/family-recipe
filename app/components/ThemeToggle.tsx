@@ -1,20 +1,33 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 import { Sun, Moon } from "lucide-react";
 
 /**
  * Flips the `.dark` class on <html> and persists the choice. The class is also
  * set pre-paint by an inline script in the root layout, so there's no flash.
+ *
+ * The <html> class is the source of truth (an external system), so we read it
+ * via useSyncExternalStore instead of mirroring it into state from an effect —
+ * the MutationObserver re-renders the button whenever the class flips, no
+ * matter who flipped it.
  */
+function subscribe(onChange: () => void): () => void {
+  const observer = new MutationObserver(onChange);
+  observer.observe(document.documentElement, { attributeFilter: ["class"] });
+  return () => observer.disconnect();
+}
+
 export default function ThemeToggle() {
-  const [dark, setDark] = useState(false);
+  const dark = useSyncExternalStore(
+    subscribe,
+    () => document.documentElement.classList.contains("dark"),
+    // Server snapshot: render light; the pre-paint script has already set the
+    // real class by the time hydration compares snapshots.
+    () => false,
+  );
 
-  useEffect(() => {
-    setDark(document.documentElement.classList.contains("dark"));
-  }, []);
-
-  const toggle = () => {
+  const toggle = useCallback(() => {
     const next = !document.documentElement.classList.contains("dark");
     document.documentElement.classList.toggle("dark", next);
     try {
@@ -22,8 +35,7 @@ export default function ThemeToggle() {
     } catch {
       /* storage unavailable — fine, just won't persist */
     }
-    setDark(next);
-  };
+  }, []);
 
   return (
     <button

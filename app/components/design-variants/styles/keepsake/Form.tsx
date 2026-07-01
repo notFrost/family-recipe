@@ -9,7 +9,7 @@ import {
   Check,
   PenLine,
 } from "lucide-react";
-import { Eyebrow, SectionHeading, Fold } from "./_kit";
+import { Eyebrow, Fold } from "./_kit";
 
 /**
  * Keepsake · Form — writing a new recipe onto a fresh card.

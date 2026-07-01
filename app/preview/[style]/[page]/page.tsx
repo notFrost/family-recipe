@@ -18,8 +18,11 @@ export default async function PreviewStylePage({
   const { style, page } = await params;
   if (!VALID_PAGES.includes(page as PageKey)) notFound();
 
-  const Component = getPage(style, page as PageKey);
-  if (!Component) notFound();
+  // The registry entries are render thunks (() => ReactNode), not component
+  // types — call one to get its element instead of minting a new component
+  // type per render (which would reset state on every navigation).
+  const renderPage = getPage(style, page as PageKey);
+  if (!renderPage) notFound();
 
-  return <Component />;
+  return renderPage();
 }
