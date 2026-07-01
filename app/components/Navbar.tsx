@@ -44,12 +44,14 @@ export default async function Navbar() {
           <ThemeToggle />
           {user ? (
             <>
-              <span
-                className="hidden text-sm text-muted-foreground sm:inline"
+              {/* The name doubles as the door to /settings. */}
+              <Link
+                href="/settings"
+                className="hidden rounded-full px-2.5 py-1.5 text-sm font-semibold text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 sm:inline"
                 title={user.email ?? undefined}
               >
                 {user.name ?? user.email}
-              </span>
+              </Link>
               <Link
                 href="/recipes/new"
                 className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-bold text-primary-foreground shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
