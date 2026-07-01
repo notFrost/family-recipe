@@ -12,7 +12,7 @@ interface FamilyRow {
 }
 
 /**
- * Shape of a Prisma FamilyMember row including the user's name.
+ * Shape of a Prisma FamilyMember row including the user's name + avatar.
  */
 interface FamilyMemberRowWithUser {
   id: string;
@@ -20,7 +20,7 @@ interface FamilyMemberRowWithUser {
   userId: string;
   role: string;
   joinedAt: Date;
-  user: { name: string | null };
+  user: { name: string | null; image: string | null };
 }
 
 /**
@@ -61,11 +61,14 @@ function toFamilyMember(row: FamilyMemberRowWithUser): FamilyMember {
     role: row.role as FamilyRole,
     joinedAt: row.joinedAt.toISOString(),
     userName: row.user.name ?? null,
+    userImage: row.user.image ?? null,
   };
 }
 
-/** Include clause for member queries that need the user name. */
-const memberInclude = { user: { select: { name: true } } } as const;
+/** Include clause for member queries that need the user name + avatar. */
+const memberInclude = {
+  user: { select: { name: true, image: true } },
+} as const;
 
 class PrismaFamilyRepository implements FamilyRepository {
   async getFamilyById(id: string): Promise<Family | null> {
