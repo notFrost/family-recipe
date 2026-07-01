@@ -23,9 +23,14 @@ shadcn/ui, Vercel.
   new-recipe form, and a new `/settings` route (Frost re-prioritized to branding mid-flight).
   Where mocks used missing fields, pages adapt — proposed-adds list in the decision ledger;
   `story`/`sourceName` arrive with the MVP branch merge, don't fake them.
-- **Brand exploration (2026-07-01):** `/preview/branding` fitting room — 4 name candidates
-  (Family Recipe, Family Secret, Heirloom, Hand-Me-Downs) × 6 Amber SVG marks with a live
-  navbar/app-icon/favicon try-on. Preview (latest `dev`):
+- **Brand exploration (2026-07-01):** `/preview/branding` fitting room — 15 candidates in 4
+  batches (opening flight / heirloom shelf / warm shelf / single words) × 11 Amber SVG marks,
+  live navbar/app-icon/favicon try-on, and a 22-name GRAVEYARD of verified collisions (don't
+  re-propose those). Every batch-2+ name was live-web-vetted; USPTO + app-store sweep on the
+  finalists is the real gate. **Frost peer-reviews tonight via the dev preview.**
+- **Competitor intel (2026-07-01):** *Family Recipe Keeper — Hearth* (iOS) is directly our
+  product — the family-legacy lane now has at least two players (with Heirloom).
+  Preview (latest `dev`):
   `https://family-recipe-git-dev-nfs-projects-adbffaf9.vercel.app/preview`
 - **Unmerged branch `feat/mvp-sharing-families`** (monetization MVP): tokenized share links
   (`/r/[token]`), save-a-copy lineage (`parentRecipeId`), favorites, family invites, plan gates
