@@ -174,6 +174,69 @@ function HeartMark({ className }: MarkProps) {
   );
 }
 
+/** Two plates, one behind the other — someone's having seconds. */
+function SecondsMark({ className }: MarkProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden
+    >
+      <path d="M8.5 4.2a8 8 0 0 1 11 7.4 8 8 0 0 1-1.2 4.2" />
+      <circle cx="10" cy="14" r="7.5" />
+      <circle cx="10" cy="14" r="3.2" />
+    </svg>
+  );
+}
+
+/** The house with something on the stove — the special's tonight. */
+function HouseMark({ className }: MarkProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden
+    >
+      <path d="M4 11.5 12 4.5l8 7" />
+      <path d="M6 10v9.5h12V10" />
+      <path
+        d="M12 11.2l.95 1.93 2.13.31-1.54 1.5.36 2.12L12 16.06l-1.9 1-.36-2.12-1.54-1.5 2.13-.31z"
+        fill="currentColor"
+        stroke="none"
+      />
+    </svg>
+  );
+}
+
+/** The recipe card that earned its checkmark — tested for decades. */
+function CardCheckMark({ className }: MarkProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden
+    >
+      <rect x="3" y="4.5" width="18" height="15" rx="2.5" />
+      <path d="M8 12.2l2.6 2.6 5.4-5.6" />
+    </svg>
+  );
+}
+
 /** Big spoon, little spoon — someone taught you how to stir. */
 function SpoonsMark({ className }: MarkProps) {
   return (
@@ -206,6 +269,9 @@ const MARKS = [
   { id: "spoons", label: "Spoons", note: "big spoon, little spoon", Mark: SpoonsMark },
   { id: "table", label: "Family table", note: "a covered dish, kept and served", Mark: TableMark },
   { id: "heart", label: "Heart", note: "never written down — known by heart", Mark: HeartMark },
+  { id: "seconds", label: "Seconds", note: "two plates — someone's back for more", Mark: SecondsMark },
+  { id: "house", label: "House special", note: "home, with something on the stove", Mark: HouseMark },
+  { id: "check", label: "Tried card", note: "the card that earned its check", Mark: CardCheckMark },
 ] as const;
 
 type MarkId = (typeof MARKS)[number]["id"];
@@ -376,6 +442,53 @@ const CANDIDATES_2: Candidate[] = [
   },
 ];
 
+/**
+ * Batch 3 — the warm shelf (Frost's recalibration: warm, cozy, homey,
+ * familiar — phrases from an actual kitchen). Same vetting bar as batch 2.
+ */
+const CANDIDATES_3: Candidate[] = [
+  {
+    id: "second-helping",
+    name: "Second Helping",
+    markId: "seconds",
+    wordmarkClass: "font-extrabold tracking-tight",
+    tagline: "Nobody asks for seconds of a bad recipe.",
+    quote: "“Is there more?” — “There's always more.”",
+    works: [
+      "The warmest compliment a dish can get — seconds IS the endorsement.",
+      "No app owns it; nearest neighbor is a beloved 1968 cookbook (searched 2026-07).",
+    ],
+    watchOut:
+      "Second Helpings food-rescue nonprofits share the plural; faint echo of “leftovers.”",
+  },
+  {
+    id: "house-special",
+    name: "House Special",
+    markId: "house",
+    wordmarkClass: "font-extrabold tracking-tight",
+    tagline: "Every family has one.",
+    quote: "“What should I bring?” — “The house special. Obviously.”",
+    works: [
+      "Everyone knows the phrase; nobody expects it on a family app — instant charm.",
+      "No app collisions; closest is Sysco's House Recipe ketchup (searched 2026-07).",
+    ],
+    watchOut: "Menu-generic phrase — a trademark protects the brand, not the words.",
+  },
+  {
+    id: "tried-and-true",
+    name: "Tried & True",
+    markId: "check",
+    wordmarkClass: "font-extrabold tracking-tight",
+    tagline: "The ones that never fail.",
+    quote: "“New recipe?” — “No. Tried and true.”",
+    works: [
+      "Exactly what a family recipe IS — tested by decades, trusted by default.",
+      "No app owns it (searched 2026-07); the phrase sells trust, and trust sells subs.",
+    ],
+    watchOut: "Descriptive and everywhere on recipe blogs — ownable as a brand, not as words.",
+  },
+];
+
 /** Names that FAILED vetting (searched 2026-07) — the graveyard, kept honest. */
 const GRAVEYARD: { name: string; reason: string }[] = [
   { name: "Kitchen Heirloom / Heirloom", reason: "direct competitor named Heirloom in our exact lane" },
@@ -386,6 +499,13 @@ const GRAVEYARD: { name: string; reason: string }[] = [
   { name: "Ladle", reason: "three live recipe apps share the name" },
   { name: "Sunday Table", reason: "“sunday” is a restaurant-payments unicorn — owns the word in food apps" },
   { name: "Recipe Tin", reason: "RecipeTin Eats — one of the biggest food blogs, with an app" },
+  { name: "Dinner Bell", reason: "multiple live apps, incl. a food-ordering app on the App Store" },
+  { name: "Family Style", reason: "a live co-op cooking party game on both stores" },
+  { name: "Stone Soup", reason: "two recipe apps + a major cooking blog share it" },
+  { name: "Bread & Butter", reason: "live grocery app on Google Play" },
+  { name: "Breadbox", reason: "Bread Box! sandwich-making game on the App Store" },
+  { name: "Dig In", reason: "Dig Inn — restaurant chain with an ordering app on both stores" },
+  { name: "Come Hungry", reason: "the Hungry-app namespace is saturated (HUNGRY Foods, HungryApp, …)" },
 ];
 
 const HANDWRITTEN: React.CSSProperties = {
@@ -555,8 +675,9 @@ export default function BrandingPage() {
   const [markOverride, setMarkOverride] = useState<MarkId | null>(null);
 
   const pick =
-    [...CANDIDATES, ...CANDIDATES_2].find((c) => c.id === pickId) ??
-    CANDIDATES[0];
+    [...CANDIDATES, ...CANDIDATES_2, ...CANDIDATES_3].find(
+      (c) => c.id === pickId,
+    ) ?? CANDIDATES[0];
   const wornMark = markOverride ?? pick.markId;
 
   const wear = (id: string) => {
@@ -615,6 +736,30 @@ export default function BrandingPage() {
         </div>
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           {CANDIDATES_2.map((c) => (
+            <CandidateCard
+              key={c.id}
+              candidate={c}
+              active={c.id === pickId}
+              onPick={() => wear(c.id)}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* Batch 3 — warm, cozy, homey, familiar. */}
+      <section className="flex flex-col gap-4">
+        <div className="flex flex-col gap-1">
+          <h2 className="text-xl font-bold tracking-tight text-foreground">
+            Batch three — the warm shelf
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Recalibrated: warm, cozy, homey, familiar — things people actually
+            say at a full table. Same vetting bar; the fallen are in the
+            graveyard.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          {CANDIDATES_3.map((c) => (
             <CandidateCard
               key={c.id}
               candidate={c}
