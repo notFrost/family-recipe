@@ -36,14 +36,14 @@ export default async function EditRecipePage({
   const updateAction = updateRecipeAction.bind(null, recipe.id);
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-8">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl">
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-8">
+      <div className="flex flex-col gap-3">
+        <span className="text-sm font-bold uppercase tracking-[0.18em] text-primary">
           Edit recipe
+        </span>
+        <h1 className="text-4xl font-extrabold leading-[1.05] tracking-tight text-foreground sm:text-5xl">
+          {recipe.title}
         </h1>
-        <p className="text-base text-zinc-600">
-          Update the details for &ldquo;{recipe.title}&rdquo;.
-        </p>
       </div>
 
       <RecipeForm
