@@ -16,9 +16,16 @@ shadcn/ui, Vercel.
   2026-06-29, in-place and data-preserving). Email/password works on prod.
 - **Branch flow:** `dev` → `prod`. Vercel env scopes: `prod` branch → Production scope → prod
   Turso; ALL other branches → Preview scope → dev Turso (automatic isolation).
-- **Active frontier:** pick a global STYLE at `/preview` — **Homestead / Atelier / Keepsake**
-  (each implements Recipe, Profile, Family, New-recipe form, Settings) — then wire the winner
-  into the REAL pages. Preview (latest `dev`):
+- **STYLE PICKED: Homestead (2026-07-01).** Wiring into real pages started on
+  `feat/homestead-real-pages`: the **recipe page is live on dev in Homestead** plus foundations
+  (`authorImage`/`userImage` repo includes, read-only `user-repository`, `Avatar` initials
+  fallback, `ShareLinkButton`). Remaining wiring PARKED on that branch: profile, family,
+  new-recipe form, and a new `/settings` route (Frost re-prioritized to branding mid-flight).
+  Where mocks used missing fields, pages adapt — proposed-adds list in the decision ledger;
+  `story`/`sourceName` arrive with the MVP branch merge, don't fake them.
+- **Brand exploration (2026-07-01):** `/preview/branding` fitting room — 4 name candidates
+  (Family Recipe, Family Secret, Heirloom, Hand-Me-Downs) × 6 Amber SVG marks with a live
+  navbar/app-icon/favicon try-on. Preview (latest `dev`):
   `https://family-recipe-git-dev-nfs-projects-adbffaf9.vercel.app/preview`
 - **Unmerged branch `feat/mvp-sharing-families`** (monetization MVP): tokenized share links
   (`/r/[token]`), save-a-copy lineage (`parentRecipeId`), favorites, family invites, plan gates
@@ -27,7 +34,11 @@ shadcn/ui, Vercel.
   income). Its migration still needs applying to dev-Turso before its preview works.
 
 ## Decisions waiting on Frost
-- **The style pick** (Homestead / Atelier / Keepsake) → then wire into real pages.
+- **The name + mark pick** at `/preview/branding` (a rename must beat its switching costs —
+  keeping "Family Recipe" with a better mark is a legitimate outcome). Then: real favicon/
+  app-icon/navbar swap.
+- **Resume Homestead wiring?** (profile / family / form / settings on
+  `feat/homestead-real-pages` — recipe page already merged.)
 - **OAuth redirect URIs for prod** (Google + Facebook consoles): social login on prod fails the
   callback until `https://family-recipe-nine.vercel.app/api/auth/callback/{google,facebook}` is
   registered (+ FB App Domains, Live mode, Privacy/Data-Deletion URLs). Email/pw already works.
@@ -37,7 +48,10 @@ shadcn/ui, Vercel.
 - `authorId` comes from the session, never the form; ownership checked on every edit/delete.
 - Ingredients/steps are JSON-in-TEXT, (de)serialized only inside `app/lib/*-repository.ts`.
 - SQLite/libSQL has no enums/arrays → TEXT. Modified Next.js — read `node_modules/next/dist/docs/`
-  before framework APIs (AGENTS.md).
+  before framework APIs (AGENTS.md). Known trap: `next/image` `priority` is DEPRECATED in this
+  Next 16 → use `preload` (the design variants still say `priority`; fix on port).
+- eslint ignores `.claude/worktrees/**` (stale session worktrees used to redden lint with
+  generated `.next` output).
 - **Turso migrations:** `scripts/backup-turso.mts` FIRST, then `scripts/migrate-turso.mts`
   (Prisma migrate can't speak `libsql://`). Env trap: local `.env` = prod DB, `.env.local` =
   `file:./local.db` — mind which one a script loads.
