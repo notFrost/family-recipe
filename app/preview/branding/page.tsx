@@ -226,6 +226,21 @@ const CANDIDATES: Candidate[] = [
     watchOut: "Crowded word in the artisan aisle; one-word domains cost real money.",
   },
   {
+    id: "kitchen-heirloom",
+    name: "Kitchen Heirloom",
+    markId: "pot",
+    wordmarkClass: "font-semibold tracking-tight",
+    wordmarkStyle: { fontFamily: "Georgia, 'Times New Roman', serif" },
+    tagline: "An heirloom you can taste.",
+    quote: "“Careful with that ragù — it's a kitchen heirloom.”",
+    works: [
+      "Fixes bare Heirloom: the food context is in the name itself.",
+      "Far more ownable than “Family Recipe” — searchable, brandable.",
+    ],
+    watchOut:
+      "A direct competitor in this exact lane is named Heirloom (2026 market research) — reads derivative and sits trademark-adjacent.",
+  },
+  {
     id: "hand-me-downs",
     name: "Hand-Me-Downs",
     markId: "stack",
