@@ -489,6 +489,41 @@ const CANDIDATES_3: Candidate[] = [
   },
 ];
 
+/**
+ * Batch 4 — one word (Frost's ask, for tonight's peer review). The
+ * single-word warm namespace is strip-mined: ten more died in vetting (see
+ * the graveyard). These are the survivors.
+ */
+const CANDIDATES_4: Candidate[] = [
+  {
+    id: "familiar",
+    name: "Familiar",
+    markId: "spoons",
+    wordmarkClass: "font-extrabold tracking-tight",
+    tagline: "You know this taste.",
+    quote: "“Why does this taste like home?” — “Because it's familiar.”",
+    works: [
+      "The word literally comes from familia — family is inside the name.",
+      "The only clean single word found: nothing in food owns it (searched 2026-07).",
+    ],
+    watchOut: "Reads as an adjective until the brand teaches it — needs a strong lockup.",
+  },
+  {
+    id: "homespun",
+    name: "Homespun",
+    markId: "card",
+    wordmarkClass: "font-extrabold lowercase tracking-tight",
+    tagline: "Made at home, the long way.",
+    quote: "“It's not fancy. It's homespun.”",
+    works: [
+      "One word for handmade-with-love — the anti-fast-food register.",
+      "No app owns it (searched 2026-07).",
+    ],
+    watchOut:
+      "Diluted: an Irish packaged-food brand and many food blogs already wear it.",
+  },
+];
+
 /** Names that FAILED vetting (searched 2026-07) — the graveyard, kept honest. */
 const GRAVEYARD: { name: string; reason: string }[] = [
   { name: "Kitchen Heirloom / Heirloom", reason: "direct competitor named Heirloom in our exact lane" },
@@ -506,6 +541,13 @@ const GRAVEYARD: { name: string; reason: string }[] = [
   { name: "Breadbox", reason: "Bread Box! sandwich-making game on the App Store" },
   { name: "Dig In", reason: "Dig Inn — restaurant chain with an ordering app on both stores" },
   { name: "Come Hungry", reason: "the Hungry-app namespace is saturated (HUNGRY Foods, HungryApp, …)" },
+  { name: "Homestead", reason: "two live homestead cooking apps (and it's our style's name)" },
+  { name: "Spoonful", reason: "live diet-scanner app, 500K+ users" },
+  { name: "Simmer", reason: "FIVE live recipe apps share it" },
+  { name: "Hearth", reason: "Family Recipe Keeper – Hearth is live on iOS — a direct competitor, noted" },
+  { name: "Suppertime", reason: "live home-dining marketplace + an ex-delivery brand" },
+  { name: "Fixings", reason: "Fixins Soul Kitchen — growing restaurant chain owns the word" },
+  { name: "Gather", reason: "live meal-planning food app (mygatherapp.com)" },
 ];
 
 const HANDWRITTEN: React.CSSProperties = {
@@ -675,7 +717,7 @@ export default function BrandingPage() {
   const [markOverride, setMarkOverride] = useState<MarkId | null>(null);
 
   const pick =
-    [...CANDIDATES, ...CANDIDATES_2, ...CANDIDATES_3].find(
+    [...CANDIDATES, ...CANDIDATES_2, ...CANDIDATES_3, ...CANDIDATES_4].find(
       (c) => c.id === pickId,
     ) ?? CANDIDATES[0];
   const wornMark = markOverride ?? pick.markId;
@@ -760,6 +802,29 @@ export default function BrandingPage() {
         </div>
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           {CANDIDATES_3.map((c) => (
+            <CandidateCard
+              key={c.id}
+              candidate={c}
+              active={c.id === pickId}
+              onPick={() => wear(c.id)}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* Batch 4 — single words. */}
+      <section className="flex flex-col gap-4">
+        <div className="flex flex-col gap-1">
+          <h2 className="text-xl font-bold tracking-tight text-foreground">
+            Batch four — one word
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            The single-word shelf is nearly strip-mined — ten more died in
+            vetting (graveyard below). These two survived.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          {CANDIDATES_4.map((c) => (
             <CandidateCard
               key={c.id}
               candidate={c}
