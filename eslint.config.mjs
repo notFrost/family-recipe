@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Session worktrees (isolated agent checkouts) carry their own generated
+    // .next output; linting them reddens every run with build-artifact noise.
+    ".claude/worktrees/**",
   ]),
 ]);
 

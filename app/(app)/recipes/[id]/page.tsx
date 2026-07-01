@@ -1,37 +1,31 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowLeft, Clock, ChefHat, ListOrdered, Pencil } from "lucide-react";
 import { recipeRepository } from "@/app/lib/recipe-repository";
 import { familyRepository } from "@/app/lib/family-repository";
 import { getSession } from "@/app/lib/auth";
+import Avatar from "@/app/components/Avatar";
 import DeleteRecipeButton from "@/app/components/DeleteRecipeButton";
+import ShareLinkButton from "@/app/components/ShareLinkButton";
 
-const VISIBILITY_BADGES: Record<
-  string,
-  { label: string; className: string }
-> = {
-  PRIVATE: {
-    label: "Private",
-    className:
-      "bg-muted text-muted-foreground border-border",
-  },
-  UNLISTED: {
-    label: "Unlisted",
-    className:
-      "bg-primary/10 text-primary border-primary/30",
-  },
-  PUBLIC: {
-    label: "Public",
-    className:
-      "bg-green-50 text-green-800 border-green-300 dark:bg-green-500/20 dark:text-green-300 dark:border-green-500/30",
-  },
-  FAMILY: {
-    label: "Family",
-    className:
-      "bg-indigo-100 text-indigo-700 border-indigo-300 dark:bg-indigo-500/20 dark:text-indigo-300 dark:border-indigo-500/30",
-  },
+// Homestead: the eyebrow above the title carries the recipe's visibility in
+// the style's uppercase-tracked voice (the mock used cuisine · difficulty —
+// fields the schema doesn't have; visibility is the real datum that matters).
+const VISIBILITY_EYEBROWS: Record<string, string> = {
+  PRIVATE: "Private recipe",
+  UNLISTED: "Unlisted recipe",
+  PUBLIC: "Public recipe",
+  FAMILY: "Family recipe",
 };
 
+/**
+ * Recipe page in the Homestead language — "Cook's Table": lead with the
+ * person, not the plate. A prominent byline (avatar + name + family lineage)
+ * sits under the title, the photo follows, then one warm column of
+ * ingredients and method. The story panel ships when the `story` field lands
+ * (feat/mvp-sharing-families).
+ */
 export default async function RecipeDetailPage({
   params,
 }: PageProps<"/recipes/[id]">) {
@@ -75,109 +69,131 @@ export default async function RecipeDetailPage({
 
   const backHref = isOwner ? "/" : "/discover";
   const backLabel = isOwner ? "Back to my recipes" : "Back to discover";
-  const badge = VISIBILITY_BADGES[recipe.visibility] ?? VISIBILITY_BADGES.PRIVATE;
+  const eyebrow =
+    VISIBILITY_EYEBROWS[recipe.visibility] ?? VISIBILITY_EYEBROWS.PRIVATE;
 
   return (
-    <article className="flex flex-col gap-8">
+    <article className="mx-auto flex w-full max-w-4xl flex-col gap-8">
       <Link
         href={backHref}
-        className="inline-flex w-fit items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded"
+        className="inline-flex w-fit items-center gap-1.5 rounded text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
-        <span aria-hidden>&larr;</span>
+        <ArrowLeft className="h-4 w-4" />
         {backLabel}
       </Link>
 
-      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl border border-border bg-muted shadow-sm">
+      <div className="flex flex-col gap-3">
+        <span className="text-sm font-bold uppercase tracking-[0.18em] text-primary">
+          {eyebrow}
+        </span>
+        <h1 className="text-4xl font-extrabold leading-[1.05] tracking-tight text-foreground sm:text-5xl">
+          {recipe.title}
+        </h1>
+
+        {/* Prominent byline — the cook stays front and center. */}
+        <div className="mt-1 flex items-center gap-3">
+          <Avatar
+            name={recipe.authorName}
+            src={recipe.authorImage}
+            size={52}
+            className="h-12 w-12 shrink-0 text-lg ring-2 ring-primary/25"
+          />
+          <div className="flex flex-col leading-tight">
+            <Link
+              href={`/u/${recipe.authorId}`}
+              className="w-fit rounded text-lg font-extrabold tracking-tight text-foreground underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              {recipe.authorName ?? "A family cook"}
+            </Link>
+            {familyName && recipe.familyId ? (
+              <span className="text-sm text-muted-foreground">
+                in{" "}
+                <Link
+                  href={`/families/${recipe.familyId}`}
+                  className="rounded font-semibold text-foreground underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  {familyName}
+                </Link>
+              </span>
+            ) : null}
+          </div>
+        </div>
+      </div>
+
+      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-3xl border border-border bg-muted shadow-md">
         <Image
           src={recipe.imageUrl}
           alt={recipe.title}
           fill
           preload
-          sizes="(max-width: 1024px) 100vw, 64rem"
+          sizes="(max-width: 1024px) 100vw, 56rem"
           className="object-cover"
         />
       </div>
 
-      <header className="flex flex-col gap-4">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div className="flex flex-col gap-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-                {recipe.title}
-              </h1>
-              <span
-                className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${badge.className}`}
-              >
-                {badge.label}
-              </span>
-              {recipe.visibility === "FAMILY" && recipe.familyId && familyName ? (
-                <Link
-                  href={`/families/${recipe.familyId}`}
-                  className="text-xs font-medium text-muted-foreground underline-offset-2 hover:text-indigo-600 dark:hover:text-indigo-400 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
-                >
-                  in {familyName}
-                </Link>
-              ) : null}
-            </div>
-          </div>
+      {/* Actions + quick stats. */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-wrap items-center gap-2">
           {isOwner ? (
-            <div className="flex shrink-0 items-center gap-2">
+            <>
               <Link
                 href={`/recipes/${recipe.id}/edit`}
-                className="inline-flex items-center rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
+                <Pencil className="h-4 w-4" />
                 Edit
               </Link>
+              <ShareLinkButton />
               <DeleteRecipeButton id={recipe.id} />
-            </div>
-          ) : null}
+            </>
+          ) : (
+            <ShareLinkButton />
+          )}
         </div>
-
-        {recipe.description ? (
-          <p className="max-w-2xl text-base leading-relaxed text-muted-foreground">
-            {recipe.description}
-          </p>
-        ) : null}
-
-        {recipe.authorName ? (
-          <p className="text-sm text-muted-foreground">
-            by{" "}
-            <Link
-              href={`/u/${recipe.authorId}`}
-              className="font-medium text-foreground underline-offset-2 hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
-            >
-              {recipe.authorName}
-            </Link>
-          </p>
-        ) : null}
-
-        <div className="flex items-center gap-3 text-xs font-medium text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
+          {recipe.minutes != null ? (
+            <span className="inline-flex items-center gap-1.5">
+              <Clock className="h-4 w-4" />
+              <span className="font-bold text-foreground">
+                {recipe.minutes}m
+              </span>{" "}
+              total
+            </span>
+          ) : null}
           <span className="inline-flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-            {recipe.ingredients.length}{" "}
+            <ChefHat className="h-4 w-4" />
+            <span className="font-bold text-foreground">
+              {recipe.ingredients.length}
+            </span>{" "}
             {recipe.ingredients.length === 1 ? "ingredient" : "ingredients"}
           </span>
-          <span aria-hidden className="text-muted-foreground">
-            &bull;
-          </span>
-          <span>
-            {recipe.steps.length} {recipe.steps.length === 1 ? "step" : "steps"}
+          <span className="inline-flex items-center gap-1.5">
+            <ListOrdered className="h-4 w-4" />
+            <span className="font-bold text-foreground">
+              {recipe.steps.length}
+            </span>{" "}
+            {recipe.steps.length === 1 ? "step" : "steps"}
           </span>
         </div>
-      </header>
+      </div>
 
-      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]">
+      {recipe.description ? (
+        <p className="max-w-2xl text-base leading-relaxed text-muted-foreground">
+          {recipe.description}
+        </p>
+      ) : null}
+
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)]">
         <section className="flex flex-col gap-4">
-          <h2 className="text-xl font-semibold tracking-tight text-foreground">
+          <h2 className="text-xl font-bold tracking-tight text-foreground">
             Ingredients
           </h2>
-          <ul className="flex flex-col gap-2 rounded-2xl border border-border bg-card p-5 shadow-sm">
+          <ul className="flex flex-col rounded-2xl border border-border bg-card p-5 shadow-sm">
             {recipe.ingredients.map((ingredient, index) => (
               <li
                 key={index}
-                className="flex items-start gap-3 text-sm leading-relaxed text-foreground"
+                className="border-b border-border/50 py-2 text-sm leading-relaxed text-foreground last:border-0"
               >
-                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
                 {ingredient}
               </li>
             ))}
@@ -185,8 +201,8 @@ export default async function RecipeDetailPage({
         </section>
 
         <section className="flex flex-col gap-4">
-          <h2 className="text-xl font-semibold tracking-tight text-foreground">
-            Steps
+          <h2 className="text-xl font-bold tracking-tight text-foreground">
+            Method
           </h2>
           <ol className="flex flex-col gap-4">
             {recipe.steps.map((step, index) => (
@@ -194,7 +210,7 @@ export default async function RecipeDetailPage({
                 key={index}
                 className="flex items-start gap-4 rounded-2xl border border-border bg-card p-5 shadow-sm"
               >
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
                   {index + 1}
                 </span>
                 <p className="pt-1 text-sm leading-relaxed text-foreground">

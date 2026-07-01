@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { Trash2 } from "lucide-react";
 import { deleteRecipeAction } from "../lib/actions";
 
 interface DeleteRecipeButtonProps {
@@ -24,15 +25,16 @@ export default function DeleteRecipeButton({ id }: DeleteRecipeButtonProps) {
           type="button"
           onClick={handleDelete}
           disabled={isPending}
-          className="inline-flex items-center rounded-full bg-destructive px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-destructive/90 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          className="inline-flex items-center gap-2 rounded-full bg-destructive px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-destructive/90 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
+          <Trash2 className="h-4 w-4" />
           {isPending ? "Deleting…" : "Confirm delete"}
         </button>
         <button
           type="button"
           onClick={() => setConfirming(false)}
           disabled={isPending}
-          className="inline-flex items-center rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          className="inline-flex items-center rounded-full border border-border bg-card px-4 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-accent disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           Cancel
         </button>
@@ -44,8 +46,9 @@ export default function DeleteRecipeButton({ id }: DeleteRecipeButtonProps) {
     <button
       type="button"
       onClick={() => setConfirming(true)}
-      className="inline-flex items-center rounded-full border border-destructive/40 bg-card px-4 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      className="inline-flex items-center gap-2 rounded-full border border-destructive/40 bg-card px-4 py-2.5 text-sm font-semibold text-destructive transition-colors hover:bg-destructive/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
+      <Trash2 className="h-4 w-4" />
       Delete
     </button>
   );

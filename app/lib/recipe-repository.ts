@@ -2,11 +2,11 @@ import type { Recipe, RecipeVisibility } from "./types";
 import { prisma } from "./prisma";
 
 /**
- * Shape of a Prisma Recipe row after including the author name.
+ * Shape of a Prisma Recipe row after including the author name + avatar.
  *
- * All repository queries include `author: { select: { name: true } }` so that
- * `toRecipe` can populate the denormalized `authorName` field on the app-level
- * `Recipe` type without a separate user lookup.
+ * All repository queries include `author: { select: { name: true, image: true } }`
+ * so that `toRecipe` can populate the denormalized `authorName` / `authorImage`
+ * fields on the app-level `Recipe` type without a separate user lookup.
  */
 interface RecipeRowWithAuthor {
   id: string;
@@ -20,7 +20,7 @@ interface RecipeRowWithAuthor {
   familyId: string | null;
   minutes: number | null;
   createdAt: Date;
-  author: { name: string | null };
+  author: { name: string | null; image: string | null };
 }
 
 /**
@@ -71,6 +71,7 @@ function toRecipe(row: RecipeRowWithAuthor): Recipe {
     steps: JSON.parse(row.stepsJson) as string[],
     authorId: row.authorId,
     authorName: row.author.name ?? null,
+    authorImage: row.author.image ?? null,
     visibility: row.visibility as RecipeVisibility,
     familyId: row.familyId ?? null,
     minutes: row.minutes ?? null,
@@ -79,7 +80,9 @@ function toRecipe(row: RecipeRowWithAuthor): Recipe {
 }
 
 /** Include clause used by all queries that return Recipe domain objects. */
-const authorInclude = { author: { select: { name: true } } } as const;
+const authorInclude = {
+  author: { select: { name: true, image: true } },
+} as const;
 
 class PrismaRecipeRepository implements RecipeRepository {
   async getRecipeById(id: string): Promise<Recipe | null> {
