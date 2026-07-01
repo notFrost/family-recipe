@@ -47,8 +47,13 @@ const rand = (n: number) => {
   return x - Math.floor(x);
 };
 
+// PITCH must divide TILE exactly: the lattice's wrap-around gap then equals
+// its interior gap, so density is uniform across tile seams. (At the old
+// PITCH=72, 264 % 72 left a 48px seam gap vs 72px inside — every 4th row and
+// column ran ~33% tighter, which read as faint diagonal density bands under
+// the 6° pattern rotation. 264/4 = 66 keeps the same average density, evenly.)
 const TILE = 264;
-const PITCH = 72;
+const PITCH = 66;
 
 type Slot = { x: number; y: number; size: number; rot: number; sw: number; Icon: LucideIcon };
 
@@ -93,8 +98,8 @@ const BASE: Slot[] = (() => {
       fi++;
       // De-collision: skip a filler whose center lands inside a big doodle's
       // glyph radius (wrap-aware) — otherwise the tiny filler reads as a smudge
-      // overlapping the big icon. With the current lattice this drops exactly
-      // one corner filler; every other slot is unchanged.
+      // overlapping the big icon. With the uniform lattice the nominal offsets
+      // clear comfortably; this guards the jittered edge cases.
       if (bigSlots.some((b) => torusDist(fx, fy, b.x, b.y) < b.size / 2)) {
         continue;
       }
