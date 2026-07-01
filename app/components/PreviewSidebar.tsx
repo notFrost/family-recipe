@@ -126,6 +126,18 @@ export default function PreviewSidebar() {
               );
             })}
           </ul>
+
+          {/* Brand exploration — separate from the style×page grid. */}
+          <p className="px-1 pb-2 pt-5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+            Brand
+          </p>
+          <Link
+            href="/preview/branding"
+            onClick={() => setOpen(false)}
+            className={`flex items-center rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors ${pathname === "/preview/branding" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent hover:text-foreground"}`}
+          >
+            Name &amp; logo
+          </Link>
         </div>
 
         <div className="border-t border-border px-3 py-3">
