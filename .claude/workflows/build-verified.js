@@ -12,8 +12,12 @@ export const meta = {
 // args: {
 //   repo: 'D:\\Code\\trade-app',          // ABSOLUTE path — subagents don't inherit cwd
 //   context: 'shared facts every agent needs: spec doc paths, conventions, hard rules',
-//   chunks: [{ label: 'poller', brief: 'what to build + acceptance criteria', files: 'files this chunk owns' }],
+//   chunks: [{ label: 'poller', brief: 'what to build + acceptance criteria', files: 'files this chunk owns', tier: 'mechanical'? }],
 // }
+// tier: 'mechanical' → the BUILDER runs on sonnet (well-specified volume; the verifiers catch
+// what it misses). Omit tier for correctness-critical chunks (math/money/auth/schema) — the
+// builder then inherits the session model. Verifier + fix agents ALWAYS inherit the session
+// model: never verify below the builder.
 
 const repo = args && args.repo
 const context = (args && args.context) || ''
@@ -61,7 +65,9 @@ const results = await pipeline(
         (chunk.files ? `You own ONLY these files (others are owned by parallel agents — do not touch them): ${chunk.files}\n` : '') +
         `Write tests that would catch a wrong implementation, run them, and return raw data: ` +
         `files touched, what you verified by actually running it, and any claims you could NOT verify.`,
-      { label: `build:${chunk.label}`, phase: 'Build' }
+      chunk.tier === 'mechanical'
+        ? { label: `build:${chunk.label}`, phase: 'Build', model: 'sonnet' }
+        : { label: `build:${chunk.label}`, phase: 'Build' }
     ),
   (buildReport, chunk) => {
     if (!buildReport) {
