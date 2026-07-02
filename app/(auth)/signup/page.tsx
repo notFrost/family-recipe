@@ -22,7 +22,7 @@ export default async function SignupPage() {
           fill
           sizes="55vw"
           quality={80}
-          priority
+          preload
           className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-br from-[#241a12]/85 via-[#3b2417]/45 to-transparent" />

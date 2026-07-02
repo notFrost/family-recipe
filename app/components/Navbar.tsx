@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { ArrowRight, Plus } from "lucide-react";
 import { getSession } from "../lib/auth";
+import Avatar from "./Avatar";
+import NavLinks from "./NavLinks";
 import SignOutButton from "./SignOutButton";
 import ThemeToggle from "./ThemeToggle";
 
@@ -21,36 +23,38 @@ export default async function Navbar() {
             </span>
             Family Recipe
           </Link>
-          <nav className="hidden items-center gap-1 md:flex">
-            <Link
-              href="/discover"
-              aria-current="page"
-              className="rounded-full bg-primary/10 px-3.5 py-1.5 text-sm font-semibold text-primary"
-            >
-              Discover
-            </Link>
-            {user ? (
-              <Link
-                href="/families"
-                className="rounded-full px-3.5 py-1.5 text-sm font-semibold text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-              >
-                Families
-              </Link>
-            ) : null}
-          </nav>
+          <NavLinks
+            links={
+              user
+                ? [
+                    { href: "/discover", label: "Discover" },
+                    { href: "/families", label: "Families" },
+                  ]
+                : [{ href: "/discover", label: "Discover" }]
+            }
+          />
         </div>
 
         <div className="flex items-center gap-2.5">
           <ThemeToggle />
           {user ? (
             <>
-              {/* The name doubles as the door to /settings. */}
+              {/* Avatar + name are the door to /settings — the avatar stays
+                  visible on mobile so the page is reachable at every width. */}
               <Link
                 href="/settings"
-                className="hidden rounded-full px-2.5 py-1.5 text-sm font-semibold text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 sm:inline"
+                className="flex items-center gap-2 rounded-full p-1 text-sm font-semibold text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 sm:py-1 sm:pl-1 sm:pr-3"
                 title={user.email ?? undefined}
               >
-                {user.name ?? user.email}
+                <Avatar
+                  name={user.name}
+                  src={user.image}
+                  size={32}
+                  className="h-8 w-8 text-sm"
+                />
+                <span className="hidden sm:inline">
+                  {user.name ?? user.email}
+                </span>
               </Link>
               <Link
                 href="/recipes/new"
