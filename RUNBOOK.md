@@ -77,3 +77,24 @@ without greenlight; small fixes to already-greenlit surfaces follow standing OKs
   payment funnel (on MVP branch) + PWA in the fresh window. Gotcha of the night:
   branch switches leave stale .next types → rebuild (or delete .next/dev ONLY when
   no dev server runs).
+- 01:37 (wake fired early) — `feat/payment-funnel` off the MVP branch: /pricing (decided
+  band; Lifetime displays $59 = LOW END of the $59–79 band — Frost's one-string call),
+  PaymentProvider abstraction + beta flag-flip provider, checkoutAction. Funnel walked
+  live end-to-end (Choose Family → Welcome-to-Premium → downgraded back, db as found).
+  Lesson: preview synthetic clicks don't fire server-action forms — requestSubmit does.
+- 01:52 — `feat/pwa`: manifest + next/og-generated icons (512/180, no raster assets),
+  themeColor viewport, appleWebApp metadata. Endpoints verified (200s, icon eyeballed).
+  Own-goal admitted: deleted .next/dev while the preview server ran (my own rule) —
+  restart recovered it.
+- 02:05 — Money-path verifier: BOTH chunks SHIP-TO-PREVIEW SAFE. Live attacks defended:
+  CSRF origin check, cross-user flip impossible (session-only call site), redirect
+  injection blocked by catalog lookup, offer tampering bounces. Fixed its one MINOR
+  (multipart File offer field 500 → typeof guard, pushed 2fa9d7d). Deferred honestly:
+  checkout rate-limit (matters at real-processor time).
+- 02:15 — WIND-DOWN: MOBILE.md rung-1 line tightened (no service worker shipped —
+  installability doesn't need one). HANDOFF waiting-list rewritten (6 branches),
+  MORNING.md written. Loop ENDED — no further wakes; remaining usage is Frost's.
+
+## Closing state
+Six verifier-passed branches pushed, dev untouched by features, prod untouched, no Turso
+migrations, no external accounts, local.db restored (demo user FREE). Scope complete.

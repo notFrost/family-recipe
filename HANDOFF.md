@@ -40,15 +40,27 @@ shadcn/ui, Vercel.
   the OWNER's plan). No payment processor, no AI (hard line: no recurring cost before recurring
   income). Its migration still needs applying to dev-Turso before its preview works.
 
-## Overnight run 2026-07-02 (see RUNBOOK.md for the full log)
-Four feature branches now await greenlight, ALL verifier-passed with fixes applied:
-`feat/cooking-mode`, `feat/print-recipe` (now incl. **share-as-image** card + print charm
-+ QR growth loop), `feat/video-import` (TikTok/Shorts/Reels → draft via keyless oEmbed;
-premium AI extractor is an interface slot), `feat/kitchen-heirloom` (provisional rebrand —
-see research verdict in the ledger; PUBLIC rename still needs TESS + attorney).
-MOBILE.md = the mobile ladder (PWA now → Capacitor → RN never-unless). Still queued:
-payment funnel (off the MVP branch), PWA branch. Competitor intel: *Heirloom Recipe Box*
-(iOS) already ships video-import — validation and pressure.
+## Overnight run 2026-07-02, COMPLETE (RUNBOOK.md = full log, MORNING.md = the brief)
+**Six feature branches await greenlight — every one verifier-attacked, findings fixed,
+green-gated, pushed. NONE merged to dev.** Vercel branch previews on dev-Turso:
+1. `feat/cooking-mode` — step-by-step cook view (wake-lock, keyboard, finish screen).
+2. `feat/print-recipe` — print charm (tin frame, serif masthead, QR growth loop) +
+   **share-as-image** (`/recipes/[id]/card`, branded 1080×1350 PNG, page-identical gating
+   via shared `canViewRecipe`).
+3. `feat/video-import` — TikTok/Shorts/Reels → recipe draft (keyless oEmbed, SSRF-fuzzed);
+   premium AI extractor = interface slot awaiting a key + plan gate.
+4. `feat/kitchen-heirloom` — provisional rebrand (research: crowded field, descriptive word →
+   manageable REVERSIBLY; public rename needs TESS + attorney hour).
+5. `feat/payment-funnel` (off the MVP branch) — /pricing with the decided band (**Lifetime
+   shows $59 = low end of your $59–79 band, one string in app/lib/payments.ts**),
+   PaymentProvider abstraction, beta flag-flip checkout; money path survived live attack
+   (CSRF, cross-user, injection). No processor, no real charging.
+6. `feat/pwa` — installable app: manifest + build-time-generated icons (pot mark), themeColor.
+MOBILE.md = the ladder (PWA shipped → Capacitor when video-import is premium-live → RN
+never-unless). Competitor intel: *Heirloom Recipe Box* (iOS) already ships video-import.
+Deferred with log: card-route render cost (unauth DoS vector → rate-limit later); app-wide
+next/image throw on empty imageUrl (pre-existing); checkout rate-limit (matters when a real
+processor lands).
 
 ## Decisions waiting on Frost
 - **OK to fix the familyId-leak bug?** (verifier-confirmed, PRE-EXISTING, touches server
@@ -56,20 +68,17 @@ payment funnel (off the MVP branch), PWA branch. Competitor intel: *Heirloom Rec
   no membership check, and it renders inside that family's private grid. Fix = scrub familyId
   in `parseRecipeFormData` when visibility !== FAMILY + filter `getRecipesByFamily` to
   `visibility: "FAMILY"`. Small, ready to go on your word.
-- **The name + mark pick** at `/preview/branding` (peer review tonight; a rename must beat its
-  switching costs — keeping "Family Recipe" with a better mark is a legitimate outcome).
-  Then: real favicon/app-icon/navbar swap, deep USPTO/domain/store sweep on finalists.
-- **Greenlight for feature branches** (both verifier-passed, fixes applied, pushed —
-  Vercel branch previews on dev-Turso): `feat/cooking-mode` (step-by-step cook view w/
-  wake-lock; fixed: scroll clip, finish-screen ←, focus restore, aria) and
-  `feat/print-recipe` (printable recipe card, ink-safe from dark mode; fixed: UTF-8
-  corruption BLOCKER, print-invisible step numbers). Branch previews only — no dev merge
-  without OK. NOTE: both edit the recipe page's action row → merging the second will need
-  a small manual reconcile.
+- **Greenlights for the six branches above** (test each branch preview; note: cooking-mode and
+  print-recipe both edit the recipe page's action row → whichever merges second needs a small
+  manual reconcile; payment-funnel rides on the MVP branch and merges with it).
+- **The name + mark pick** (peer feedback + `/preview/branding`): keep Family Recipe with a
+  better mark, or commit to Kitchen Heirloom (then: TESS + attorney, favicon/navbar swap is
+  already built on its branch).
 - **OAuth redirect URIs for prod** (Google + Facebook consoles): social login on prod fails the
   callback until `https://family-recipe-nine.vercel.app/api/auth/callback/{google,facebook}` is
   registered (+ FB App Domains, Live mode, Privacy/Data-Deletion URLs). Email/pw already works.
-- **Merge decision** on `feat/mvp-sharing-families` (needs dev-Turso migration first).
+- **Merge decision** on `feat/mvp-sharing-families` (+ payment funnel): needs its migration
+  applied to dev-Turso first (backup-turso.mts, then migrate-turso.mts — your call).
 
 ## Conventions / gotchas
 - `authorId` comes from the session, never the form; ownership checked on every edit/delete.

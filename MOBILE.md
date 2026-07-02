@@ -7,9 +7,10 @@ so "all connected to the same db" is true by construction on every rung.
 
 ## The ladder (climb only when the rung below stops paying)
 
-### Rung 1 — PWA (days, ~free) ← do now
-Web manifest + icons + service worker → the site becomes installable from the browser
-("Add to Home Screen"), full-screen, with an app icon on Android AND iOS.
+### Rung 1 — PWA (days, ~free) ← SHIPPED on `feat/pwa`
+Web manifest + generated icons → the site is installable from the browser ("Add to Home
+Screen"), full-screen, with an app icon on Android AND iOS. (No service worker yet —
+installability doesn't need one; offline caching is a later polish item.)
 - **Pros:** near-zero cost; instant updates (it's just the site); no store review, no fees.
 - **Cons:** no store listing (discovery), iOS install flow is buried in the share sheet,
   no share-TARGET on iOS (can't "share a TikTok to the app"), push is possible but
