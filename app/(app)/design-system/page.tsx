@@ -3,7 +3,7 @@ import RecipeCard from "@/app/components/RecipeCard";
 import type { Recipe } from "@/app/lib/types";
 
 export const metadata = {
-  title: "Design System · Family Recipe",
+  title: "Design System · Kitchen Heirloom",
 };
 
 const sampleRecipe: Recipe = {
@@ -57,7 +57,7 @@ export default function DesignSystemPage() {
     <div className="flex flex-col gap-14">
       <header>
         <p className="text-sm font-bold uppercase tracking-[0.2em] text-primary">
-          Family Recipe
+          Kitchen Heirloom
         </p>
         <h1 className="mt-2 text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
           Design System

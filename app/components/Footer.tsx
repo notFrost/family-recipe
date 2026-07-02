@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Heart } from "lucide-react";
+import BrandMark from "./BrandMark";
 
 function FooterLink({
   href,
@@ -35,9 +36,9 @@ export default function Footer() {
               className="flex items-center gap-2.5 text-xl font-bold tracking-tight text-foreground"
             >
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-base text-primary-foreground shadow-sm">
-                🍳
+                <BrandMark className="h-5 w-5" />
               </span>
-              Family Recipe
+              Kitchen Heirloom
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
               Keep your family&apos;s recipes together, discover new ones, and
@@ -69,7 +70,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 flex flex-col gap-3 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Family Recipe</p>
+          <p>© {new Date().getFullYear()} Kitchen Heirloom</p>
           <p className="flex items-center gap-1.5">
             Made with
             <Heart className="h-3.5 w-3.5 fill-primary text-primary" />

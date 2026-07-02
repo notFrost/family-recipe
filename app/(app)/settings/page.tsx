@@ -57,7 +57,7 @@ export default async function SettingsPage() {
             Profile
           </h2>
           <p className="text-sm text-muted-foreground">
-            How you appear across Family Recipe.
+            How you appear across Kitchen Heirloom.
           </p>
         </div>
         <div className="flex items-center gap-4 rounded-2xl border border-border bg-card p-5 shadow-sm">

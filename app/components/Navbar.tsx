@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Plus } from "lucide-react";
 import { getSession } from "../lib/auth";
 import Avatar from "./Avatar";
+import BrandMark from "./BrandMark";
 import NavLinks from "./NavLinks";
 import SignOutButton from "./SignOutButton";
 import ThemeToggle from "./ThemeToggle";
@@ -19,9 +20,9 @@ export default async function Navbar() {
             className="flex items-center gap-2.5 text-xl font-bold tracking-tight text-foreground"
           >
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-base text-primary-foreground shadow-sm">
-              🍳
+              <BrandMark className="h-5 w-5" />
             </span>
-            Family Recipe
+            Kitchen Heirloom
           </Link>
           <NavLinks
             links={

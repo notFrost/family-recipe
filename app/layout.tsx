@@ -9,7 +9,7 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
-  title: "Family Recipe",
+  title: "Kitchen Heirloom",
   description:
     "Store your family recipes, discover new ones, and keep your family's cooking together — even when you move out.",
 };

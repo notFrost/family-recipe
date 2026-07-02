@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { getSession } from "@/app/lib/auth";
+import BrandMark from "@/app/components/BrandMark";
 import SignupForm from "@/app/components/SignupForm";
 import ThemeToggle from "@/app/components/ThemeToggle";
 import DoodleField from "@/app/components/DoodleField";
@@ -29,10 +30,10 @@ export default async function SignupPage() {
         <div className="absolute inset-0 flex flex-col justify-end p-12 pb-16">
           <Link href="/" className="mb-4 flex w-fit items-center gap-3">
             <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-lg text-primary-foreground shadow-lg">
-              🍳
+              <BrandMark className="h-6 w-6" />
             </span>
             <span className="text-2xl font-bold tracking-tight text-white">
-              Family Recipe
+              Kitchen Heirloom
             </span>
           </Link>
           <p className="max-w-xs text-lg font-light leading-relaxed text-white/85">
@@ -51,10 +52,10 @@ export default async function SignupPage() {
         <div className="relative z-10 w-full max-w-[420px]">
           <Link href="/" className="mb-8 flex items-center gap-2.5 lg:hidden">
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-base shadow-sm">
-              🍳
+              <BrandMark className="h-5 w-5" />
             </span>
             <span className="text-xl font-bold tracking-tight text-foreground">
-              Family Recipe
+              Kitchen Heirloom
             </span>
           </Link>
 
