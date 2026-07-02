@@ -40,6 +40,16 @@ shadcn/ui, Vercel.
   the OWNER's plan). No payment processor, no AI (hard line: no recurring cost before recurring
   income). Its migration still needs applying to dev-Turso before its preview works.
 
+## Overnight run 2026-07-02 (see RUNBOOK.md for the full log)
+Four feature branches now await greenlight, ALL verifier-passed with fixes applied:
+`feat/cooking-mode`, `feat/print-recipe` (now incl. **share-as-image** card + print charm
++ QR growth loop), `feat/video-import` (TikTok/Shorts/Reels → draft via keyless oEmbed;
+premium AI extractor is an interface slot), `feat/kitchen-heirloom` (provisional rebrand —
+see research verdict in the ledger; PUBLIC rename still needs TESS + attorney).
+MOBILE.md = the mobile ladder (PWA now → Capacitor → RN never-unless). Still queued:
+payment funnel (off the MVP branch), PWA branch. Competitor intel: *Heirloom Recipe Box*
+(iOS) already ships video-import — validation and pressure.
+
 ## Decisions waiting on Frost
 - **OK to fix the familyId-leak bug?** (verifier-confirmed, PRE-EXISTING, touches server
   actions = ask-first): forged form data can attach `familyId` to a PUBLIC/PRIVATE recipe with
