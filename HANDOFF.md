@@ -16,13 +16,15 @@ shadcn/ui, Vercel.
   2026-06-29, in-place and data-preserving). Email/password works on prod.
 - **Branch flow:** `dev` → `prod`. Vercel env scopes: `prod` branch → Production scope → prod
   Turso; ALL other branches → Preview scope → dev Turso (automatic isolation).
-- **STYLE PICKED: Homestead (2026-07-01).** Wiring into real pages started on
-  `feat/homestead-real-pages`: the **recipe page is live on dev in Homestead** plus foundations
-  (`authorImage`/`userImage` repo includes, read-only `user-repository`, `Avatar` initials
-  fallback, `ShareLinkButton`). Remaining wiring PARKED on that branch: profile, family,
-  new-recipe form, and a new `/settings` route (Frost re-prioritized to branding mid-flight).
-  Where mocks used missing fields, pages adapt — proposed-adds list in the decision ledger;
-  `story`/`sourceName` arrive with the MVP branch merge, don't fake them.
+- **HOMESTEAD WIRING COMPLETE on dev (2026-07-01, verifier: PASS).** All five real pages ship
+  the Homestead language on real data: recipe, profile (`/u/[id]`), family, form (new+edit,
+  behaviors preserved + family-CTA now defaults FAMILY visibility), and a NEW `/settings`
+  route (read-only account — mutations are ask-first). Navbar: avatar+name → `/settings`
+  (mobile-reachable), route-aware active pills (NavLinks). Foundations: `authorImage`/
+  `userImage` repo includes, read-only `user-repository`, `Avatar` fallback, `ShareLinkButton`,
+  CopyLinkButton pill variant that copies ABSOLUTE urls. Where mocks used missing fields the
+  pages adapt — proposed-adds list in the decision ledger; `story`/`sourceName` arrive with
+  the MVP branch merge, don't fake them. `/preview` harness stays for future exploration.
 - **Brand exploration (2026-07-01):** `/preview/branding` fitting room — 15 candidates in 4
   batches (opening flight / heirloom shelf / warm shelf / single words) × 11 Amber SVG marks,
   live navbar/app-icon/favicon try-on, and a 22-name GRAVEYARD of verified collisions (don't
@@ -39,11 +41,17 @@ shadcn/ui, Vercel.
   income). Its migration still needs applying to dev-Turso before its preview works.
 
 ## Decisions waiting on Frost
-- **The name + mark pick** at `/preview/branding` (a rename must beat its switching costs —
-  keeping "Family Recipe" with a better mark is a legitimate outcome). Then: real favicon/
-  app-icon/navbar swap.
-- **Resume Homestead wiring?** (profile / family / form / settings on
-  `feat/homestead-real-pages` — recipe page already merged.)
+- **OK to fix the familyId-leak bug?** (verifier-confirmed, PRE-EXISTING, touches server
+  actions = ask-first): forged form data can attach `familyId` to a PUBLIC/PRIVATE recipe with
+  no membership check, and it renders inside that family's private grid. Fix = scrub familyId
+  in `parseRecipeFormData` when visibility !== FAMILY + filter `getRecipesByFamily` to
+  `visibility: "FAMILY"`. Small, ready to go on your word.
+- **The name + mark pick** at `/preview/branding` (peer review tonight; a rename must beat its
+  switching costs — keeping "Family Recipe" with a better mark is a legitimate outcome).
+  Then: real favicon/app-icon/navbar swap, deep USPTO/domain/store sweep on finalists.
+- **Greenlight for feature branches** once tested: `feat/cooking-mode` and
+  `feat/print-recipe` (zero-schema, from the deferred slice) — branch previews only, no dev
+  merge without OK.
 - **OAuth redirect URIs for prod** (Google + Facebook consoles): social login on prod fails the
   callback until `https://family-recipe-nine.vercel.app/api/auth/callback/{google,facebook}` is
   registered (+ FB App Domains, Live mode, Privacy/Data-Deletion URLs). Email/pw already works.
