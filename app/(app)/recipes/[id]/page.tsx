@@ -1,13 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Clock, ChefHat, ListOrdered, Pencil } from "lucide-react";
+import QRCode from "qrcode";
 import { recipeRepository } from "@/app/lib/recipe-repository";
 import { familyRepository } from "@/app/lib/family-repository";
+import { canViewRecipe } from "@/app/lib/recipe-access";
 import { getSession } from "@/app/lib/auth";
 import Avatar from "@/app/components/Avatar";
 import DeleteRecipeButton from "@/app/components/DeleteRecipeButton";
 import PrintRecipeButton from "@/app/components/PrintRecipeButton";
+import ShareImageButton from "@/app/components/ShareImageButton";
 import ShareLinkButton from "@/app/components/ShareLinkButton";
 
 // Homestead: the eyebrow above the title carries the recipe's visibility in
@@ -40,25 +44,10 @@ export default async function RecipeDetailPage({
   const session = await getSession();
   const isOwner = session?.user?.id === recipe.authorId;
 
-  // View-gating: PRIVATE recipes are only visible to the author.
-  if (recipe.visibility === "PRIVATE" && !isOwner) {
+  // View-gating: one shared rule for the page AND its exports (share image,
+  // print) — see app/lib/recipe-access.ts.
+  if (!(await canViewRecipe(recipe, session?.user?.id))) {
     notFound();
-  }
-
-  // View-gating: FAMILY recipes are only visible to family members (and the owner).
-  if (recipe.visibility === "FAMILY" && !isOwner) {
-    if (recipe.familyId) {
-      const isMember = await familyRepository.isMember(
-        recipe.familyId,
-        session?.user?.id ?? "",
-      );
-      if (!isMember) {
-        notFound();
-      }
-    } else {
-      // Orphaned FAMILY recipe — shouldn't happen, but treat as not found for non-owners.
-      notFound();
-    }
   }
 
   // Fetch family name for FAMILY recipes when there is a familyId.
@@ -73,8 +62,23 @@ export default async function RecipeDetailPage({
   const eyebrow =
     VISIBILITY_EYEBROWS[recipe.visibility] ?? VISIBILITY_EYEBROWS.PRIVATE;
 
+  // Print-only QR: scan the paper card to open the recipe here. Absolute URL
+  // built from the request headers (the page is already request-dynamic).
+  const h = await headers();
+  const proto = h.get("x-forwarded-proto") ?? "http";
+  const host = h.get("host") ?? "localhost:3000";
+  const qrSvg = await QRCode.toString(
+    `${proto}://${host}/recipes/${recipe.id}`,
+    {
+      type: "svg",
+      margin: 0,
+      width: 88,
+      color: { dark: "#1c1917", light: "#ffffff" },
+    },
+  );
+
   return (
-    <article className="mx-auto flex w-full max-w-4xl flex-col gap-8">
+    <article className="mx-auto flex w-full max-w-4xl flex-col gap-8 print:gap-6 print:border-4 print:border-double print:border-stone-400 print:p-10">
       <Link
         href={backHref}
         className="inline-flex w-fit items-center gap-1.5 rounded text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background print:hidden"
@@ -83,16 +87,25 @@ export default async function RecipeDetailPage({
         {backLabel}
       </Link>
 
+      {/* Print-only masthead: the recipe-tin card leads with the cook, framed
+          by hairline rules — the visibility eyebrow stays on screen only. */}
+      <div className="hidden print:block">
+        <div className="border-y border-stone-300 py-2 text-center font-serif text-sm italic tracking-wide text-stone-600">
+          ✦ From the kitchen of {recipe.authorName ?? "the family"} ✦
+        </div>
+      </div>
+
       <div className="flex flex-col gap-3">
-        <span className="text-sm font-bold uppercase tracking-[0.18em] text-primary">
+        <span className="text-sm font-bold uppercase tracking-[0.18em] text-primary print:hidden">
           {eyebrow}
         </span>
-        <h1 className="text-4xl font-extrabold leading-[1.05] tracking-tight text-foreground sm:text-5xl">
+        <h1 className="text-4xl font-extrabold leading-[1.05] tracking-tight text-foreground sm:text-5xl print:mt-4 print:text-center print:font-serif">
           {recipe.title}
         </h1>
 
-        {/* Prominent byline — the cook stays front and center. */}
-        <div className="mt-1 flex items-center gap-3">
+        {/* Prominent byline — the cook stays front and center (screen only;
+            print credits the cook in the masthead). */}
+        <div className="mt-1 flex items-center gap-3 print:hidden">
           <Avatar
             name={recipe.authorName}
             src={recipe.authorImage}
@@ -156,8 +169,9 @@ export default async function RecipeDetailPage({
               <PrintRecipeButton />
             </>
           )}
+          <ShareImageButton recipeId={recipe.id} title={recipe.title} />
         </div>
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground print:justify-center">
           {recipe.minutes != null ? (
             <span className="inline-flex items-center gap-1.5">
               <Clock className="h-4 w-4" />
@@ -185,7 +199,7 @@ export default async function RecipeDetailPage({
       </div>
 
       {recipe.description ? (
-        <p className="max-w-2xl text-base leading-relaxed text-muted-foreground">
+        <p className="max-w-2xl text-base leading-relaxed text-muted-foreground print:mx-auto print:mt-4 print:text-center print:font-serif print:italic">
           {recipe.description}
         </p>
       ) : null}
@@ -230,6 +244,25 @@ export default async function RecipeDetailPage({
             ))}
           </ol>
         </section>
+      </div>
+
+      {/* Print-only footer: scan the paper card to open the live recipe. */}
+      <div className="hidden print:block">
+        <div className="mt-2 flex items-center justify-center gap-5 border-t border-stone-300 pt-5">
+          <div
+            className="h-[88px] w-[88px] shrink-0"
+            // Server-generated QR SVG (qrcode) — static markup, no user HTML.
+            dangerouslySetInnerHTML={{ __html: qrSvg }}
+          />
+          <div className="flex flex-col gap-0.5">
+            <span className="text-sm font-bold text-stone-800">
+              Scan to cook along
+            </span>
+            <span className="font-serif text-sm italic text-stone-600">
+              Made with Family Recipe — every dish has a story.
+            </span>
+          </div>
+        </div>
       </div>
     </article>
   );
