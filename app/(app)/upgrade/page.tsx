@@ -28,6 +28,8 @@ export default async function UpgradePage({
   const plan = await getUserPlan(session.user.id);
   const sp = await searchParams;
   const reason = typeof sp.reason === "string" ? REASONS[sp.reason] : undefined;
+  // Set when arriving from a completed /pricing checkout.
+  const justUpgraded = typeof sp.welcome === "string";
   const isPremium = plan === "PREMIUM";
 
   return (
@@ -39,7 +41,9 @@ export default async function UpgradePage({
       {isPremium ? (
         <>
           <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            You&apos;re on Premium — thank you
+            {justUpgraded
+              ? "Welcome to Premium — thank you"
+              : "You're on Premium — thank you"}
           </h1>
           <p className="text-base leading-relaxed text-muted-foreground">
             Every limit is lifted. Genuinely, thank you for supporting the
@@ -88,7 +92,13 @@ export default async function UpgradePage({
           </form>
           <p className="text-xs text-muted-foreground">
             Beta: no payment yet — this unlocks Premium so you can try it. Real
-            checkout comes later.
+            checkout comes later.{" "}
+            <a
+              href="/pricing"
+              className="font-semibold text-primary underline-offset-2 hover:underline"
+            >
+              See plans &amp; pricing
+            </a>
           </p>
         </>
       )}
