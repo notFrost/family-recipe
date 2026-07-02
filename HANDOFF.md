@@ -49,9 +49,13 @@ shadcn/ui, Vercel.
 - **The name + mark pick** at `/preview/branding` (peer review tonight; a rename must beat its
   switching costs — keeping "Family Recipe" with a better mark is a legitimate outcome).
   Then: real favicon/app-icon/navbar swap, deep USPTO/domain/store sweep on finalists.
-- **Greenlight for feature branches** once tested: `feat/cooking-mode` and
-  `feat/print-recipe` (zero-schema, from the deferred slice) — branch previews only, no dev
-  merge without OK.
+- **Greenlight for feature branches** (both verifier-passed, fixes applied, pushed —
+  Vercel branch previews on dev-Turso): `feat/cooking-mode` (step-by-step cook view w/
+  wake-lock; fixed: scroll clip, finish-screen ←, focus restore, aria) and
+  `feat/print-recipe` (printable recipe card, ink-safe from dark mode; fixed: UTF-8
+  corruption BLOCKER, print-invisible step numbers). Branch previews only — no dev merge
+  without OK. NOTE: both edit the recipe page's action row → merging the second will need
+  a small manual reconcile.
 - **OAuth redirect URIs for prod** (Google + Facebook consoles): social login on prod fails the
   callback until `https://family-recipe-nine.vercel.app/api/auth/callback/{google,facebook}` is
   registered (+ FB App Domains, Live mode, Privacy/Data-Deletion URLs). Email/pw already works.
@@ -65,6 +69,9 @@ shadcn/ui, Vercel.
   Next 16 → use `preload` (the design variants still say `priority`; fix on port).
 - eslint ignores `.claude/worktrees/**` (stale session worktrees used to redden lint with
   generated `.next` output).
+- **NEVER round-trip source files through PowerShell 5.1 Get-Content/Set-Content** — it reads
+  UTF-8 as cp1252 and writes back BOM + mojibake (corrupted the navbar 🍳 on a whole branch;
+  tsc/lint/build can't catch it). Use the editor tools for file edits, always.
 - **Turso migrations:** `scripts/backup-turso.mts` FIRST, then `scripts/migrate-turso.mts`
   (Prisma migrate can't speak `libsql://`). Env trap: local `.env` = prod DB, `.env.local` =
   `file:./local.db` — mind which one a script loads.
