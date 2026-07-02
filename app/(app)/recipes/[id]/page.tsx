@@ -6,6 +6,7 @@ import { recipeRepository } from "@/app/lib/recipe-repository";
 import { familyRepository } from "@/app/lib/family-repository";
 import { getSession } from "@/app/lib/auth";
 import Avatar from "@/app/components/Avatar";
+import CookingMode from "@/app/components/CookingMode";
 import DeleteRecipeButton from "@/app/components/DeleteRecipeButton";
 import ShareLinkButton from "@/app/components/ShareLinkButton";
 
@@ -134,11 +135,18 @@ export default async function RecipeDetailPage({
       {/* Actions + quick stats. */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap items-center gap-2">
+          {/* Start cooking is the page's one primary action for everyone;
+              the owner's Edit steps down to a secondary pill beside it. */}
+          <CookingMode
+            title={recipe.title}
+            steps={recipe.steps}
+            ingredients={recipe.ingredients}
+          />
           {isOwner ? (
             <>
               <Link
                 href={`/recipes/${recipe.id}/edit`}
-                className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2.5 text-sm font-semibold text-foreground shadow-sm transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 <Pencil className="h-4 w-4" />
                 Edit
