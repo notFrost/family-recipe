@@ -138,12 +138,15 @@ export function toDraftPrefill(meta: VideoMetadata): RecipeDraftPrefill {
       : meta.platform === "youtube"
         ? "YouTube"
         : "Instagram";
+  // Cap the echoed URL here too (the receiving form re-caps, but the
+  // continue-link shouldn't balloon on a pathologically long platform URL).
+  const shortUrl = meta.sourceUrl.slice(0, 300);
   return {
     title: meta.title ?? undefined,
     imageUrl: meta.thumbnailUrl ?? undefined,
     description: meta.authorName
-      ? `From a ${platformLabel} video by ${meta.authorName} — ${meta.sourceUrl}`
-      : `From a ${platformLabel} video — ${meta.sourceUrl}`,
+      ? `From a ${platformLabel} video by ${meta.authorName} — ${shortUrl}`
+      : `From a ${platformLabel} video — ${shortUrl}`,
   };
 }
 
