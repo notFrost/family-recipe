@@ -142,7 +142,7 @@ export default function DoodleField({ className = "" }: { className?: string }) 
   return (
     <svg
       aria-hidden="true"
-      className={`pointer-events-none inset-0 z-0 h-full w-full overflow-hidden text-foreground opacity-[0.06] dark:opacity-[0.10] ${className}`}
+      className={`pointer-events-none inset-0 z-0 h-full w-full overflow-hidden text-foreground opacity-[0.06] dark:opacity-[0.10] print:hidden ${className}`}
     >
       <defs>
         <pattern

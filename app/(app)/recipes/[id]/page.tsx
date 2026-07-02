@@ -7,6 +7,7 @@ import { familyRepository } from "@/app/lib/family-repository";
 import { getSession } from "@/app/lib/auth";
 import Avatar from "@/app/components/Avatar";
 import DeleteRecipeButton from "@/app/components/DeleteRecipeButton";
+import PrintRecipeButton from "@/app/components/PrintRecipeButton";
 import ShareLinkButton from "@/app/components/ShareLinkButton";
 
 // Homestead: the eyebrow above the title carries the recipe's visibility in
@@ -76,7 +77,7 @@ export default async function RecipeDetailPage({
     <article className="mx-auto flex w-full max-w-4xl flex-col gap-8">
       <Link
         href={backHref}
-        className="inline-flex w-fit items-center gap-1.5 rounded text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className="inline-flex w-fit items-center gap-1.5 rounded text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background print:hidden"
       >
         <ArrowLeft className="h-4 w-4" />
         {backLabel}
@@ -120,7 +121,9 @@ export default async function RecipeDetailPage({
         </div>
       </div>
 
-      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-3xl border border-border bg-muted shadow-md">
+      {/* Hidden in print: a recipe-tin card is ingredients and method, not a
+          full-bleed photo — and it saves a page of ink. */}
+      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-3xl border border-border bg-muted shadow-md print:hidden">
         <Image
           src={recipe.imageUrl}
           alt={recipe.title}
@@ -133,7 +136,7 @@ export default async function RecipeDetailPage({
 
       {/* Actions + quick stats. */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 print:hidden">
           {isOwner ? (
             <>
               <Link
@@ -144,10 +147,14 @@ export default async function RecipeDetailPage({
                 Edit
               </Link>
               <ShareLinkButton />
+              <PrintRecipeButton />
               <DeleteRecipeButton id={recipe.id} />
             </>
           ) : (
-            <ShareLinkButton />
+            <>
+              <ShareLinkButton />
+              <PrintRecipeButton />
+            </>
           )}
         </div>
         <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">

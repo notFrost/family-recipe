@@ -122,6 +122,27 @@ body {
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+/* Print: force the ink-friendly light palette regardless of theme — a dark-
+   mode user printing a recipe must not get faint cream text on white paper.
+   White page, near-black text, amber-700 accent (reads as warm on color,
+   solid gray on B/W). Only the tokens the recipe card uses are remapped. */
+@media print {
+  :root,
+  .dark {
+    --background: #ffffff;
+    --foreground: #1c1917;
+    --card: #ffffff;
+    --card-foreground: #1c1917;
+    --primary: #b45309;
+    --primary-foreground: #ffffff;
+    --secondary: #f5f5f4;
+    --secondary-foreground: #44403c;
+    --muted: #f5f5f4;
+    --muted-foreground: #57534e;
+    --border: #d6d3d1;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { ArrowRight, Plus } from "lucide-react";
 import { getSession } from "../lib/auth";
 import Avatar from "./Avatar";
@@ -11,7 +11,7 @@ export default async function Navbar() {
   const user = session?.user;
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-card/90 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-border bg-card/90 backdrop-blur-md print:hidden">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3.5 sm:px-6 lg:px-8">
         <div className="flex items-center gap-6">
           <Link
@@ -19,7 +19,7 @@ export default async function Navbar() {
             className="flex items-center gap-2.5 text-xl font-bold tracking-tight text-foreground"
           >
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-base text-primary-foreground shadow-sm">
-              🍳
+              ðŸ³
             </span>
             Family Recipe
           </Link>
@@ -39,7 +39,7 @@ export default async function Navbar() {
           <ThemeToggle />
           {user ? (
             <>
-              {/* Avatar + name are the door to /settings — the avatar stays
+              {/* Avatar + name are the door to /settings â€” the avatar stays
                   visible on mobile so the page is reachable at every width. */}
               <Link
                 href="/settings"
