@@ -19,7 +19,10 @@ export async function checkoutAction(formData: FormData): Promise<void> {
     redirect("/login?callbackUrl=/pricing");
   }
 
-  const offerId = (formData.get("offer") as string | null)?.trim() ?? "";
+  // FormData.get can return a File for multipart file fields — a crafted
+  // request must bounce like any other invalid offer, not 500 on .trim().
+  const raw = formData.get("offer");
+  const offerId = typeof raw === "string" ? raw.trim() : "";
   const offer = getOffer(offerId);
   if (!offer) {
     redirect("/pricing");
