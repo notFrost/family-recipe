@@ -77,6 +77,15 @@ shadcn/ui, Vercel.
   `file:./local.db` — mind which one a script loads.
 - Design/preview changes: standing OK to commit + push to `dev` once verified. Schema, auth,
   server actions, prod: ask first.
+- **Design-review kill switch** (`app/lib/design-review.ts`): the whole /preview harness +
+  Review-designs CTA are OFF in production always (hard-coded), and can be muted between
+  review rounds by setting `DESIGN_REVIEW=0` in Vercel's Preview env scope (+ redeploy);
+  remove the var (or `=1`) when sharing the dev preview for a round. Unset = visible on
+  non-prod. ADD the var, never detach shared ones (see the env-edit incident below).
+- **Branches pruned (2026-07-01):** only `dev`, `prod`, `feat/cooking-mode`,
+  `feat/print-recipe`, and `feat/mvp-sharing-families` (UNMERGED — the monetization MVP,
+  do not delete) remain. better-auth / preview-styles / recipe-user-page-variants /
+  homestead-real-pages were fully merged into dev and deleted local+remote.
 - Don't run `npm run dev` in foreground Bash — use the Preview MCP (`launch.json` "dev").
   Don't `rm -rf .next` while the preview server runs. A push with no Vercel build = dropped
   webhook → empty commit or Redeploy.
