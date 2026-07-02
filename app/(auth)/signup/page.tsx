@@ -51,7 +51,7 @@ export default async function SignupPage() {
         </div>
         <div className="relative z-10 w-full max-w-[420px]">
           <Link href="/" className="mb-8 flex items-center gap-2.5 lg:hidden">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-base shadow-sm">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-base text-primary-foreground shadow-sm">
               <BrandMark className="h-5 w-5" />
             </span>
             <span className="text-xl font-bold tracking-tight text-foreground">
