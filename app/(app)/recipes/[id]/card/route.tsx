@@ -85,15 +85,31 @@ export async function GET(
           backgroundColor: C.bg,
         }}
       >
-        {/* Hero photo band. */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={recipe.imageUrl}
-          alt=""
-          width={1080}
-          height={480}
-          style={{ width: 1080, height: 480, objectFit: "cover" }}
-        />
+        {/* Hero photo band. An empty imageUrl (the form allows it) throws
+            inside ImageResponse — fall back to a warm brand band instead. */}
+        {recipe.imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={recipe.imageUrl}
+            alt=""
+            width={1080}
+            height={480}
+            style={{ width: 1080, height: 480, objectFit: "cover" }}
+          />
+        ) : (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 1080,
+              height: 480,
+              backgroundColor: "#fdecd8",
+            }}
+          >
+            <PotMark size={160} color={C.amber} />
+          </div>
+        )}
 
         {/* Body. */}
         <div
