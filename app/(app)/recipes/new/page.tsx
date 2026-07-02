@@ -36,10 +36,24 @@ export default async function NewRecipePage({
   } catch {
     draftImage = undefined;
   }
+  // Repeated ing/step params (AI extraction handoff) — arrays or single
+  // strings, capped in both count and length; anything else drops.
+  const list = (v: unknown, maxItems: number, maxLen: number): string[] =>
+    (Array.isArray(v) ? v : typeof v === "string" ? [v] : [])
+      .filter((x): x is string => typeof x === "string" && !!x.trim())
+      .slice(0, maxItems)
+      .map((x) => x.trim().slice(0, maxLen));
+  const minutesNum = Number(str(sp.minutes, 10));
   const initialDraft = {
     title: str(sp.title, 200),
     imageUrl: draftImage,
     description: str(sp.description, 1000),
+    ingredients: list(sp.ing, 30, 200),
+    steps: list(sp.step, 20, 400),
+    minutes:
+      Number.isFinite(minutesNum) && minutesNum > 0 && minutesNum < 100000
+        ? Math.round(minutesNum)
+        : undefined,
   };
 
   const families = await familyRepository.getFamiliesForUser(session.user.id);

@@ -13,7 +13,14 @@ interface RecipeFormProps {
    * Create-mode prefills (e.g. from the video import) — ignored in edit
    * mode. Strings are already sanitized/capped by the caller.
    */
-  initialDraft?: { title?: string; imageUrl?: string; description?: string };
+  initialDraft?: {
+    title?: string;
+    imageUrl?: string;
+    description?: string;
+    ingredients?: string[];
+    steps?: string[];
+    minutes?: number;
+  };
   /**
    * Server action invoked on submit. Receives the form data and is
    * responsible for persisting + redirecting.
@@ -65,10 +72,18 @@ export default function RecipeForm({
     initialRecipe?.imageUrl ?? draft?.imageUrl ?? "",
   );
   const [ingredients, setIngredients] = useState<string[]>(
-    initialRecipe?.ingredients.length ? initialRecipe.ingredients : [""],
+    initialRecipe?.ingredients.length
+      ? initialRecipe.ingredients
+      : draft?.ingredients?.length
+        ? draft.ingredients
+        : [""],
   );
   const [steps, setSteps] = useState<string[]>(
-    initialRecipe?.steps.length ? initialRecipe.steps : [""],
+    initialRecipe?.steps.length
+      ? initialRecipe.steps
+      : draft?.steps?.length
+        ? draft.steps
+        : [""],
   );
   const [errors, setErrors] = useState<string[]>([]);
   const [imagePreviewFailed, setImagePreviewFailed] = useState(false);
@@ -265,7 +280,7 @@ export default function RecipeForm({
               name="minutes"
               type="number"
               min={0}
-              defaultValue={initialRecipe?.minutes ?? ""}
+              defaultValue={initialRecipe?.minutes ?? draft?.minutes ?? ""}
               placeholder="45"
               className={`${inputClasses} pl-10 pr-14`}
             />
