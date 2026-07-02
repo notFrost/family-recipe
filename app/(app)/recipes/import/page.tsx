@@ -1,11 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import {
   ArrowLeft,
   ArrowRight,
   Clapperboard,
   Link2,
+  Loader2,
   Sparkles,
 } from "lucide-react";
 import { getSession } from "@/app/lib/auth";
@@ -13,21 +15,136 @@ import {
   aiExtractionEnabled,
   extractRecipe,
   mergePrefill,
+  type ExtractedRecipe,
 } from "@/app/lib/recipe-extractor";
 import {
   fetchVideoMetadata,
   parseVideoUrl,
   toDraftPrefill,
+  type RecipeDraftPrefill,
+  type VideoMetadata,
 } from "@/app/lib/video-import";
+
+// Watching a video can take up to ~40s — the page shell streams immediately,
+// but the serverless function must stay alive for the Suspense payload.
+export const maxDuration = 60;
 
 const inputClasses =
   "w-full rounded-xl border border-input bg-card px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-ring";
 
 /**
- * Video → recipe import. Paste a TikTok / YouTube Short / Reel link and the
- * platform's own shared metadata (title, creator, thumbnail) prefills a
- * recipe draft. Metadata-only tonight; AI extraction of ingredients/steps is
- * the premium slot (see app/lib/video-import.ts).
+ * Build the /recipes/new prefill link under a hard byte budget — a typical
+ * recipe is ~1KB of query params; tail items drop first if a monster recipe
+ * would push the URL near proxy limits (the form is editable anyway).
+ */
+function buildContinueHref(
+  prefill: RecipeDraftPrefill & {
+    ingredients?: string[];
+    steps?: string[];
+    minutes?: number;
+  },
+): string {
+  const q = new URLSearchParams();
+  if (prefill.title) q.set("title", prefill.title);
+  if (prefill.imageUrl) q.set("imageUrl", prefill.imageUrl);
+  if (prefill.description) q.set("description", prefill.description);
+  if (prefill.minutes) q.set("minutes", String(prefill.minutes));
+  const BUDGET = 6000;
+  for (const ing of prefill.ingredients ?? []) {
+    q.append("ing", ing);
+    if (q.toString().length > BUDGET) {
+      q.delete("ing", ing);
+      break;
+    }
+  }
+  for (const step of prefill.steps ?? []) {
+    q.append("step", step);
+    if (q.toString().length > BUDGET) {
+      q.delete("step", step);
+      break;
+    }
+  }
+  return `/recipes/new?${q.toString()}`;
+}
+
+function ContinueButton({
+  href,
+  label,
+  primary,
+}: {
+  href: string;
+  label: string;
+  primary: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      className={`inline-flex w-fit items-center gap-2 rounded-full px-6 py-2.5 text-sm font-semibold shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+        primary
+          ? "bg-primary text-primary-foreground"
+          : "border border-border bg-card text-foreground shadow-sm hover:bg-accent"
+      }`}
+    >
+      {label}
+      <ArrowRight className="h-4 w-4" />
+    </Link>
+  );
+}
+
+/**
+ * The slow half: AI extraction, streamed in via Suspense so the page shell
+ * (metadata + basic continue) renders instantly. Renders the upgraded
+ * continue button when the model finds a recipe; a quiet note when it
+ * doesn't; nothing at all when extraction is disabled.
+ */
+async function AiSection({ meta }: { meta: VideoMetadata }) {
+  const ai: ExtractedRecipe | null = await extractRecipe(meta);
+
+  if (!ai) {
+    return (
+      <p className="text-sm text-muted-foreground">
+        No written recipe found in the video — continue with the basics and
+        fill it in yourself.
+      </p>
+    );
+  }
+
+  const fullHref = buildContinueHref(mergePrefill(toDraftPrefill(meta), ai));
+
+  return (
+    <div className="flex flex-col gap-3">
+      <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
+        <Sparkles className="h-4 w-4" />
+        AI read the recipe: {ai.ingredients.length}{" "}
+        {ai.ingredients.length === 1 ? "ingredient" : "ingredients"},{" "}
+        {ai.steps.length} {ai.steps.length === 1 ? "step" : "steps"}
+        {ai.minutes ? `, ~${ai.minutes} min` : ""}
+      </span>
+      <ContinueButton
+        href={fullHref}
+        label="Continue with the full recipe"
+        primary
+      />
+    </div>
+  );
+}
+
+function AiWorking({ platform }: { platform: string }) {
+  return (
+    <div className="flex items-center gap-3 text-sm font-semibold text-muted-foreground">
+      <Loader2 className="h-4 w-4 animate-spin text-primary" />
+      {platform === "youtube"
+        ? "Watching the video for the recipe — up to a minute. You can continue with the basics meanwhile."
+        : "Reading the caption for the recipe…"}
+    </div>
+  );
+}
+
+/**
+ * Video → recipe import. Paste a TikTok / YouTube Short / Reel link: the
+ * platform's metadata prefills a draft instantly, and (dev-only until
+ * go-live) AI extraction streams in the full ingredients/steps behind a
+ * Suspense boundary — no blocking wait.
  */
 export default async function ImportRecipePage({
   searchParams,
@@ -44,39 +161,8 @@ export default async function ImportRecipePage({
 
   const parsed = rawUrl ? parseVideoUrl(rawUrl) : null;
   const meta = parsed ? await fetchVideoMetadata(parsed) : null;
-  // AI extraction (dev-only, best-effort): watches YouTube videos outright,
-  // parses caption text for the others. Null = fall back to metadata prefill.
-  const ai = meta ? await extractRecipe(meta) : null;
-  const prefill = meta ? mergePrefill(toDraftPrefill(meta), ai) : null;
-
-  // Continue-link with a hard byte budget: the prefill travels as query
-  // params, and while a typical recipe is ~1KB, we never build an URL that
-  // browsers/proxies might choke on. Tail items get dropped first — the form
-  // is fully editable anyway.
-  let continueHref: string | null = null;
-  if (prefill) {
-    const q = new URLSearchParams();
-    if (prefill.title) q.set("title", prefill.title);
-    if (prefill.imageUrl) q.set("imageUrl", prefill.imageUrl);
-    if (prefill.description) q.set("description", prefill.description);
-    if (prefill.minutes) q.set("minutes", String(prefill.minutes));
-    const BUDGET = 6000;
-    for (const ing of prefill.ingredients ?? []) {
-      q.append("ing", ing);
-      if (q.toString().length > BUDGET) {
-        q.delete("ing", ing);
-        break;
-      }
-    }
-    for (const step of prefill.steps ?? []) {
-      q.append("step", step);
-      if (q.toString().length > BUDGET) {
-        q.delete("step", step);
-        break;
-      }
-    }
-    continueHref = `/recipes/new?${q.toString()}`;
-  }
+  const basicHref = meta ? buildContinueHref(toDraftPrefill(meta)) : null;
+  const aiOn = aiExtractionEnabled();
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-8">
@@ -97,9 +183,8 @@ export default async function ImportRecipePage({
           <br className="hidden sm:block" /> to the family table
         </h1>
         <p className="max-w-2xl text-base leading-relaxed text-muted-foreground">
-          Paste a TikTok, YouTube Short, or Instagram Reel. What the platform
-          shares — title, creator, cover image — prefills your draft; you add
-          the ingredients and method.
+          Paste a TikTok, YouTube Short, or Instagram Reel. The video&apos;s
+          details prefill your draft{aiOn ? " — and AI writes out the recipe when it can" : ""}.
         </p>
       </div>
 
@@ -172,25 +257,24 @@ export default async function ImportRecipePage({
                   by {meta.authorName}
                 </span>
               ) : null}
-              {ai ? (
-                <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
-                  <Sparkles className="h-4 w-4" />
-                  AI read the recipe: {ai.ingredients.length}{" "}
-                  {ai.ingredients.length === 1 ? "ingredient" : "ingredients"},{" "}
-                  {ai.steps.length} {ai.steps.length === 1 ? "step" : "steps"}
-                </span>
-              ) : null}
             </div>
           </div>
 
-          {continueHref ? (
-            <Link
-              href={continueHref}
-              className="inline-flex w-fit items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-            >
-              Continue to the recipe form
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+          <div className="flex flex-wrap items-center gap-3">
+            {basicHref ? (
+              <ContinueButton
+                href={basicHref}
+                label="Continue with the basics"
+                primary={!aiOn}
+              />
+            ) : null}
+          </div>
+
+          {/* The slow half streams in — the shell above renders instantly. */}
+          {aiOn ? (
+            <Suspense fallback={<AiWorking platform={meta.platform} />}>
+              <AiSection meta={meta} />
+            </Suspense>
           ) : null}
         </section>
       ) : null}
@@ -204,11 +288,11 @@ export default async function ImportRecipePage({
         <div className="flex flex-col gap-1.5">
           <span className="inline-flex items-center gap-2 text-sm font-bold text-foreground">
             <Sparkles className="h-4 w-4 text-primary" />
-            {aiExtractionEnabled() ? "AI extraction — dev preview" : "Coming to Premium"}
+            {aiOn ? "AI extraction — beta preview" : "Coming to Premium"}
           </span>
           <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
-            {aiExtractionEnabled()
-              ? "AI is ON in this environment: YouTube videos get watched outright; TikTok and Reels are read from their captions. At launch this becomes a Premium perk."
+            {aiOn
+              ? "AI is ON in this test environment: YouTube videos get watched outright; TikTok and Reels are read from their captions. At launch this becomes a Premium perk."
               : "Premium will watch the video for you and write out the ingredients and method, ready to edit. Today the import prefills what the platform shares — title, creator, and cover."}
           </p>
         </div>
