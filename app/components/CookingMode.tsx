@@ -35,6 +35,7 @@ export default function CookingMode({
   // `done` renders the finish screen after the last step.
   const [done, setDone] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const wakeLockRef = useRef<WakeLockSentinel | null>(null);
 
   const close = useCallback(() => {
@@ -42,6 +43,9 @@ export default function CookingMode({
     setIndex(0);
     setDone(false);
     setShowIngredients(false);
+    // Hand focus back to the trigger — the focused close button unmounts
+    // with the portal, which would otherwise drop focus on <body>.
+    triggerRef.current?.focus();
   }, []);
 
   const next = useCallback(() => {
@@ -55,9 +59,14 @@ export default function CookingMode({
   }, [steps.length]);
 
   const prev = useCallback(() => {
-    setDone(false);
+    // From the finish screen, ← returns TO the last step: `index` never
+    // advanced when `done` was set, so only the flag clears here.
+    if (done) {
+      setDone(false);
+      return;
+    }
     setIndex((i) => Math.max(0, i - 1));
-  }, []);
+  }, [done]);
 
   // Keyboard: ← → navigate, Escape closes. Only while open.
   useEffect(() => {
@@ -116,6 +125,10 @@ export default function CookingMode({
     };
   }, [open]);
 
+  // Defense-in-depth: the form enforces ≥1 step client-side, but a crafted
+  // POST could store an empty list — no button, no broken "Step 1 of 0".
+  if (steps.length === 0) return null;
+
   const progress = done ? 1 : (index + 1) / steps.length;
 
   // Portaled to <body>: the page's <main> carries its own z-index, which
@@ -167,17 +180,30 @@ export default function CookingMode({
           </header>
 
           {/* Progress. */}
-          <div className="h-1.5 w-full bg-muted">
+          <div
+            role="progressbar"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={Math.round(progress * 100)}
+            aria-label="Cooking progress"
+            className="h-1.5 w-full bg-muted"
+          >
             <div
               className="h-full bg-primary transition-[width] duration-300 motion-reduce:transition-none"
               style={{ width: `${progress * 100}%` }}
             />
           </div>
 
-          {/* The step (or the finish screen). */}
-          <div className="flex flex-1 items-center justify-center overflow-y-auto px-6 py-10 sm:px-10">
+          {/* The step (or the finish screen). Children center via m-auto —
+              centering on the flex container itself would top-clip any step
+              taller than the viewport and make its start unscrollable.
+              aria-live announces step changes to screen readers. */}
+          <div
+            aria-live="polite"
+            className="flex flex-1 overflow-y-auto px-6 py-10 sm:px-10"
+          >
             {done ? (
-              <div className="flex max-w-xl flex-col items-center gap-5 text-center">
+              <div className="m-auto flex max-w-xl flex-col items-center gap-5 text-center">
                 <span className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/15 text-primary">
                   <Check className="h-8 w-8" />
                 </span>
@@ -196,11 +222,11 @@ export default function CookingMode({
                 </button>
               </div>
             ) : (
-              <div className="flex w-full max-w-2xl items-start gap-5">
+              <div className="m-auto flex w-full max-w-2xl items-start gap-5">
                 <span className="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary text-lg font-bold text-primary-foreground">
                   {index + 1}
                 </span>
-                <p className="text-2xl font-semibold leading-relaxed tracking-tight text-foreground sm:text-3xl sm:leading-relaxed">
+                <p className="min-w-0 break-words text-2xl font-semibold leading-relaxed tracking-tight text-foreground sm:text-3xl sm:leading-relaxed">
                   {steps[index]}
                 </p>
               </div>
@@ -257,6 +283,7 @@ export default function CookingMode({
   return (
     <>
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen(true)}
         className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
