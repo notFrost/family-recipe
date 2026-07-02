@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Nunito } from "next/font/google";
 import "./globals.css";
 
@@ -12,6 +12,20 @@ export const metadata: Metadata = {
   title: "Family Recipe",
   description:
     "Store your family recipes, discover new ones, and keep your family's cooking together — even when you move out.",
+  // Installed-PWA polish (iOS reads these, not the manifest).
+  appleWebApp: {
+    capable: true,
+    title: "Family Recipe",
+    statusBarStyle: "default",
+  },
+};
+
+// Browser chrome matches the amber brand in light and the mocha canvas in dark.
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#d97706" },
+    { media: "(prefers-color-scheme: dark)", color: "#241a12" },
+  ],
 };
 
 // Set the theme class before first paint so dark mode doesn't flash. Reads the
