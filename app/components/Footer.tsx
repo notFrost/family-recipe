@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { Heart } from "lucide-react";
 
 function FooterLink({
@@ -35,13 +35,13 @@ export default function Footer() {
               className="flex items-center gap-2.5 text-xl font-bold tracking-tight text-foreground"
             >
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-base text-primary-foreground shadow-sm">
-                ðŸ³
+                🍳
               </span>
               Family Recipe
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
               Keep your family&apos;s recipes together, discover new ones, and
-              pass them down â€” even after everyone moves out.
+              pass them down — even after everyone moves out.
             </p>
           </div>
 
@@ -69,7 +69,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 flex flex-col gap-3 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <p>Â© {new Date().getFullYear()} Family Recipe</p>
+          <p>© {new Date().getFullYear()} Family Recipe</p>
           <p className="flex items-center gap-1.5">
             Made with
             <Heart className="h-3.5 w-3.5 fill-primary text-primary" />

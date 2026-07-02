@@ -1,12 +1,12 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { Sparkles } from "lucide-react";
 
 /**
- * Floating "Review designs" shortcut â€” a sticky pill centered at the bottom of
+ * Floating "Review designs" shortcut — a sticky pill centered at the bottom of
  * the screen (mobile and desktop), drawing attention because its mere presence
  * signals "there are designs to review". A floating button, not a full-width
  * bar (kept off the very edge). Rendered only on app pages (not in /preview) and
- * only off production â€” the caller gates on VERCEL_ENV.
+ * only off production — the caller gates on VERCEL_ENV.
  */
 export default function PreviewCta() {
   return (

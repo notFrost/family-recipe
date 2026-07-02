@@ -217,7 +217,10 @@ export default async function RecipeDetailPage({
                 key={index}
                 className="flex items-start gap-4 rounded-2xl border border-border bg-card p-5 shadow-sm"
               >
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
+                {/* Print: browsers strip background-color by default ("background
+                    graphics" off), which would leave white numerals on white paper —
+                    so the badge falls back to a bordered dark-text ring. */}
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground print:border print:border-border print:bg-transparent print:text-foreground">
                   {index + 1}
                 </span>
                 <p className="pt-1 text-sm leading-relaxed text-foreground">
