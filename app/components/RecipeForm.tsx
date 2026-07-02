@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { ChevronDown, Clock, Globe, Plus, X } from "lucide-react";
 import type { Recipe } from "../lib/types";
 
 interface RecipeFormProps {
@@ -23,16 +24,17 @@ interface RecipeFormProps {
   initialFamilyId?: string;
 }
 
+// Homestead field treatment: bold labels, the shared rounded-xl inputs.
 const inputClasses =
   "w-full rounded-xl border border-input bg-card px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-ring";
 
-const labelClasses = "text-sm font-medium text-foreground";
+const labelClasses = "text-sm font-bold text-foreground";
 
 const minorButtonClasses =
-  "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border bg-card text-lg text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+  "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border bg-card text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
 const addButtonClasses =
-  "self-start rounded-full border border-border bg-card px-4 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+  "self-start rounded-full border border-border bg-card px-4 py-1.5 text-sm font-semibold text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
 function looksLikeUrl(value: string): boolean {
   try {
@@ -60,8 +62,11 @@ export default function RecipeForm({
   );
   const [errors, setErrors] = useState<string[]>([]);
   const [imagePreviewFailed, setImagePreviewFailed] = useState(false);
+  // Arriving from "Add recipe to this family" hands us a familyId — honor the
+  // intent by defaulting visibility to FAMILY so the picker is visible and
+  // pre-filled (it used to stay on PRIVATE, silently dropping the family).
   const [visibility, setVisibility] = useState<string>(
-    initialRecipe?.visibility ?? "PRIVATE",
+    initialRecipe?.visibility ?? (initialFamilyId ? "FAMILY" : "PRIVATE"),
   );
 
   // Resolve the effective initial family id: pre-select from the prop, the
@@ -156,7 +161,7 @@ export default function RecipeForm({
       {errors.length > 0 ? (
         <div
           role="alert"
-          className="rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+          className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
         >
           <ul className="list-inside list-disc space-y-1">
             {errors.map((error) => (
@@ -177,13 +182,15 @@ export default function RecipeForm({
           required
           defaultValue={initialRecipe?.title ?? ""}
           placeholder="e.g. Roasted Tomato Soup"
-          className={inputClasses}
+          className={`${inputClasses} text-base font-semibold`}
         />
       </div>
 
+      {/* Photo — the image well leads like the recipe hero; the URL input
+          feeds it and the preview fills the big rounded frame. */}
       <div className="flex flex-col gap-2">
         <label htmlFor="imageUrl" className={labelClasses}>
-          Image URL
+          Photo
         </label>
         <input
           id="imageUrl"
@@ -198,12 +205,12 @@ export default function RecipeForm({
           className={inputClasses}
         />
         {showPreview ? (
-          <div className="relative mt-2 aspect-[16/9] w-full max-w-md overflow-hidden rounded-xl border border-border bg-muted">
+          <div className="relative mt-2 aspect-[16/9] w-full overflow-hidden rounded-3xl border border-border bg-muted shadow-md">
             <Image
               src={imageUrl}
               alt="Image preview"
               fill
-              sizes="(max-width: 768px) 100vw, 28rem"
+              sizes="(max-width: 768px) 100vw, 48rem"
               className="object-cover"
               onError={() => setImagePreviewFailed(true)}
               unoptimized
@@ -215,6 +222,10 @@ export default function RecipeForm({
             Couldn&apos;t load a preview for that URL.
           </p>
         ) : null}
+        <p className="text-xs text-muted-foreground">
+          A bright, close-up photo makes a recipe twice as tempting on
+          Discover.
+        </p>
       </div>
 
       <div className="flex flex-col gap-2">
@@ -231,47 +242,54 @@ export default function RecipeForm({
         />
       </div>
 
-      <div className="flex flex-col gap-2">
-        <label htmlFor="minutes" className={labelClasses}>
-          Total time (minutes)
-        </label>
-        <input
-          id="minutes"
-          name="minutes"
-          type="number"
-          min={0}
-          defaultValue={initialRecipe?.minutes ?? ""}
-          placeholder="e.g. 45"
-          className={`${inputClasses} max-w-[10rem]`}
-        />
-        <p className="text-xs text-muted-foreground">
-          Optional — shown as a quick badge on the recipe card.
-        </p>
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <label htmlFor="visibility" className={labelClasses}>
-          Visibility
-        </label>
-        <select
-          id="visibility"
-          name="visibility"
-          value={visibility}
-          onChange={(event) => setVisibility(event.target.value)}
-          className={inputClasses}
-        >
-          <option value="PRIVATE">Private</option>
-          <option value="PUBLIC">Public</option>
-          <option value="UNLISTED">Unlisted</option>
-          <option value="FAMILY" disabled={families.length === 0}>
-            Family
-          </option>
-        </select>
-        <p className="text-xs text-muted-foreground">
-          Private &mdash; only you. Public &mdash; shown on Discover. Unlisted
-          &mdash; viewable by link, not listed. Family &mdash; visible to
-          members of a family.
-        </p>
+      {/* Total time + visibility, side by side on wider screens. */}
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div className="flex flex-col gap-2">
+          <label htmlFor="minutes" className={labelClasses}>
+            Total time
+          </label>
+          <div className="relative">
+            <Clock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              id="minutes"
+              name="minutes"
+              type="number"
+              min={0}
+              defaultValue={initialRecipe?.minutes ?? ""}
+              placeholder="45"
+              className={`${inputClasses} pl-10 pr-14`}
+            />
+            <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-muted-foreground">
+              min
+            </span>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Optional — shown as a quick badge on the recipe card.
+          </p>
+        </div>
+        <div className="flex flex-col gap-2">
+          <label htmlFor="visibility" className={labelClasses}>
+            Who can see it
+          </label>
+          <div className="relative">
+            <Globe className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <select
+              id="visibility"
+              name="visibility"
+              value={visibility}
+              onChange={(event) => setVisibility(event.target.value)}
+              className={`${inputClasses} cursor-pointer appearance-none pl-10 pr-10`}
+            >
+              <option value="PRIVATE">Private — only you</option>
+              <option value="PUBLIC">Public — shown on Discover</option>
+              <option value="UNLISTED">Unlisted — anyone with the link</option>
+              <option value="FAMILY" disabled={families.length === 0}>
+                Family — your family kitchen
+              </option>
+            </select>
+            <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          </div>
+        </div>
       </div>
 
       {visibility === "FAMILY" ? (
@@ -279,23 +297,26 @@ export default function RecipeForm({
           <label htmlFor="familyId" className={labelClasses}>
             Family
           </label>
-          <select
-            id="familyId"
-            name="familyId"
-            value={familyId}
-            onChange={(event) => setFamilyId(event.target.value)}
-            required
-            className={inputClasses}
-          >
-            <option value="" disabled>
-              Select a family…
-            </option>
-            {families.map((f) => (
-              <option key={f.id} value={f.id}>
-                {f.name}
+          <div className="relative">
+            <select
+              id="familyId"
+              name="familyId"
+              value={familyId}
+              onChange={(event) => setFamilyId(event.target.value)}
+              required
+              className={`${inputClasses} cursor-pointer appearance-none pr-10`}
+            >
+              <option value="" disabled>
+                Select a family…
               </option>
-            ))}
-          </select>
+              {families.map((f) => (
+                <option key={f.id} value={f.id}>
+                  {f.name}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          </div>
         </div>
       ) : null}
 
@@ -321,7 +342,7 @@ export default function RecipeForm({
                 aria-label={`Remove ingredient ${index + 1}`}
                 className={minorButtonClasses}
               >
-                &times;
+                <X className="h-4 w-4" />
               </button>
             </div>
           ))}
@@ -331,16 +352,18 @@ export default function RecipeForm({
           onClick={() => addListItem(setIngredients)}
           className={addButtonClasses}
         >
-          + Add ingredient
+          <Plus className="-ml-0.5 mr-1 inline h-4 w-4 align-text-bottom" />
+          Add ingredient
         </button>
       </fieldset>
 
+      {/* Steps — numbered badges identical to the recipe page's method. */}
       <fieldset className="flex flex-col gap-3">
-        <legend className={`${labelClasses} mb-1`}>Steps</legend>
-        <div className="flex flex-col gap-2">
+        <legend className={`${labelClasses} mb-1`}>Method</legend>
+        <div className="flex flex-col gap-2.5">
           {steps.map((step, index) => (
-            <div key={index} className="flex items-start gap-2">
-              <span className="mt-2.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
+            <div key={index} className="flex items-start gap-3">
+              <span className="mt-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
                 {index + 1}
               </span>
               <textarea
@@ -351,7 +374,7 @@ export default function RecipeForm({
                   updateListItem(setSteps, index, event.target.value)
                 }
                 placeholder={`Step ${index + 1}`}
-                className={`${inputClasses} resize-y`}
+                className={`${inputClasses} resize-y leading-relaxed`}
               />
               <button
                 type="button"
@@ -360,7 +383,7 @@ export default function RecipeForm({
                 aria-label={`Remove step ${index + 1}`}
                 className={`${minorButtonClasses} mt-1`}
               >
-                &times;
+                <X className="h-4 w-4" />
               </button>
             </div>
           ))}
@@ -370,23 +393,25 @@ export default function RecipeForm({
           onClick={() => addListItem(setSteps)}
           className={addButtonClasses}
         >
-          + Add step
+          <Plus className="-ml-0.5 mr-1 inline h-4 w-4 align-text-bottom" />
+          Add step
         </button>
       </fieldset>
 
-      <div className="flex items-center gap-3 border-t border-border pt-6">
-        <button
-          type="submit"
-          className="inline-flex items-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-        >
-          {submitLabel}
-        </button>
+      {/* Submit — the primary pill, matching every other Homestead page. */}
+      <div className="flex flex-col-reverse items-stretch gap-3 border-t border-border pt-6 sm:flex-row sm:items-center">
         <Link
           href={cancelHref}
-          className="inline-flex items-center rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="inline-flex items-center justify-center rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold text-muted-foreground transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           Cancel
         </Link>
+        <button
+          type="submit"
+          className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:px-7"
+        >
+          {submitLabel}
+        </button>
       </div>
     </form>
   );
