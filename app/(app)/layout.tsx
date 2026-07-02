@@ -2,16 +2,18 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import DoodleField from "../components/DoodleField";
 import PreviewCta from "../components/PreviewCta";
+import { designReviewEnabled } from "../lib/design-review";
 
 export default function AppLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // The "Review designs" CTA shows on app pages off-production only (never in
-  // prod, and — since it lives here, not in the shared preview layout — never
-  // inside /preview itself).
-  const showPreviewCta = process.env.VERCEL_ENV !== "production";
+  // The "Review designs" CTA shows only during design-review rounds (see
+  // app/lib/design-review.ts — never in prod; DESIGN_REVIEW=0 mutes it
+  // between rounds). It lives here, not in the shared preview layout, so it
+  // never renders inside /preview itself.
+  const showPreviewCta = designReviewEnabled();
 
   return (
     <>

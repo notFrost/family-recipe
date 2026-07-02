@@ -1,18 +1,26 @@
+import { notFound } from "next/navigation";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import DoodleField from "../components/DoodleField";
 import PreviewSidebar from "../components/PreviewSidebar";
+import { designReviewEnabled } from "../lib/design-review";
 
 /**
  * Preview harness layout: the tool's collapsible sidebar on the left, and to its
  * right the REAL app chrome (Navbar + Footer) wrapping the page — so each style's
  * pages can be judged in their real context, not in isolation.
+ *
+ * The whole harness (every /preview route) is gated on the design-review flag:
+ * 404 in production always, and 404 between review rounds when DESIGN_REVIEW=0.
  */
 export default function PreviewLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  if (!designReviewEnabled()) {
+    notFound();
+  }
   return (
     <div className="min-h-screen">
       <PreviewSidebar />
