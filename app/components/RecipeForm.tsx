@@ -10,6 +10,11 @@ interface RecipeFormProps {
   /** When present, the form is in edit mode and pre-fills its fields. */
   initialRecipe?: Recipe;
   /**
+   * Create-mode prefills (e.g. from the video import) — ignored in edit
+   * mode. Strings are already sanitized/capped by the caller.
+   */
+  initialDraft?: { title?: string; imageUrl?: string; description?: string };
+  /**
    * Server action invoked on submit. Receives the form data and is
    * responsible for persisting + redirecting.
    */
@@ -47,13 +52,18 @@ function looksLikeUrl(value: string): boolean {
 
 export default function RecipeForm({
   initialRecipe,
+  initialDraft,
   action,
   submitLabel,
   cancelHref,
   families = [],
   initialFamilyId,
 }: RecipeFormProps) {
-  const [imageUrl, setImageUrl] = useState(initialRecipe?.imageUrl ?? "");
+  // Edit mode wins; the draft only seeds a fresh form.
+  const draft = initialRecipe ? undefined : initialDraft;
+  const [imageUrl, setImageUrl] = useState(
+    initialRecipe?.imageUrl ?? draft?.imageUrl ?? "",
+  );
   const [ingredients, setIngredients] = useState<string[]>(
     initialRecipe?.ingredients.length ? initialRecipe.ingredients : [""],
   );
@@ -180,7 +190,7 @@ export default function RecipeForm({
           name="title"
           type="text"
           required
-          defaultValue={initialRecipe?.title ?? ""}
+          defaultValue={initialRecipe?.title ?? draft?.title ?? ""}
           placeholder="e.g. Roasted Tomato Soup"
           className={`${inputClasses} text-base font-semibold`}
         />
@@ -236,7 +246,7 @@ export default function RecipeForm({
           id="description"
           name="description"
           rows={3}
-          defaultValue={initialRecipe?.description ?? ""}
+          defaultValue={initialRecipe?.description ?? draft?.description ?? ""}
           placeholder="A short summary of the dish."
           className={`${inputClasses} resize-y`}
         />
